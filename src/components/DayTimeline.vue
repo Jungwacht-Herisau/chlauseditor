@@ -149,7 +149,7 @@ export default defineComponent({
                 <td>{{ formatDeltaSeconds(parseFloat(cl.client.required_time!)) }}</td>
                 <td>
                   <span v-if="cl.otherAvailabilities.length == 0"> Nur heute </span>
-                  <span v-else> Heute+{{ cl.otherAvailabilities.length }} andere Tage </span>
+                  <span v-else> Heute+{{ cl.otherAvailabilities.length }}</span>
                 </td>
               </tr>
             </tbody>
