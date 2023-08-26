@@ -12,8 +12,11 @@ export default defineComponent({
   },
   data() {
     const ticks = [] as number[];
-    for (let i = this.range?.start; i <= this.range?.end; i++) {
+    for (let i = this.range?.start!; i <= this.range?.end!; i++) {
       ticks.push(i);
+      if (ticks.length > 24) {
+        throw `invalid props ${this.range?.start} ${this.range?.end}`;
+      }
     }
     return {
       ticks: ticks,

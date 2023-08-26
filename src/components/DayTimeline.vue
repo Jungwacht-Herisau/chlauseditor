@@ -1,15 +1,40 @@
 <script lang="ts">
 import {defineComponent} from "vue";
 import TourTimeline from "@/components/TourTimeline.vue";
-import type {Tour} from "@/api";
-import {getDayKeyOfTour, getDisplayEndHourOfTour, getDisplayStartHourOfTour} from "@/model_utils";
+import type {Client, ClientAvailability, JWler, JWlerAvailability, Tour} from "@/api";
+import {
+  extractId,
+  getDayKeyOfClientAvailability,
+  getDayKeyOfDate,
+  getDayKeyOfTour,
+  getDisplayEndHourOfTour,
+  getDisplayStartHourOfTour,
+  getJwlerAvailabilityOnDay,
+} from "@/model_utils";
 import TimeRuler from "@/components/TimeRuler.vue";
 import {HourRange} from "@/types";
+import {store} from "@/store";
+import ClientLabel from "@/components/ClientLabel.vue";
+import {formatDeltaSeconds, formatStartEnd} from "@/util";
+import JWlerLabel from "@/components/JWlerLabel.vue";
+import CollapsibleContent from "@/components/CollapsibleContent.vue";
+
+type PossibleClientData = {
+  client: Client;
+  locationString: string;
+  availabilityToday: ClientAvailability;
+  otherAvailabilities: ClientAvailability[];
+};
+
+type PossibleJwlerData = {
+  jwler: JWler;
+  availability: JWlerAvailability;
+};
 
 export default defineComponent({
   name: "DayTimeline",
-  methods: {getDateKey: getDayKeyOfTour},
-  components: {TimeRuler, TourTimeline},
+  methods: {formatStartEnd, formatDeltaSeconds, extractId, getDateKey: getDayKeyOfTour},
+  components: {CollapsibleContent, JWlerLabel, ClientLabel, TimeRuler, TourTimeline},
   props: {
     date: {
       type: Date,
@@ -18,15 +43,75 @@ export default defineComponent({
       type: Array<Tour>,
     },
   },
+  data() {
+    return {
+      store,
+    };
+  },
   computed: {
-    formattedDate() {
-      return this.date!.toLocaleDateString();
+    dayKey() {
+      return getDayKeyOfDate(this.date!);
     },
     range() {
-      return new HourRange(
-        Math.floor(Math.min(...(this.tours?.map(getDisplayStartHourOfTour) as number[]))),
-        Math.ceil(Math.min(...(this.tours?.map(getDisplayEndHourOfTour) as number[]))),
-      );
+      const starts = this.tours?.map(getDisplayStartHourOfTour) as number[];
+      const ends = this.tours?.map(getDisplayEndHourOfTour) as number[];
+      if (starts.length == 0 || ends.length == 0) {
+        return new HourRange(10, 23);
+      }
+      return new HourRange(Math.floor(Math.min(...starts)), Math.ceil(Math.max(...ends)));
+    },
+    possibleClients() {
+      const result = [] as PossibleClientData[];
+      for (let clientId in store.clients) {
+        const avs = store.clientAvailabilities[clientId];
+        let avToday = null;
+        let otherAvs = [];
+        for (let i = 0; i < avs.length; i++) {
+          if (getDayKeyOfDate(this.date!) == getDayKeyOfClientAvailability(avs[i])) {
+            avToday = avs[i];
+          } else {
+            otherAvs.push(avs[i]);
+          }
+        }
+        if (avToday != null) {
+          const client = store.clients[clientId];
+          const visitLocationId = parseInt(extractId(client.visit_location));
+          const location = store.locations[visitLocationId];
+          result.push({
+            client: client,
+            locationString: location ? location.string : "",
+            availabilityToday: avToday,
+            otherAvailabilities: otherAvs,
+          });
+        }
+      }
+      result.sort((a, b) => a.otherAvailabilities.length - b.otherAvailabilities.length);
+      return result;
+    },
+    possibleJwlers() {
+      const jwlerIds = [...Object.keys(store.jwlers).map(Number)];
+      for (let iTour = 0; iTour < this.tours!.length; iTour++) {
+        this.tours![iTour].jwlers.map(extractId)
+          .map(parseInt)
+          .forEach(id => {
+            const idx = jwlerIds.indexOf(id);
+            if (id !== -1) {
+              jwlerIds.splice(idx, 1);
+            }
+          });
+      }
+      const result = [] as PossibleJwlerData[];
+      jwlerIds.forEach(id => {
+        const av = getJwlerAvailabilityOnDay(id, this.dayKey);
+        if (av != null) {
+          result.push({
+            jwler: store.jwlers[id],
+            availability: av,
+          });
+        }
+      });
+      result.sort((a, b) => a.availability.start.localeCompare(b.availability.start));
+      return result;
     },
   },
 });
@@ -34,7 +119,6 @@ export default defineComponent({
 
 <template>
   <div class="day-timeline">
-    <h2>{{ formattedDate }}</h2>
     <div class="tour-wrapper">
       <TourTimeline v-for="t in tours" :key="getDateKey(t)" :tour="t" :range="range" />
     </div>
@@ -42,6 +126,55 @@ export default defineComponent({
       <div class="spacer"></div>
       <TimeRuler :range="range" />
     </div>
+    <CollapsibleContent title="Verfügbar">
+      <div class="list-container">
+        <div class="client-list">
+          <table>
+            <thead>
+              <tr>
+                <th>Nr</th>
+                <th>Name</th>
+                <th>Addresse</th>
+                <th>Dauer</th>
+                <th>Besuchbar</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="cl in possibleClients" :key="cl.client.id">
+                <td>{{ cl.client.id }}</td>
+                <td>
+                  <ClientLabel :client="cl.client" />
+                </td>
+                <td>{{ cl.locationString }}</td>
+                <td>{{ formatDeltaSeconds(parseFloat(cl.client.required_time!)) }}</td>
+                <td>
+                  <span v-if="cl.otherAvailabilities.length == 0"> Nur heute </span>
+                  <span v-else> Heute+{{ cl.otherAvailabilities.length }} andere Tage </span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="jwler-list">
+          <table>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Zeit</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="j in possibleJwlers" :key="j.jwler.id">
+                <td>
+                  <JWlerLabel :jwler="j.jwler" />
+                </td>
+                <td>{{ formatStartEnd(j.availability) }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </CollapsibleContent>
   </div>
 </template>
 
@@ -63,5 +196,11 @@ export default defineComponent({
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
+}
+
+.list-container {
+  display: flex;
+  flex-direction: row;
+  gap: 2rem;
 }
 </style>

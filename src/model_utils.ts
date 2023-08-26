@@ -3,6 +3,10 @@ import {parseApiDateTime, toDateISOString} from "@/util";
 import type {DayKey} from "@/types";
 import {store} from "@/store";
 
+export function getDayKeyOfDate(date: Date): DayKey {
+  return toDateISOString(date);
+}
+
 export function getDayKeyOfTour(tour: Tour): DayKey {
   return toDateISOString(parseApiDateTime(tour.date!));
 }
@@ -61,4 +65,16 @@ export function getDisplayStartHourOfTour(tour: Tour): number {
 
 export function getDisplayEndHourOfTour(tour: Tour): number {
   return Math.max(...getHoursOfTour(tour));
+}
+
+export function getJwlerAvailabilityOnDay(jwlerId: number, day: DayKey): JWlerAvailability | null {
+  const avs = store.jwlerAvailabilities[jwlerId];
+  if (avs) {
+    for (let i = 0; i < avs.length; i++) {
+      if (getDayKeyOfJwlerAvailability(avs[i]) == day) {
+        return avs[i];
+      }
+    }
+  }
+  return null;
 }

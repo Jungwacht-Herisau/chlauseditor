@@ -14,23 +14,19 @@ export default defineComponent({
 </script>
 
 <template>
-  <p class="jwler-label">
+  <span class="jwler-label">
     <span class="icons-container">
-      <span v-if="jwler?.driver">🚗</span>
       <span v-if="jwler?.chlaus">🎅</span>
       <span v-else>🥷</span>
+      <span v-if="jwler?.driver">🚗</span>
     </span>
     <span>{{ jwler!.name }}</span>
-  </p>
+  </span>
 </template>
 
 <style scoped>
 .icons-container {
   display: inline-block;
   width: 2rem;
-}
-p {
-  display: table-cell;
-  vertical-align: middle;
 }
 </style>

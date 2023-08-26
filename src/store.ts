@@ -1,5 +1,5 @@
 import {reactive, watch} from "vue";
-import type {Client, ClientAvailability, JWler, JWlerAvailability, Tour} from "@/api";
+import type {Client, ClientAvailability, JWler, JWlerAvailability, Location, Tour} from "@/api";
 import {ApiClient} from "@/api";
 import {
   extractId,
@@ -15,6 +15,7 @@ export const store = reactive({
   jwlerAvailabilities: {} as Record<number, Array<JWlerAvailability>>,
   clients: {} as Record<number, Client>,
   clientAvailabilities: {} as Record<number, Array<ClientAvailability>>,
+  locations: {} as Record<number, Location>,
 
   //working data
   tours: [] as Tour[],
@@ -50,6 +51,10 @@ export function fetchData() {
       response =>
         (store.clientAvailabilities = groupBy(response, ca => parseInt(extractId(ca.client)))),
     )
+    .catch(console.log);
+  apiClient.api
+    .listLocations()
+    .then(response => response.forEach(l => (store.locations[l.id!] = l)))
     .catch(console.log);
 
   apiClient.api
@@ -93,6 +98,6 @@ watch(
     return {};
   },
   () => {
-    store.toursByDay = groupBy(store.tours, getDayKeyOfTour);
+    store.toursByDay = groupBy(store.tours, getDayKeyOfTour, store.days);
   },
 );

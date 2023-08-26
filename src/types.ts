@@ -24,3 +24,8 @@ export class HourRange {
     return (time - (relative ? 0 : this.start)) / this.span();
   }
 }
+
+export interface StartEnd {
+  start: string;
+  end: string;
+}
