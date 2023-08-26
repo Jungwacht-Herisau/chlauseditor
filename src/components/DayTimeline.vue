@@ -2,12 +2,14 @@
 import {defineComponent} from "vue";
 import TourTimeline from "@/components/TourTimeline.vue";
 import type {Tour} from "@/api";
-import {getDateKey} from "@/model_utils";
+import {getDayKeyOfTour, getDisplayEndHourOfTour, getDisplayStartHourOfTour} from "@/model_utils";
+import TimeRuler from "@/components/TimeRuler.vue";
+import {HourRange} from "@/types";
 
 export default defineComponent({
   name: "DayTimeline",
-  methods: {getDateKey},
-  components: {TourTimeline},
+  methods: {getDateKey: getDayKeyOfTour},
+  components: {TimeRuler, TourTimeline},
   props: {
     date: {
       type: Date,
@@ -20,6 +22,12 @@ export default defineComponent({
     formattedDate() {
       return this.date!.toLocaleDateString();
     },
+    range() {
+      return new HourRange(
+        Math.floor(Math.min(...(this.tours?.map(getDisplayStartHourOfTour) as number[]))),
+        Math.ceil(Math.min(...(this.tours?.map(getDisplayEndHourOfTour) as number[]))),
+      );
+    },
   },
 });
 </script>
@@ -27,8 +35,30 @@ export default defineComponent({
 <template>
   <div class="day-timeline">
     <h2>{{ formattedDate }}</h2>
-    <TourTimeline v-for="t in tours" :key="getDateKey(t)" :tour="t" />
+    <TourTimeline
+      v-for="t in tours"
+      :key="getDateKey(t)"
+      :tour="t"
+      :range="range"
+    />
+    <div class="ruler-container">
+      <div class="spacer"></div>
+      <TimeRuler :range="range" />
+    </div>
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+.ruler-container {
+  display: flex;
+  flex-direction: row;
+}
+
+.ruler-container .spacer {
+  width: calc(2rem + 12rem);
+}
+
+.ruler-container .time-ruler {
+  flex-grow: 1;
+}
+</style>

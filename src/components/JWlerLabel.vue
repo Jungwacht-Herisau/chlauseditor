@@ -1,5 +1,6 @@
 <script lang="ts">
-import {defineComponent, PropType} from "vue";
+import type {PropType} from "vue";
+import {defineComponent} from "vue";
 import type {JWler} from "@/api";
 
 export default defineComponent({
@@ -13,12 +14,19 @@ export default defineComponent({
 </script>
 
 <template>
-  <p>
-    <span>{{ jwler.name }}</span>
-    <span v-if="jwler?.driver">🚗</span>
-    <span v-if="jwler?.chlaus">🎅</span>
-    <span v-else>🥷</span>
+  <p class="jwler-label">
+    <span class="icons-container">
+      <span v-if="jwler?.driver">🚗</span>
+      <span v-if="jwler?.chlaus">🎅</span>
+      <span v-else>🥷</span>
+    </span>
+    <span>{{ jwler!.name }}</span>
   </p>
 </template>
 
-<style scoped></style>
+<style scoped>
+.icons-container {
+  display: inline-block;
+  width: 2rem;
+}
+</style>
