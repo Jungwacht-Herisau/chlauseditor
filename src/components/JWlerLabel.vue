@@ -29,4 +29,8 @@ export default defineComponent({
   display: inline-block;
   width: 2rem;
 }
+p {
+  display: table-cell;
+  vertical-align: middle;
+}
 </style>

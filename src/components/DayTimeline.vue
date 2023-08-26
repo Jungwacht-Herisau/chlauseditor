@@ -35,12 +35,9 @@ export default defineComponent({
 <template>
   <div class="day-timeline">
     <h2>{{ formattedDate }}</h2>
-    <TourTimeline
-      v-for="t in tours"
-      :key="getDateKey(t)"
-      :tour="t"
-      :range="range"
-    />
+    <div class="tour-wrapper">
+      <TourTimeline v-for="t in tours" :key="getDateKey(t)" :tour="t" :range="range" />
+    </div>
     <div class="ruler-container">
       <div class="spacer"></div>
       <TimeRuler :range="range" />
@@ -60,5 +57,11 @@ export default defineComponent({
 
 .ruler-container .time-ruler {
   flex-grow: 1;
+}
+
+.tour-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
 }
 </style>

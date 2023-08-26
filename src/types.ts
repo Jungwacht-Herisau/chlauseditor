@@ -13,11 +13,14 @@ export class HourRange {
     return this.end - this.start;
   }
 
-  calcPercentage(time: number) {
-    return this.calcFraction(time) * 100 + "%";
+  calcPercentage(time: number | Date, relative = false): string {
+    return this.calcFraction(time, relative) * 100 + "%";
   }
 
-  calcFraction(time: number) {
-    return (time - this.start) / this.span();
+  calcFraction(time: number | Date, relative = false): number {
+    if (time instanceof Date) {
+      time = time.getHours() + time.getMinutes() * 60;
+    }
+    return (time - (relative ? 0 : this.start)) / this.span();
   }
 }
