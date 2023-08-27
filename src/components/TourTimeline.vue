@@ -2,11 +2,11 @@
 import type {PropType} from "vue";
 import {defineComponent, reactive} from "vue";
 import type {JWlerAvailability, Tour} from "@/api";
-import {getJwlerAvailabilitiesOfTour, getJwlersOfTour} from "@/model_utils";
+import {getDayKeyOfTour, getJwlerAvailabilitiesOfTour, getJwlersOfTour} from "@/model_utils";
 import JWlerLabel from "@/components/JWlerLabel.vue";
 import {parseApiDateTime} from "@/util";
 import {HourRange} from "@/types";
-import {allowDrop, drop, ObjectType} from "@/drag_drop";
+import {allowDrop, drop, ObjectType, startDrag} from "@/drag_drop";
 import {getJwlerUrl} from "@/api_url_builder";
 import {useStore} from "@/store";
 
@@ -40,6 +40,7 @@ export default defineComponent({
   },
   created() {},
   methods: {
+    startDrag,
     drop,
     allowDrop,
     parseApiDateTime,
@@ -49,17 +50,16 @@ export default defineComponent({
       return (endFraction - startFraction) * 100 + "%";
     },
     addJwler(id: number) {
-      const newTour: Tour = {
-        id: this.tour!.id,
-        name: this.tour!.name,
-        jwlers: [...this.tour!.jwlers, getJwlerUrl(id)],
-        elements: this.tour!.elements,
-        date: this.tour!.date,
-        start: this.tour!.start,
-        end: this.tour!.end,
-      };
-      console.log(newTour);
-      this.store.tours.set(this.tour!.id!, newTour);
+      const jwlerUrl = getJwlerUrl(id);
+      const sameDayTours = this.store.toursByDay.get(getDayKeyOfTour(this.tour!))!;
+      const currentTourMutable = this.store.tours.get(this.tour!.id!)!;
+      sameDayTours.forEach(to => {
+        const idx = to.jwlers.indexOf(jwlerUrl);
+        if (idx >= 0) {
+          to.jwlers.splice(idx, 1);
+        }
+      });
+      currentTourMutable.jwlers.push(jwlerUrl);
     },
   },
 });
@@ -73,7 +73,12 @@ export default defineComponent({
       @dragover="event => allowDrop(event, ObjectType.JWLER)"
       @drop="event => addJwler(drop(event) as number)"
     >
-      <div v-for="(_, i) in jwlers.length" :key="i">
+      <div
+        v-for="(_, i) in jwlers.length"
+        :key="i"
+        draggable="true"
+        @dragstart="event => startDrag(event, ObjectType.JWLER, jwlers[i].id!)"
+      >
         <JWlerLabel :jwler="jwlers[i]" />
       </div>
     </div>

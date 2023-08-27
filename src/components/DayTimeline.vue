@@ -95,18 +95,13 @@ export default defineComponent({
       return result;
     },
     possibleJwlers() {
-      const jwlerIds = [] as number[];
-      this.store.jwlers.forEach((_, id) => jwlerIds.push(id));
+      const jwlerIds = new Set<number>();
+      this.store.jwlers.forEach((_, id) => jwlerIds.add(id));
       this.tours.forEach(tour =>
         tour.jwlers
           .map(extractId)
-          .map(parseInt)
-          .forEach(id => {
-            const idx = jwlerIds.indexOf(id);
-            if (id !== -1) {
-              jwlerIds.splice(idx, 1);
-            }
-          }),
+          .map(x => parseInt(x))
+          .forEach(id => jwlerIds.delete(id)),
       );
       const result = [] as PossibleJwlerData[];
       jwlerIds.forEach(id => {
