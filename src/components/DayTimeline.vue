@@ -87,7 +87,7 @@ export default defineComponent({
       const imgElement = (
         this.$refs.draggingElementImageContainer as HTMLElement
       ).getElementsByClassName("timeline-element")[0];
-      event.dataTransfer!.setDragImage(imgElement, 0, 0);
+      event.dataTransfer!.setDragImage(imgElement, 0, 20);
     },
   },
   watch: {
@@ -115,7 +115,7 @@ export default defineComponent({
     },
     possibleClients() {
       const result = [] as PossibleClientData[];
-      this.store.clients.forEach((client, clientId) => {
+      this.store.unassignedClients.forEach((client, clientId) => {
         const avs = this.store.clientAvailabilities.get(clientId)!;
         let avToday = null;
         let otherAvs = [];
@@ -243,7 +243,7 @@ export default defineComponent({
                 <td>
                   <JWlerLabel :jwler="j.jwler" />
                 </td>
-                <td>{{ formatStartEnd(j.availability) }}</td>
+                <td v-if="false">{{ formatStartEnd(j.availability) }}</td>
               </tr>
             </tbody>
           </table>

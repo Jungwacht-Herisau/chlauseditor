@@ -1,13 +1,13 @@
 <script lang="ts">
 import type {PropType} from "vue";
 import {defineComponent} from "vue";
-import type {JWlerAvailability, Tour} from "@/api";
+import type {JWlerAvailability, Tour, TourElement} from "@/api";
 import {getDayKeyOfTour, getJwlerAvailabilitiesOfTour, getJwlersOfTour} from "@/model_utils";
 import JWlerLabel from "@/components/JWlerLabel.vue";
 import {parseApiDateTime} from "@/util";
 import {HourRange} from "@/types";
 import {allowDrop, drop, ObjectType, startDrag} from "@/drag_drop";
-import {getJwlerUrl} from "@/api_url_builder";
+import {getClientUrl, getJwlerUrl, getUrl} from "@/api_url_builder";
 import {useStore} from "@/store";
 import TimelineElement from "@/components/TimelineElement.vue";
 
@@ -41,6 +41,9 @@ export default defineComponent({
     elements() {
       return this.store.tourElements.get(this.tour!.id!);
     },
+    tourId(): number {
+      return this.tour!.id!;
+    },
   },
   methods: {
     startDrag,
@@ -63,6 +66,28 @@ export default defineComponent({
         }
       });
       currentTourMutable.jwlers.push(jwlerUrl);
+    },
+    dropClient(event: DragEvent) {
+      let clientId = drop(event);
+      const dropZoneRect = (this.$refs.dropZone as HTMLElement).getBoundingClientRect();
+      const x = (event.clientX - dropZoneRect.left) / dropZoneRect.width;
+      const hourStart = this.range!.start + x * this.range!.span();
+      const todayMorning = new Date(this.tour!.date);
+      const start = new Date(todayMorning.getTime() + hourStart * 60 * 60 * 1000);
+      const durationSecs = parseFloat(this.store.clients.get(clientId)!.required_time!);
+      const end = new Date(start.getTime() + durationSecs * 1000);
+      const newElement: TourElement = {
+        tour: getUrl("tour", this.tourId),
+        start: start.toISOString(),
+        end: end.toISOString(),
+        type: "V" as TourElement.type,
+        client: getClientUrl(clientId),
+      };
+      if (this.store.tourElements.has(this.tourId)) {
+        this.store.tourElements.get(this.tourId)!.push(newElement);
+      } else {
+        this.store.tourElements.set(this.tourId, [newElement]);
+      }
     },
   },
 });
@@ -96,7 +121,13 @@ export default defineComponent({
           }"
         ></div>
       </div>
-      <TimelineElement v-for="e in elements" :key="e.id" :tour-element="e" />
+      <div
+        @dragover="event => allowDrop(event, ObjectType.CLIENT)"
+        @drop="event => dropClient(event)"
+        ref="dropZone"
+        class="drop-zone"
+      ></div>
+      <TimelineElement v-for="e in elements" :key="e.id" :tour-element="e" :range="range" />
     </div>
   </div>
 </template>
@@ -159,5 +190,9 @@ export default defineComponent({
 .jwler-availability div {
   flex-grow: 1;
   background-color: palegreen;
+}
+
+.drop-zone {
+  /*pointer-events: none;*/
 }
 </style>

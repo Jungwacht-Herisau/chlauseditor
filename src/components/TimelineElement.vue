@@ -5,8 +5,9 @@ import type {TourElement} from "@/api";
 import {useStore} from "@/store";
 import type {HourRange} from "@/types";
 import {extractId} from "@/model_utils";
-import {parseApiDateTime} from "@/util";
+import {formatHours, formatStartEnd, parseApiDateTime, toFractionHours} from "@/util";
 import ClientLabel from "@/components/ClientLabel.vue";
+import {Tooltip} from "bootstrap";
 
 export default defineComponent({
   name: "TimelineElement",
@@ -32,6 +33,9 @@ export default defineComponent({
       store: useStore(),
     };
   },
+  mounted() {
+    new Tooltip(this.$refs.timelineElement as Element);
+  },
   methods: {
     fractionToCssWidth(fraction: number) {
       const cssWidth =
@@ -51,13 +55,12 @@ export default defineComponent({
       return parseApiDateTime(this.tourElement?.end!);
     },
     startHour() {
-      return (this.startDate.getUTCHours() * this.startDate.getUTCMinutes()) / 60;
+      return toFractionHours(this.startDate);
     },
     endHour() {
-      return (this.endDate.getUTCHours() * this.endDate.getUTCHours()) / 60;
+      return toFractionHours(this.endDate);
     },
     durationHours() {
-      console.log(this.timelineWidthPx);
       return this.endHour - this.startHour;
     },
     spacerWidth() {
@@ -73,24 +76,56 @@ export default defineComponent({
         return null;
       }
     },
+    tooltipHtml() {
+      let html =
+        `Zeit: ${formatStartEnd(this.tourElement!)}<br>` +
+        `Dauer: ${formatHours(this.durationHours)}<br>`;
+      if (this.client != null) {
+        html += "<hr>";
+        const locationStr = this.store.locations.get(
+          parseInt(extractId(this.client!.visit_location)),
+        )?.string;
+        html += `${this.client?.first_name} ${this.client?.last_name}<br>`;
+        html += `${locationStr}<br>`;
+      }
+      return html;
+    },
   },
 });
 </script>
 
 <template>
-  <div v-if="offset" class="spacer"></div>
-  <div :data-type="tourElement?.type" class="timeline-element">
-    <div v-if="tourElement!.type == 'V'">Besuch</div>
-    <div v-else-if="tourElement!.type == 'D'">Fahrt</div>
-    <div v-else-if="tourElement!.type == 'B'">Pause</div>
-    <div v-if="client != null">Nr. {{ client.id }}</div>
-    <div v-if="client != null">
-      <ClientLabel :client="client" />
+  <div class="timeline-element-container">
+    <div v-if="offset" class="spacer"></div>
+    <div
+      :data-type="tourElement?.type"
+      class="timeline-element"
+      data-bs-toggle="tooltip"
+      data-bs-placement="top"
+      data-bs-html="true"
+      :data-bs-title="tooltipHtml"
+      ref="timelineElement"
+    >
+      <div v-if="tourElement!.type == 'D'">
+        <font-awesome-icon icon="car-side" />
+      </div>
+      <div v-else-if="tourElement!.type == 'B'">
+        <font-awesome-icon icon="mug-hot" />
+      </div>
+      <div v-if="client != null">
+        <ClientLabel :client="client" />
+      </div>
     </div>
   </div>
 </template>
 
 <style scoped>
+.timeline-element-container {
+  display: flex;
+  flex-direction: row;
+  pointer-events: none;
+}
+
 .spacer {
   width: v-bind(spacerWidth);
 }
@@ -102,6 +137,8 @@ export default defineComponent({
   flex-direction: column;
   align-items: center;
   justify-content: space-around;
+  overflow: hidden;
+  pointer-events: auto;
 }
 
 [data-type="V"] {

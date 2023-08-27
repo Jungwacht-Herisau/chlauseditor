@@ -1,5 +1,5 @@
 import type {ClientAvailability, JWler, JWlerAvailability, Tour} from "@/api";
-import {parseApiDateTime, toDateISOString} from "@/util";
+import {parseApiDateTime, toDateISOString, toFractionHours} from "@/util";
 import type {DayKey} from "@/types";
 import {useStore} from "@/store";
 
@@ -53,8 +53,7 @@ export function getJwlerAvailabilitiesOfTour(tour: Tour): JWlerAvailability[] {
 function getHoursOfTour(tour: Tour): number[] {
   return getJwlerAvailabilitiesOfTour(tour).flatMap(av => {
     return [av.start, av.end].map(dstr => {
-      const date = parseApiDateTime(dstr);
-      return date.getHours() + date.getMinutes() / 60;
+        return toFractionHours(parseApiDateTime(dstr));
     });
   });
 }

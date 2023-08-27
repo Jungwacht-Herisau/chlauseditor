@@ -48,6 +48,22 @@ export const useStore = defineStore("data", {
       this.tours.forEach(t => toursByDay.get(getDayKeyOfTour(t))!.push(t));
       return toursByDay;
     },
+    unassignedClients() {
+      const result = new Map<number, Client>();
+      this.clients.forEach((value, key) => result.set(key, value));
+      console.log(this.tourElements);
+      this.tours.forEach(t => {
+        const elements = this.tourElements.get(t.id!);
+        if (elements != undefined) {
+          elements!.forEach(te => {
+            if (te.client != null) {
+              result.delete(parseInt(extractId(te.client)));
+            }
+          });
+        }
+      });
+      return result;
+    },
   },
   actions: {
     createTour(name: string, date: string) {

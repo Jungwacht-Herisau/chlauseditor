@@ -23,7 +23,10 @@ export function allowDrop(event: DragEvent, type: ObjectType) {
   }
 }
 
-export function drop(event: DragEvent) {
+export function drop(event: DragEvent): number {
   const data: DragData = JSON.parse(event.dataTransfer!.getData("object"));
+  if (typeof data.id == "string") {
+    return parseInt(data.id);
+  }
   return data.id;
 }

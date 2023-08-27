@@ -36,9 +36,10 @@ export function groupBy<T, K extends keyof any>(
 }
 
 export function formatHours(time: number): string {
-  const hours = Math.floor(time);
-  const minutes = (time - hours) * 60;
-  return hours.toString().padStart(2, "0") + ":" + minutes.toString().padStart(2, "0");
+  if (isNaN(time)) {
+    return "";
+  }
+  return new Date(time * 60 * 60 * 1000).toTimeString().substring(0, 5);
 }
 
 export function formatDeltaSeconds(seconds: number): string {
@@ -59,9 +60,9 @@ export function formatDeltaSeconds(seconds: number): string {
 export function formatStartEnd(obj: StartEnd): string {
   const start = parseApiDateTime(obj.start);
   const end = parseApiDateTime(obj.end);
-  return (
-    formatHours(start.getHours() + start.getMinutes() / 60) +
-    "-" +
-    formatHours(end.getHours() + end.getMinutes() / 60)
-  );
+  return formatHours(toFractionHours(start)) + "-" + formatHours(toFractionHours(end));
+}
+
+export function toFractionHours(date: Date): number {
+  return date.getUTCHours() + date.getUTCMinutes() / 60 + date.getUTCSeconds() / 3600;
 }

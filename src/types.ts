@@ -1,3 +1,5 @@
+import {toFractionHours} from "@/util";
+
 export type DayKey = string;
 
 export class HourRange {
@@ -19,7 +21,7 @@ export class HourRange {
 
   calcFraction(time: number | Date, relative = false): number {
     if (time instanceof Date) {
-      time = time.getHours() + time.getMinutes() / 60;
+      time = toFractionHours(time);
     }
     return (time - (relative ? 0 : this.start)) / this.span();
   }
