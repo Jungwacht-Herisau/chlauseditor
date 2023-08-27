@@ -1,4 +1,12 @@
-import type {Client, ClientAvailability, JWler, JWlerAvailability, Location, Tour} from "@/api";
+import type {
+  Client,
+  ClientAvailability,
+  JWler,
+  JWlerAvailability,
+  Location,
+  Tour,
+  TourElement,
+} from "@/api";
 import {ApiClient} from "@/api";
 import {
   extractId,
@@ -20,6 +28,7 @@ export const useStore = defineStore("data", {
       clientAvailabilities: new Map<number, Array<ClientAvailability>>(),
       locations: new Map<number, Location>(),
       tours: new Map<number, Tour>(),
+      tourElements: new Map<number, TourElement[]>(),
     };
   },
   getters: {
@@ -86,6 +95,13 @@ export const useStore = defineStore("data", {
       apiClient.api
         .listTours()
         .then(response => response.forEach(t => this.tours.set(t.id!, t)))
+        .catch(console.log);
+      apiClient.api
+        .listTourElements()
+        .then(response => {
+          const grouped = groupBy(response, te => parseInt(extractId(te.tour)));
+          grouped.forEach((value, key) => this.tourElements.set(key, value));
+        })
         .catch(console.log);
     },
   },

@@ -60,8 +60,8 @@ export function formatStartEnd(obj: StartEnd): string {
   const start = parseApiDateTime(obj.start);
   const end = parseApiDateTime(obj.end);
   return (
-    formatHours(start.getHours() + start.getMinutes() * 60) +
+    formatHours(start.getHours() + start.getMinutes() / 60) +
     "-" +
-    formatHours(end.getHours() + end.getMinutes() * 60)
+    formatHours(end.getHours() + end.getMinutes() / 60)
   );
 }

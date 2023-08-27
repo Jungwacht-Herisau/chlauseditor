@@ -1,7 +1,7 @@
 <script lang="ts">
 import {defineComponent} from "vue";
 import TourTimeline from "@/components/TourTimeline.vue";
-import type {Client, ClientAvailability, JWler, JWlerAvailability, Tour} from "@/api";
+import type {Client, ClientAvailability, JWler, JWlerAvailability, Tour, TourElement} from "@/api";
 import {
   extractId,
   getDayKeyOfClientAvailability,
@@ -20,6 +20,8 @@ import JWlerLabel from "@/components/JWlerLabel.vue";
 import CollapsibleContent from "@/components/CollapsibleContent.vue";
 import {ObjectType, startDrag} from "@/drag_drop";
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
+import TimelineElement from "@/components/TimelineElement.vue";
+import {getClientUrl} from "@/api_url_builder";
 
 type PossibleClientData = {
   client: Client;
@@ -35,17 +37,8 @@ type PossibleJwlerData = {
 
 export default defineComponent({
   name: "DayTimeline",
-  methods: {
-    startDrag,
-    formatStartEnd,
-    formatDeltaSeconds,
-    extractId,
-    getDayKeyOfTour,
-    addNewTour() {
-      this.store.createTour("Neue Tour", this.dayKey);
-    },
-  },
   components: {
+    TimelineElement,
     FontAwesomeIcon,
     CollapsibleContent,
     JWlerLabel,
@@ -61,8 +54,41 @@ export default defineComponent({
   data() {
     return {
       store: useStore(),
+      mounted: false,
       ObjectType,
+      draggingTourElement: {} as TourElement,
     };
+  },
+  mounted() {
+    this.mounted = true;
+  },
+  methods: {
+    startDrag,
+    formatStartEnd,
+    formatDeltaSeconds,
+    extractId,
+    getDayKeyOfTour,
+    addNewTour() {
+      this.store.createTour("Neue Tour", this.dayKey);
+    },
+    startPossibleClientDrag(possibleClient: PossibleClientData, event: DragEvent) {
+      startDrag(event, ObjectType.CLIENT, possibleClient.client.id!);
+      const endDate = new Date(
+        this.rangeStartAsDate.getTime() + parseFloat(possibleClient.client.required_time!) * 1000,
+      );
+      this.draggingTourElement = {
+        tour: "",
+        start: this.rangeStartAsDate.toISOString(),
+        end: endDate.toISOString(),
+        type: "V" as TourElement.type,
+        client: getClientUrl(possibleClient.client.id!),
+      };
+
+      const imgElement = (
+        this.$refs.draggingElementImageContainer as HTMLElement
+      ).getElementsByClassName("timeline-element")[0];
+      event.dataTransfer!.setDragImage(imgElement, 0, 0);
+    },
   },
   watch: {
     tours() {
@@ -83,6 +109,9 @@ export default defineComponent({
         return new HourRange(10, 23);
       }
       return new HourRange(Math.floor(Math.min(...starts)), Math.ceil(Math.max(...ends)));
+    },
+    rangeStartAsDate() {
+      return new Date(this.date!.getTime() + this.range.start * 60 * 60 * 1000);
     },
     possibleClients() {
       const result = [] as PossibleClientData[];
@@ -133,12 +162,22 @@ export default defineComponent({
       result.sort((a, b) => a.availability.start.localeCompare(b.availability.start));
       return result;
     },
+    timelineWidthPx(): number {
+      if (this.mounted) {
+        const ruler = (this.$refs.rootElement as HTMLElement).getElementsByClassName(
+          "time-ruler",
+        )[0];
+        return ruler.getBoundingClientRect().width;
+      } else {
+        return 0;
+      }
+    },
   },
 });
 </script>
 
 <template>
-  <div class="day-timeline">
+  <div class="day-timeline" ref="rootElement">
     <div class="btn-group-sm" role="group">
       <button type="button" class="btn btn-primary" @click="addNewTour">
         <font-awesome-icon icon="plus" />
@@ -146,7 +185,7 @@ export default defineComponent({
       </button>
     </div>
     <div class="tour-wrapper">
-      <TourTimeline v-for="t in tours" :key="getDayKeyOfTour(t)" :tour="t" :range="range" />
+      <TourTimeline v-for="t in tours" :key="t.id" :tour="t" :range="range" />
     </div>
     <div class="ruler-container">
       <div class="spacer"></div>
@@ -166,7 +205,12 @@ export default defineComponent({
               </tr>
             </thead>
             <tbody>
-              <tr v-for="cl in possibleClients" :key="cl.client.id">
+              <tr
+                v-for="cl in possibleClients"
+                :key="cl.client.id"
+                draggable="true"
+                @dragstart="event => startPossibleClientDrag(cl, event)"
+              >
                 <td>{{ cl.client.id }}</td>
                 <td>
                   <ClientLabel :client="cl.client" />
@@ -206,6 +250,13 @@ export default defineComponent({
         </div>
       </div>
     </CollapsibleContent>
+    <div class="offscreen" ref="draggingElementImageContainer">
+      <TimelineElement
+        :tour-element="draggingTourElement"
+        :timeline-width-px="timelineWidthPx"
+        :range="range"
+      />
+    </div>
   </div>
 </template>
 

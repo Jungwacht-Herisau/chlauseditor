@@ -19,7 +19,7 @@ export class HourRange {
 
   calcFraction(time: number | Date, relative = false): number {
     if (time instanceof Date) {
-      time = time.getHours() + time.getMinutes() * 60;
+      time = time.getHours() + time.getMinutes() / 60;
     }
     return (time - (relative ? 0 : this.start)) / this.span();
   }

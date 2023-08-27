@@ -1,1 +1,27 @@
-@import './base.css';
+th {
+    text-align: left;
+}
+
+[draggable] {
+    cursor: move;
+}
+
+.offscreen {
+    position: fixed;
+    overflow: hidden;
+    transform: translate(1000vw, 1000vh);
+}
+
+:root {
+    --page-padding: 4px;
+
+    --tour-timeline-height: 8rem;
+
+    --tour-name-width: 2rem;
+    --tour-jwler-width: 12rem;
+    --tour-timeline-width: calc(100vw - var(--tour-name-width) - var(--tour-jwler-width) - 2 * var(--page-padding));
+}
+
+body {
+    padding: var(--page-padding);
+}

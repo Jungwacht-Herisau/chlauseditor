@@ -1,6 +1,6 @@
 export enum ObjectType {
   JWLER,
-  CLIENT_AVAILABILITY,
+  CLIENT,
 }
 
 type DragData = {

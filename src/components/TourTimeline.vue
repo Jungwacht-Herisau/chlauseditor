@@ -9,21 +9,11 @@ import {HourRange} from "@/types";
 import {allowDrop, drop, ObjectType, startDrag} from "@/drag_drop";
 import {getJwlerUrl} from "@/api_url_builder";
 import {useStore} from "@/store";
+import TimelineElement from "@/components/TimelineElement.vue";
 
 export default defineComponent({
   name: "TourTimeline",
-  computed: {
-    date() {
-      return parseApiDateTime(this.tour?.date!);
-    },
-    jwlers() {
-      return getJwlersOfTour(this.tour!);
-    },
-    availabilities() {
-      return getJwlerAvailabilitiesOfTour(this.tour!);
-    },
-  },
-  components: {JWlerLabel},
+  components: {TimelineElement, JWlerLabel},
   props: {
     tour: {
       type: Object as PropType<Tour>,
@@ -38,7 +28,20 @@ export default defineComponent({
       store: useStore(),
     };
   },
-  created() {},
+  computed: {
+    date() {
+      return parseApiDateTime(this.tour?.date!);
+    },
+    jwlers() {
+      return getJwlersOfTour(this.tour!);
+    },
+    availabilities() {
+      return getJwlerAvailabilitiesOfTour(this.tour!);
+    },
+    elements() {
+      return this.store.tourElements.get(this.tour!.id!);
+    },
+  },
   methods: {
     startDrag,
     drop,
@@ -93,6 +96,7 @@ export default defineComponent({
           }"
         ></div>
       </div>
+      <TimelineElement v-for="e in elements" :key="e.id" :tour-element="e" />
     </div>
   </div>
 </template>
@@ -101,7 +105,7 @@ export default defineComponent({
 .tour-timeline {
   display: flex;
   flex-direction: row;
-  height: 8rem;
+  height: var(--tour-timeline-height);
 }
 
 .tour-timeline:not(:last-child) {
@@ -116,11 +120,11 @@ export default defineComponent({
   white-space: nowrap;
   text-overflow: ellipsis;
   text-align: center;
-  width: 2rem;
+  width: var(--tour-name-width);
 }
 
 .jwler-name-container {
-  width: 12rem;
+  width: var(--tour-jwler-width);
   display: flex;
   flex-direction: column;
   justify-content: space-around;
@@ -136,7 +140,7 @@ export default defineComponent({
 
 .timeline {
   background-color: antiquewhite;
-  flex-grow: 1;
+  width: var(--tour-timeline-width);
 
   display: grid;
 }
