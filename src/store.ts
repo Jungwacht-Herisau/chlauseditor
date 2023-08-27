@@ -1,4 +1,4 @@
-import {reactive, watch} from "vue";
+import {reactive, ref, watch} from "vue";
 import type {Client, ClientAvailability, JWler, JWlerAvailability, Location, Tour} from "@/api";
 import {ApiClient} from "@/api";
 import {
@@ -9,95 +9,78 @@ import {
 } from "@/model_utils";
 import type {DayKey} from "@/types";
 import {groupBy} from "@/util";
+import {API_URL} from "@/const";
+import {defineStore} from "pinia";
 
-export const store = reactive({
-  jwlers: {} as Record<number, JWler>,
-  jwlerAvailabilities: {} as Record<number, Array<JWlerAvailability>>,
-  clients: {} as Record<number, Client>,
-  clientAvailabilities: {} as Record<number, Array<ClientAvailability>>,
-  locations: {} as Record<number, Location>,
+export const useStore = defineStore("data", {
+  state: () => {
+    return {
+      jwlers: new Map<number, JWler>(),
+      jwlerAvailabilities: new Map<number, Array<JWlerAvailability>>(),
+      clients: new Map<number, Client>(),
+      clientAvailabilities: new Map<number, Array<ClientAvailability>>(),
+      locations: new Map<number, Location>(),
+      tours: new Map<number, Tour>(),
+    };
+  },
+  getters: {
+    days() {
+      const newDays = new Set<DayKey>();
+      this.jwlerAvailabilities.forEach(avs =>
+          avs.forEach(av => newDays.add(getDayKeyOfJwlerAvailability(av))),
+      );
+      this.clientAvailabilities.forEach(avs =>
+          avs.forEach(av => newDays.add(getDayKeyOfClientAvailability(av))),
+      );
+      return [...newDays].sort();
+    },
+    toursByDay() {
+      const toursByDay = new Map<DayKey, Tour[]>();
+      this.days.forEach(d => toursByDay.set(d, []));
+      this.tours.forEach(t => toursByDay.get(getDayKeyOfTour(t))!.push(t));
+      return toursByDay;
+    },
+  },
+  actions: {
+    fetchData() {
+      apiClient.api
+          .listJWlers()
+          .then(response => response.forEach(j => this.jwlers.set(j.id!, j)))
+          .catch(console.log);
+      apiClient.api
+          .listJWlerAvailabilitys()
+          .then(response => {
+            const grouped = groupBy(response, ja => parseInt(extractId(ja.jwler)));
+            grouped.forEach((value, key) => this.jwlerAvailabilities.set(key, value));
+          })
+          .catch(console.log);
+      apiClient.api
+          .listClients()
+          .then(response => response.forEach(c => this.clients.set(c.id!, c)))
+          .catch(console.log);
+      apiClient.api
+          .listClientAvailabilitys()
+          .then(response => {
+            const grouped = groupBy(response, ca => parseInt(extractId(ca.client)));
+            grouped.forEach((value, key) => this.clientAvailabilities.set(key, value));
+          })
+          .catch(console.log);
+      apiClient.api
+          .listLocations()
+          .then(response => response.forEach(l => this.locations.set(l.id!, l)))
+          .catch(console.log);
 
-  //working data
-  tours: [] as Tour[],
-
-  //derived data
-  days: [] as DayKey[],
-  toursByDay: {} as Record<DayKey, Tour[]>,
+      apiClient.api
+          .listTours()
+          .then(response => response.forEach(t => this.tours.set(t.id!, t)))
+          .catch(console.log);
+    }
+  }
 });
 
-//constant data
+const apiClient = new ApiClient({BASE: API_URL});
 
-const apiClient = new ApiClient({BASE: "http://127.0.0.1:8000"});
-
-export function fetchData() {
-  apiClient.api
-    .listJWlers()
-    .then(response => response.forEach(j => (store.jwlers[j.id!] = j)))
-    .catch(console.log);
-  apiClient.api
-    .listJWlerAvailabilitys()
-    .then(
-      response =>
-        (store.jwlerAvailabilities = groupBy(response, ja => parseInt(extractId(ja.jwler)))),
-    )
-    .catch(console.log);
-  apiClient.api
-    .listClients()
-    .then(response => response.forEach(c => (store.clients[c.id!] = c)))
-    .catch(console.log);
-  apiClient.api
-    .listClientAvailabilitys()
-    .then(
-      response =>
-        (store.clientAvailabilities = groupBy(response, ca => parseInt(extractId(ca.client)))),
-    )
-    .catch(console.log);
-  apiClient.api
-    .listLocations()
-    .then(response => response.forEach(l => (store.locations[l.id!] = l)))
-    .catch(console.log);
-
-  apiClient.api
-    .listTours()
-    .then(response => (store.tours = response))
-    .catch(console.log);
-}
-
-function touch(x: any) {
+export function touch(x: any) {
   // noinspection BadExpressionStatementJS
   x;
 }
-
-watch(
-  () => {
-    touch(store.jwlerAvailabilities);
-    touch(store.clientAvailabilities);
-    return {};
-  },
-  () => {
-    //console.log("jwlerAvailabilities", store.jwlerAvailabilities);
-    const newDays = new Set<DayKey>();
-    for (const jwlerId in store.jwlerAvailabilities) {
-      store.jwlerAvailabilities[jwlerId].forEach(av =>
-        newDays.add(getDayKeyOfJwlerAvailability(av)),
-      );
-    }
-    for (const clientId in store.clientAvailabilities) {
-      store.clientAvailabilities[clientId].forEach(av =>
-        newDays.add(getDayKeyOfClientAvailability(av)),
-      );
-    }
-    store.days = [...newDays].sort();
-  },
-);
-
-watch(
-  () => {
-    touch(store.days);
-    touch(store.tours);
-    return {};
-  },
-  () => {
-    store.toursByDay = groupBy(store.tours, getDayKeyOfTour, store.days);
-  },
-);

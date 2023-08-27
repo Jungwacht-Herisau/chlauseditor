@@ -1,6 +1,6 @@
 <script lang="ts">
 import DayTimeline from "@/components/DayTimeline.vue";
-import {fetchData, store} from "@/store";
+import {useStore} from "@/store";
 import AnimatedSpinner from "@/components/AnimatedSpinner.vue";
 import CollapsibleContent from "@/components/CollapsibleContent.vue";
 
@@ -8,22 +8,22 @@ export default {
   components: {CollapsibleContent, AnimatedSpinner, DayTimeline},
   data() {
     return {
-      store: store,
+      store: useStore(),
     };
   },
   created() {
-    fetchData();
+    this.store.fetchData();
   },
   computed: {
     dataReady() {
       return (
-        Object.keys(store.locations).length > 0 &&
-        store.days.length > 0 &&
-        Object.keys(store.clients).length > 0 &&
-        Object.keys(store.clientAvailabilities).length > 0 &&
-        Object.keys(store.jwlers).length > 0 &&
-        Object.keys(store.jwlerAvailabilities).length > 0 &&
-        Object.keys(store.toursByDay).length > 0
+        this.store.locations.size > 0 &&
+        this.store.days.length > 0 &&
+        this.store.clients.size > 0 &&
+        this.store.clientAvailabilities.size > 0 &&
+        this.store.jwlers.size > 0 &&
+        this.store.jwlerAvailabilities.size > 0 &&
+        this.store.toursByDay.size > 0
       );
     },
   },
@@ -38,7 +38,7 @@ export default {
       :title="new Date(dateKey).toLocaleDateString()"
       header-tag="h2"
     >
-      <DayTimeline :date="new Date(dateKey)" :tours="store.toursByDay[dateKey]" />
+      <DayTimeline :date="new Date(dateKey)" />
     </CollapsibleContent>
   </main>
   <div v-else id="spinner-container">

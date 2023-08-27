@@ -1,14 +1,28 @@
 <script lang="ts">
 import type {PropType} from "vue";
-import {defineComponent} from "vue";
+import {defineComponent, reactive} from "vue";
 import type {JWlerAvailability, Tour} from "@/api";
 import {getJwlerAvailabilitiesOfTour, getJwlersOfTour} from "@/model_utils";
 import JWlerLabel from "@/components/JWlerLabel.vue";
 import {parseApiDateTime} from "@/util";
 import {HourRange} from "@/types";
+import {allowDrop, drop, ObjectType} from "@/drag_drop";
+import {getJwlerUrl} from "@/api_url_builder";
+import {useStore} from "@/store";
 
 export default defineComponent({
   name: "TourTimeline",
+  computed: {
+    date() {
+      return parseApiDateTime(this.tour?.date!);
+    },
+    jwlers() {
+      return getJwlersOfTour(this.tour!);
+    },
+    availabilities() {
+      return getJwlerAvailabilitiesOfTour(this.tour!);
+    },
+  },
   components: {JWlerLabel},
   props: {
     tour: {
@@ -20,18 +34,32 @@ export default defineComponent({
   },
   data() {
     return {
-      date: parseApiDateTime(this.tour?.date!),
-      jwlers: getJwlersOfTour(this.tour!),
-      availabilities: getJwlerAvailabilitiesOfTour(this.tour!),
+      ObjectType,
+      store: useStore(),
     };
   },
   created() {},
   methods: {
+    drop,
+    allowDrop,
     parseApiDateTime,
     calcWidth(availability: JWlerAvailability): string {
       const endFraction = this.range?.calcFraction(parseApiDateTime(availability.end))!;
       const startFraction = this.range?.calcFraction(parseApiDateTime(availability.start))!;
       return (endFraction - startFraction) * 100 + "%";
+    },
+    addJwler(id: number) {
+      const newTour: Tour = {
+        id: this.tour!.id,
+        name: this.tour!.name,
+        jwlers: [...this.tour!.jwlers, getJwlerUrl(id)],
+        elements: this.tour!.elements,
+        date: this.tour!.date,
+        start: this.tour!.start,
+        end: this.tour!.end,
+      };
+      console.log(newTour);
+      this.store.tours.set(this.tour!.id!, newTour);
     },
   },
 });
@@ -40,7 +68,11 @@ export default defineComponent({
 <template>
   <div class="tour-timeline">
     <h3 class="tour-name">{{ tour!.name }}</h3>
-    <div class="jwler-name-container">
+    <div
+      class="jwler-name-container"
+      @dragover="event => allowDrop(event, ObjectType.JWLER)"
+      @drop="event => addJwler(drop(event) as number)"
+    >
       <div v-for="(_, i) in jwlers.length" :key="i">
         <JWlerLabel :jwler="jwlers[i]" />
       </div>
@@ -54,8 +86,7 @@ export default defineComponent({
             'margin-left': range?.calcPercentage(parseApiDateTime(av.start)),
             width: calcWidth(av),
           }"
-        >
-        </div>
+        ></div>
       </div>
     </div>
   </div>
@@ -67,6 +98,7 @@ export default defineComponent({
   flex-direction: row;
   height: 8rem;
 }
+
 .tour-timeline:not(:last-child) {
   border-bottom: none;
 }

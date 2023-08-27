@@ -14,6 +14,7 @@
     "generate-api": "openapi --input http://127.0.0.1:8000/api-schema/ --output ./src/api --name ApiClient"
   },
   "dependencies": {
+    "pinia": "^2.1.6",
     "vue": "^3.3.4",
     "vue-router": "^4.2.4"
   },

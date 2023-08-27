@@ -1,5 +1,9 @@
 import type {StartEnd} from "@/types";
 
+export interface HasForEach<T> {
+  forEach(callback: (elem: T) => void): void;
+}
+
 export function parseApiDateTime(value: string): Date {
   return new Date(Date.parse(value));
 }
@@ -13,18 +17,19 @@ export function toDateISOString(date: Date): string {
 }
 
 export function groupBy<T, K extends keyof any>(
-  objs: T[],
+  objs: HasForEach<T>,
   keyExtractor: (obj: T) => K,
   keys: K[] = [],
-): Record<K, Array<T>> {
-  const result = {} as Record<K, Array<T>>;
-  keys.forEach(k => (result[k] = []));
+): Map<K, Array<T>> {
+  const result = new Map<K, Array<T>>();
+  keys.forEach(k => result.set(k, []));
   objs.forEach(o => {
     const k = keyExtractor(o);
-    if (k in result) {
-      result[k].push(o);
+    const arr = result.get(k);
+    if (arr) {
+      arr.push(o);
     } else {
-      result[k] = [o];
+      result.set(k, [o]);
     }
   });
   return result;

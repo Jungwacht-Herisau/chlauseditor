@@ -1,7 +1,7 @@
 import type {ClientAvailability, JWler, JWlerAvailability, Tour} from "@/api";
 import {parseApiDateTime, toDateISOString} from "@/util";
 import type {DayKey} from "@/types";
-import {store} from "@/store";
+import {useStore} from "@/store";
 
 export function getDayKeyOfDate(date: Date): DayKey {
   return toDateISOString(date);
@@ -28,7 +28,7 @@ export function getJwlersOfTour(tour: Tour): JWler[] {
   for (let i = 0; i < tour.jwlers.length!; i++) {
     const url = tour.jwlers[i]!;
     const jwlerId = parseInt(extractId(url));
-    jwlers.push(store.jwlers[jwlerId]);
+    jwlers.push(useStore().jwlers.get(jwlerId)!);
   }
   return jwlers;
 }
@@ -39,7 +39,7 @@ export function getJwlerAvailabilitiesOfTour(tour: Tour): JWlerAvailability[] {
   for (let iJw = 0; iJw < tour.jwlers.length!; iJw++) {
     const url = tour.jwlers[iJw]!;
     const jwlerId = parseInt(extractId(url));
-    const allAv = store.jwlerAvailabilities[jwlerId];
+    const allAv = useStore().jwlerAvailabilities.get(jwlerId)!;
     for (let iAv = 0; iAv < allAv.length; iAv++) {
       if (parseApiDateTime(allAv[iAv].start).toDateString() == tourDate) {
         availabilities.push(allAv[iAv]);
@@ -68,7 +68,7 @@ export function getDisplayEndHourOfTour(tour: Tour): number {
 }
 
 export function getJwlerAvailabilityOnDay(jwlerId: number, day: DayKey): JWlerAvailability | null {
-  const avs = store.jwlerAvailabilities[jwlerId];
+  const avs = useStore().jwlerAvailabilities.get(jwlerId);
   if (avs) {
     for (let i = 0; i < avs.length; i++) {
       if (getDayKeyOfJwlerAvailability(avs[i]) == day) {
