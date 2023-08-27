@@ -1,12 +1,16 @@
-<script setup lang="ts">
-import { RouterView } from 'vue-router'
+<script lang="ts">
+import {RouterView} from "vue-router";
 
+export default {
+  components: {
+    RouterView,
+  },
+  mounted() {},
+};
 </script>
 
 <template>
   <RouterView />
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>

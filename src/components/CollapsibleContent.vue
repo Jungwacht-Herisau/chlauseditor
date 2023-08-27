@@ -26,9 +26,9 @@ export default defineComponent({
 
 <template>
   <component :is="headerTag">
-    <button @click="mutableOpen = !mutableOpen">
-      <span v-if="mutableOpen"> &#10134; </span>
-      <span v-else> &#10133; </span>
+    <button @click="mutableOpen = !mutableOpen" class="btn">
+      <font-awesome-icon v-if="mutableOpen" icon="caret-down" />
+      <font-awesome-icon v-else icon="caret-right" />
     </button>
     {{ title }}
   </component>

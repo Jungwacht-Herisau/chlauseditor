@@ -19,6 +19,7 @@ import {formatDeltaSeconds, formatStartEnd} from "@/util";
 import JWlerLabel from "@/components/JWlerLabel.vue";
 import CollapsibleContent from "@/components/CollapsibleContent.vue";
 import {ObjectType, startDrag} from "@/drag_drop";
+import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 
 type PossibleClientData = {
   client: Client;
@@ -34,8 +35,24 @@ type PossibleJwlerData = {
 
 export default defineComponent({
   name: "DayTimeline",
-  methods: {startDrag, formatStartEnd, formatDeltaSeconds, extractId, getDateKey: getDayKeyOfTour},
-  components: {CollapsibleContent, JWlerLabel, ClientLabel, TimeRuler, TourTimeline},
+  methods: {
+    startDrag,
+    formatStartEnd,
+    formatDeltaSeconds,
+    extractId,
+    getDayKeyOfTour,
+    addNewTour() {
+      this.store.createTour("Neue Tour", this.dayKey);
+    },
+  },
+  components: {
+    FontAwesomeIcon,
+    CollapsibleContent,
+    JWlerLabel,
+    ClientLabel,
+    TimeRuler,
+    TourTimeline,
+  },
   props: {
     date: {
       type: Date,
@@ -122,8 +139,14 @@ export default defineComponent({
 
 <template>
   <div class="day-timeline">
+    <div class="btn-group-sm" role="group">
+      <button type="button" class="btn btn-primary" @click="addNewTour">
+        <font-awesome-icon icon="plus" />
+        Neue Tour
+      </button>
+    </div>
     <div class="tour-wrapper">
-      <TourTimeline v-for="t in tours" :key="getDateKey(t)" :tour="t" :range="range" />
+      <TourTimeline v-for="t in tours" :key="getDayKeyOfTour(t)" :tour="t" :range="range" />
     </div>
     <div class="ruler-container">
       <div class="spacer"></div>

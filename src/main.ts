@@ -1,15 +1,21 @@
-import './assets/main.css'
+import "./assets/main.css";
+import "bootstrap/dist/css/bootstrap.min.css";
 
-import { createApp } from 'vue'
-import App from './App.vue'
+import "bootstrap";
 
-import router from './router'
+import {createApp} from "vue";
+import App from "./App.vue";
+
+import router from "./router";
 import {createPinia} from "pinia";
 
-const pinia = createPinia();
-const app = createApp(App);
+import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
+import {addIconsToLibrary} from "@/icons_library";
 
-app.use(router);
-app.use(pinia);
+addIconsToLibrary();
 
-app.mount('#app');
+createApp(App)
+  .use(router)
+  .use(createPinia())
+  .component("font-awesome-icon", FontAwesomeIcon)
+  .mount("#app");

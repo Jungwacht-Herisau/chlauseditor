@@ -1,6 +1,6 @@
 <script lang="ts">
 import type {PropType} from "vue";
-import {defineComponent, reactive} from "vue";
+import {defineComponent} from "vue";
 import type {JWlerAvailability, Tour} from "@/api";
 import {getDayKeyOfTour, getJwlerAvailabilitiesOfTour, getJwlersOfTour} from "@/model_utils";
 import JWlerLabel from "@/components/JWlerLabel.vue";
@@ -67,7 +67,7 @@ export default defineComponent({
 
 <template>
   <div class="tour-timeline">
-    <h3 class="tour-name">{{ tour!.name }}</h3>
+    <h5 class="tour-name">{{ tour!.name }}</h5>
     <div
       class="jwler-name-container"
       @dragover="event => allowDrop(event, ObjectType.JWLER)"
@@ -115,6 +115,7 @@ export default defineComponent({
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+  text-align: center;
   width: 2rem;
 }
 

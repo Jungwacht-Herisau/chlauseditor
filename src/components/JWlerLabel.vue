@@ -16,9 +16,9 @@ export default defineComponent({
 <template>
   <span class="jwler-label">
     <span class="icons-container">
-      <span v-if="jwler?.chlaus">🎅</span>
-      <span v-else>🥷</span>
-      <span v-if="jwler?.driver">🚗</span>
+      <template v-if="jwler?.chlaus">🎅</template>
+      <template v-else>🥷</template>
+      <template v-if="jwler?.driver">🚗</template>
     </span>
     <span>{{ jwler!.name }}</span>
   </span>
@@ -27,6 +27,8 @@ export default defineComponent({
 <style scoped>
 .icons-container {
   display: inline-block;
-  width: 2rem;
+  width: 2.5rem;
+  overflow-x: hidden;
+  white-space: nowrap;
 }
 </style>
