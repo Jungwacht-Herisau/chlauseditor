@@ -11,7 +11,14 @@ import {
 import JWlerLabel from "@/components/JWlerLabel.vue";
 import {parseApiDateTime} from "@/util";
 import {HourRange} from "@/types";
-import {allowDrop, getDragData, getDraggedIdInt, ObjectType, startDrag} from "@/drag_drop";
+import {
+  allowDrop,
+  getDragData,
+  getDraggedIdInt,
+  getTwoDraggedIds,
+  ObjectType,
+  startDrag,
+} from "@/drag_drop";
 import {getClientUrl, getJwlerUrl, getUrl} from "@/api_url_builder";
 import {useStore} from "@/store";
 import TimelineElement from "@/components/TimelineElement.vue";
@@ -60,8 +67,13 @@ export default defineComponent({
       const startFraction = this.range?.calcFraction(parseApiDateTime(availability.start))!;
       return (endFraction - startFraction) * 100 + "%";
     },
-    addJwler(id: number) {
-      const jwlerUrl = getJwlerUrl(id);
+    dropJwler(event: DragEvent) {
+      const dragData = getDragData(event);
+      let jwlerId =
+        dragData.type == ObjectType.JWLER
+          ? getDraggedIdInt(event)
+          : parseInt((dragData.id as string).split(";")[1]);
+      const jwlerUrl = getJwlerUrl(jwlerId);
       const sameDayTours = this.store.toursByDay.get(getDayKeyOfTour(this.tour!))!;
       const currentTourMutable = this.store.tours.get(this.tour!.id!)!;
       sameDayTours.forEach(to => {
@@ -97,16 +109,12 @@ export default defineComponent({
           this.store.tourElements.set(this.tourId, [newElement]);
         }
       } else if (dragData.type == ObjectType.TOUR_ELEMENT) {
-        const [oldTourId, elementId] = (dragData.id as string).split(";");
-        const oldTourIdInt = parseInt(oldTourId);
-        const elementIdInt = parseInt(elementId);
-        const element = this.store.tourElements
-          .get(oldTourIdInt)!
-          .find(te => te.id == elementIdInt)!;
-        if (oldTourIdInt != this.tourId) {
+        const [oldTourId, elementId] = getTwoDraggedIds(event);
+        const element = this.store.tourElements.get(oldTourId)!.find(te => te.id == elementId)!;
+        if (oldTourId != this.tourId) {
           this.store.tourElements.set(
-            oldTourIdInt,
-            this.store.tourElements.get(oldTourIdInt)!.filter(te => te.id != elementIdInt),
+            oldTourId,
+            this.store.tourElements.get(oldTourId)!.filter(te => te.id != elementId),
           );
           if (this.store.tourElements.has(this.tourId)) {
             this.store.tourElements.get(this.tourId)!.push(element);
@@ -130,14 +138,16 @@ export default defineComponent({
     <h5 class="tour-name">{{ tour!.name }}</h5>
     <div
       class="jwler-name-container"
-      @dragover="event => allowDrop(event, ObjectType.JWLER)"
-      @drop="event => addJwler(drop(event) as number)"
+      @dragover="event => allowDrop(event, ObjectType.JWLER, ObjectType.ASSIGNED_JWLER)"
+      @drop="event => dropJwler(event)"
     >
       <div
         v-for="(_, i) in jwlers.length"
         :key="i"
         draggable="true"
-        @dragstart="event => startDrag(event, ObjectType.JWLER, jwlers[i].id!)"
+        @dragstart="
+          event => startDrag(event, ObjectType.ASSIGNED_JWLER, `${tourId};${jwlers[i].id!}`)
+        "
       >
         <JWlerLabel :jwler="jwlers[i]" />
       </div>

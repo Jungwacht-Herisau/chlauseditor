@@ -1,6 +1,14 @@
+import {useStore} from "@/store";
+import {extractId} from "@/model_utils";
+
 export enum ObjectType {
+  /**id=jwler*/
   JWLER,
+  /**id=tour;jwler*/
+  ASSIGNED_JWLER,
+  /**id=client*/
   CLIENT,
+  /*id=tour;tourElement*/
   TOUR_ELEMENT,
 }
 
@@ -44,4 +52,38 @@ export function getDraggedIdInt(event: DragEvent): number {
     return parseInt(data.id);
   }
   return data.id;
+}
+
+export function getTwoDraggedIds(event: DragEvent) {
+  const [oldTourId, elementId] = (getDragData(event).id as string).split(";");
+  const tourIdInt = parseInt(oldTourId);
+  const elementIdInt = parseInt(elementId);
+  return [tourIdInt, elementIdInt];
+}
+
+export function allowDropDeletableElements(event: DragEvent) {
+  allowDrop(event, ObjectType.TOUR_ELEMENT, ObjectType.ASSIGNED_JWLER);
+}
+
+export function deleteDroppedElement(event: DragEvent) {
+  const dragData = getDragData(event);
+  const store = useStore();
+  switch (dragData.type) {
+    case ObjectType.TOUR_ELEMENT: {
+      const [tourId, elementId] = getTwoDraggedIds(event);
+      const otherElements = store.tourElements.get(tourId)!.filter(te => te.id != elementId);
+      if (otherElements.length > 0) {
+        store.tourElements.set(tourId, otherElements);
+      } else {
+        store.tourElements.delete(tourId);
+      }
+      break;
+    }
+    case ObjectType.ASSIGNED_JWLER: {
+      const [tourId, jwlerId] = getTwoDraggedIds(event);
+      const tour = store.tours.get(tourId)!;
+      tour.jwlers = tour.jwlers.filter(jwlerUrl => parseInt(extractId(jwlerUrl)) != jwlerId);
+      break;
+    }
+  }
 }

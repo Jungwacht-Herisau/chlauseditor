@@ -4,8 +4,10 @@ import {useStore} from "@/store";
 import AnimatedSpinner from "@/components/AnimatedSpinner.vue";
 import CollapsibleContent from "@/components/CollapsibleContent.vue";
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
+import {allowDropDeletableElements, deleteDroppedElement} from "@/drag_drop";
 
 export default {
+  methods: {deleteDroppedElement, allowDropEverything: allowDropDeletableElements},
   components: {FontAwesomeIcon, CollapsibleContent, AnimatedSpinner, DayTimeline},
   data() {
     return {
@@ -74,7 +76,11 @@ export default {
       </div>
     </div>
   </nav>
-  <main v-if="dataReady">
+  <main
+    v-if="dataReady"
+    @dragover="event => allowDropEverything(event)"
+    @drop="event => deleteDroppedElement(event)"
+  >
     <CollapsibleContent
       v-for="dateKey in store.days"
       :key="dateKey"
