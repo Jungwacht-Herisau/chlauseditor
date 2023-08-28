@@ -5,6 +5,7 @@ import AnimatedSpinner from "@/components/AnimatedSpinner.vue";
 import CollapsibleContent from "@/components/CollapsibleContent.vue";
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 import {allowDropDeletableElements, deleteDroppedElement} from "@/drag_drop";
+import {FETCHED_ENTITY_TYPE_COUNT} from "@/const";
 
 export default {
   methods: {deleteDroppedElement, allowDropEverything: allowDropDeletableElements},
@@ -26,7 +27,10 @@ export default {
   },
   computed: {
     dataReady() {
-      return this.store.fetchedEntities.size >= 7;
+      return this.store.fetchedEntities.size >= FETCHED_ENTITY_TYPE_COUNT;
+    },
+    loadingProgress() {
+      return this.store.fetchedEntities.size / FETCHED_ENTITY_TYPE_COUNT;
     },
   },
 };
@@ -91,7 +95,17 @@ export default {
     </CollapsibleContent>
   </main>
   <div v-else id="spinner-container">
-    <AnimatedSpinner />
+    <div class="progress">
+      <div
+        class="progress-bar"
+        role="progressbar"
+        :style="{width: loadingProgress * 100 + '%'}"
+        aria-valuemin="0"
+        :aria-valuenow="loadingProgress * 100"
+        aria-valuemax="100"
+      ></div>
+    </div>
+    <!--    <AnimatedSpinner />-->
   </div>
 </template>
 
@@ -107,7 +121,11 @@ export default {
   display: flex;
 }
 
-#spinner-container .animated-spinner {
+#spinner-container > * {
   margin: auto;
+}
+
+#spinner-container .progress {
+  width: 50vw;
 }
 </style>
