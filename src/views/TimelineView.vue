@@ -1,7 +1,6 @@
 <script lang="ts">
 import DayTimeline from "@/components/DayTimeline.vue";
 import {useStore} from "@/store";
-import AnimatedSpinner from "@/components/AnimatedSpinner.vue";
 import CollapsibleContent from "@/components/CollapsibleContent.vue";
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 import {allowDropDeletableElements, deleteDroppedElement} from "@/drag_drop";
@@ -9,7 +8,7 @@ import {FETCHED_ENTITY_TYPE_COUNT} from "@/const";
 
 export default {
   methods: {deleteDroppedElement, allowDropEverything: allowDropDeletableElements},
-  components: {FontAwesomeIcon, CollapsibleContent, AnimatedSpinner, DayTimeline},
+  components: {FontAwesomeIcon, CollapsibleContent, DayTimeline},
   data() {
     return {
       store: useStore(),
