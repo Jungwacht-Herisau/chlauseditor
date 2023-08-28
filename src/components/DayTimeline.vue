@@ -4,6 +4,7 @@ import TourTimeline from "@/components/TourTimeline.vue";
 import type {Client, ClientAvailability, JWler, JWlerAvailability, Tour, TourElement} from "@/api";
 import {
   extractId,
+  findNewTourId,
   getDayKeyOfClientAvailability,
   getDayKeyOfDate,
   getDayKeyOfTour,
@@ -22,6 +23,7 @@ import {ObjectType, startDrag} from "@/drag_drop";
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 import TimelineElement from "@/components/TimelineElement.vue";
 import {getClientUrl} from "@/api_url_builder";
+import {DEFAULT_TIME_RANGE} from "@/const";
 
 type PossibleClientData = {
   client: Client;
@@ -69,7 +71,14 @@ export default defineComponent({
     extractId,
     getDayKeyOfTour,
     addNewTour() {
-      this.store.createTour("Neue Tour", this.dayKey);
+      const newId = findNewTourId();
+      this.store.tours.set(newId, {
+        id: newId,
+        name: "Neue Tour",
+        date: this.dayKey,
+        jwlers: [],
+        elements: [],
+      });
     },
     startPossibleClientDrag(possibleClient: PossibleClientData, event: DragEvent) {
       startDrag(event, ObjectType.CLIENT, possibleClient.client.id!, 0, 20);
@@ -106,7 +115,7 @@ export default defineComponent({
       const starts = this.tours.map(getDisplayStartHourOfTour) as number[];
       const ends = this.tours.map(getDisplayEndHourOfTour) as number[];
       if (starts.length == 0 || ends.length == 0) {
-        return new HourRange(10, 23);
+        return DEFAULT_TIME_RANGE;
       }
       return new HourRange(Math.floor(Math.min(...starts)), Math.ceil(Math.max(...ends)));
     },

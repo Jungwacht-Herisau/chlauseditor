@@ -3,9 +3,10 @@ import DayTimeline from "@/components/DayTimeline.vue";
 import {useStore} from "@/store";
 import AnimatedSpinner from "@/components/AnimatedSpinner.vue";
 import CollapsibleContent from "@/components/CollapsibleContent.vue";
+import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 
 export default {
-  components: {CollapsibleContent, AnimatedSpinner, DayTimeline},
+  components: {FontAwesomeIcon, CollapsibleContent, AnimatedSpinner, DayTimeline},
   data() {
     return {
       store: useStore(),
@@ -14,23 +15,65 @@ export default {
   created() {
     this.store.fetchData();
   },
+  watch: {
+    dataReady() {
+      if (this.dataReady) {
+        this.store.clearUndoRedo();
+      }
+    },
+  },
   computed: {
     dataReady() {
-      return (
-        this.store.locations.size > 0 &&
-        this.store.days.length > 0 &&
-        this.store.clients.size > 0 &&
-        this.store.clientAvailabilities.size > 0 &&
-        this.store.jwlers.size > 0 &&
-        this.store.jwlerAvailabilities.size > 0 &&
-        this.store.toursByDay.size > 0
-      );
+      return this.store.fetchedEntities.size >= 7;
     },
   },
 };
 </script>
 
 <template>
+  <nav class="navbar navbar-expand-sm bg-primary-subtle">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">ChlausEditor</a>
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-bs-toggle="collapse"
+        data-bs-target="navbarNav"
+        aria-controls="navbarNav"
+        aria-expanded="false"
+        aria-label="Toggle Navigation"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <div class="btn-group" role="group">
+              <button
+                type="button"
+                class="btn btn-lg"
+                @click="store.undo()"
+                :disabled="!store.undoRedoData.undoPossible()"
+              >
+                <font-awesome-icon icon="rotate-left" />
+              </button>
+              <button
+                type="button"
+                class="btn btn-lg"
+                @click="store.redo()"
+                :disabled="!store.undoRedoData.redoPossible()"
+              >
+                <font-awesome-icon icon="rotate-right" />
+              </button>
+              <button type="button" class="btn btn-lg btn-primary">
+                <font-awesome-icon icon="floppy-disk" />
+              </button>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
   <main v-if="dataReady">
     <CollapsibleContent
       v-for="dateKey in store.days"

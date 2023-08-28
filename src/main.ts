@@ -11,11 +11,15 @@ import {createPinia} from "pinia";
 
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 import {addIconsToLibrary} from "@/icons_library";
+import {PiniaUndoRedo} from "@/pinia_undo_redo";
 
 addIconsToLibrary();
 
-createApp(App)
+const pinia = createPinia();
+pinia.use(PiniaUndoRedo);
+
+const app = createApp(App)
   .use(router)
-  .use(createPinia())
+  .use(pinia)
   .component("font-awesome-icon", FontAwesomeIcon)
   .mount("#app");

@@ -3,7 +3,7 @@ import type {PropType} from "vue";
 import {defineComponent} from "vue";
 import type {JWlerAvailability, Tour, TourElement} from "@/api";
 import {
-  findNewTourId,
+  findNewTourElementId,
   getDayKeyOfTour,
   getJwlerAvailabilitiesOfTour,
   getJwlersOfTour,
@@ -84,7 +84,7 @@ export default defineComponent({
         const durationSecs = parseFloat(this.store.clients.get(clientId)!.required_time!);
         const end = new Date(start.getTime() + durationSecs * 1000);
         const newElement: TourElement = {
-          id: findNewTourId(),
+          id: findNewTourElementId(),
           tour: getUrl("tour", this.tourId),
           start: start.toISOString(),
           end: end.toISOString(),

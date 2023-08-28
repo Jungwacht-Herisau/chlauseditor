@@ -13,15 +13,15 @@ th {
 }
 
 :root {
-    --page-padding: 4px;
+    --content-padding: 4px;
 
     --tour-timeline-height: 8rem;
 
     --tour-name-width: 2rem;
     --tour-jwler-width: 12rem;
-    --tour-timeline-width: calc(100vw - var(--tour-name-width) - var(--tour-jwler-width) - 2 * var(--page-padding));
+    --tour-timeline-width: calc(100vw - var(--tour-name-width) - var(--tour-jwler-width) - 2 * var(--content-padding));
 }
 
-body {
-    padding: var(--page-padding);
+main {
+    padding: var(--content-padding);
 }

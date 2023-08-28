@@ -29,6 +29,8 @@ export const useStore = defineStore("data", {
       locations: new Map<number, Location>(),
       tours: new Map<number, Tour>(),
       tourElements: new Map<number, TourElement[]>(),
+
+      fetchedEntities: new Set<string>(),
     };
   },
   getters: {
@@ -51,7 +53,6 @@ export const useStore = defineStore("data", {
     unassignedClients() {
       const result = new Map<number, Client>();
       this.clients.forEach((value, key) => result.set(key, value));
-      console.log(this.tourElements);
       this.tours.forEach(t => {
         const elements = this.tourElements.get(t.id!);
         if (elements != undefined) {
@@ -66,59 +67,52 @@ export const useStore = defineStore("data", {
     },
   },
   actions: {
-    createTour(name: string, date: string) {
-      let newId = 1;
-      while (this.tours.has(newId)) {
-        ++newId;
-      }
-      this.tours.set(newId, {
-        id: newId,
-        name: name,
-        date: date,
-        jwlers: [],
-        elements: [],
-      });
-      return newId;
-    },
     fetchData() {
       apiClient.api
         .listJWlers()
         .then(response => response.forEach(j => this.jwlers.set(j.id!, j)))
-        .catch(console.log);
+        .catch(console.log)
+        .finally(() => this.fetchedEntities.add("jwler"));
       apiClient.api
         .listJWlerAvailabilitys()
         .then(response => {
           const grouped = groupBy(response, ja => parseInt(extractId(ja.jwler)));
           grouped.forEach((value, key) => this.jwlerAvailabilities.set(key, value));
         })
-        .catch(console.log);
+        .catch(console.log)
+        .finally(() => this.fetchedEntities.add("jwlerAvailability"));
       apiClient.api
         .listClients()
         .then(response => response.forEach(c => this.clients.set(c.id!, c)))
-        .catch(console.log);
+        .catch(console.log)
+        .finally(() => this.fetchedEntities.add("client"));
       apiClient.api
         .listClientAvailabilitys()
         .then(response => {
           const grouped = groupBy(response, ca => parseInt(extractId(ca.client)));
           grouped.forEach((value, key) => this.clientAvailabilities.set(key, value));
         })
-        .catch(console.log);
+        .catch(console.log)
+        .finally(() => this.fetchedEntities.add("clientAvailability"));
       apiClient.api
         .listLocations()
         .then(response => response.forEach(l => this.locations.set(l.id!, l)))
-        .catch(console.log);
+        .catch(console.log)
+        .finally(() => this.fetchedEntities.add("location"));
 
       apiClient.api
         .listTours()
         .then(response => response.forEach(t => this.tours.set(t.id!, t)))
-        .catch(console.log);
+        .catch(console.log)
+        .finally(() => this.fetchedEntities.add("tour"));
       apiClient.api
         .listTourElements()
         .then(response => {
           const grouped = groupBy(response, te => parseInt(extractId(te.tour)));
           grouped.forEach((value, key) => this.tourElements.set(key, value));
         })
-        .catch(console.log);
+        .catch(console.log)
+        .finally(() => this.fetchedEntities.add("tourElement"));
     },
   },
 });

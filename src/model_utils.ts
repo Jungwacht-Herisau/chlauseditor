@@ -2,6 +2,7 @@ import type {ClientAvailability, JWler, JWlerAvailability, Tour} from "@/api";
 import {parseApiDateTime, toDateISOString, toFractionHours} from "@/util";
 import type {DayKey} from "@/types";
 import {useStore} from "@/store";
+import {DEFAULT_TIME_RANGE} from "@/const";
 
 export function getDayKeyOfDate(date: Date): DayKey {
   return toDateISOString(date);
@@ -59,11 +60,13 @@ function getHoursOfTour(tour: Tour): number[] {
 }
 
 export function getDisplayStartHourOfTour(tour: Tour): number {
-  return Math.min(...getHoursOfTour(tour));
+  const hours = getHoursOfTour(tour);
+  return hours.length == 0 ? DEFAULT_TIME_RANGE.start : Math.min(...hours);
 }
 
 export function getDisplayEndHourOfTour(tour: Tour): number {
-  return Math.max(...getHoursOfTour(tour));
+  const hours = getHoursOfTour(tour);
+  return hours.length == 0 ? DEFAULT_TIME_RANGE.end : Math.max(...hours);
 }
 
 export function getJwlerAvailabilityOnDay(jwlerId: number, day: DayKey): JWlerAvailability | null {
@@ -79,6 +82,14 @@ export function getJwlerAvailabilityOnDay(jwlerId: number, day: DayKey): JWlerAv
 }
 
 export function findNewTourId(): number {
+  let newId = 1;
+  while (useStore().tours.has(newId)) {
+    ++newId;
+  }
+  return newId;
+}
+
+export function findNewTourElementId(): number {
   let max = 1;
   useStore().tourElements.forEach(value => {
     max = Math.max(max, ...value.map(te => te.id!));

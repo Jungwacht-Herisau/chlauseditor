@@ -39,10 +39,9 @@ export default defineComponent({
   },
   methods: {
     fractionToCssWidth(fraction: number) {
-      const cssWidth =
-        this.timelineWidthPx != 0 ? fraction * this.timelineWidthPx + "px" : fraction * 100 + "%";
-      console.log(fraction, cssWidth);
-      return cssWidth;
+      return this.timelineWidthPx != 0
+        ? fraction * this.timelineWidthPx + "px"
+        : fraction * 100 + "%";
     },
     startDrag(event: DragEvent) {
       const rect = (this.$refs.timelineElement as HTMLElement).getBoundingClientRect();

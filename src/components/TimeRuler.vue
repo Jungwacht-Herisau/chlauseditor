@@ -69,5 +69,11 @@ export default defineComponent({
 <style scoped>
 svg {
   height: 2rem;
+  fill: var(--bs-body-color);
+  margin-top: 2px;
+}
+
+line {
+  stroke: var(--bs-body-color);
 }
 </style>

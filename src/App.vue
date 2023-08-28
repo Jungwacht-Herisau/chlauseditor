@@ -5,7 +5,9 @@ export default {
   components: {
     RouterView,
   },
-  mounted() {},
+  mounted() {
+    document.body.setAttribute("data-bs-theme", "dark");
+  },
 };
 </script>
 
