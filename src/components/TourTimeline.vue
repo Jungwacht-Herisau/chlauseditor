@@ -22,10 +22,11 @@ import {
 import {getClientUrl, getJwlerUrl, getUrl} from "@/api_url_builder";
 import {useStore} from "@/store";
 import TimelineElement from "@/components/TimelineElement.vue";
+import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 
 export default defineComponent({
   name: "TourTimeline",
-  components: {TimelineElement, JWlerLabel},
+  components: {FontAwesomeIcon, TimelineElement, JWlerLabel},
   props: {
     tour: {
       type: Object as PropType<Tour>,
@@ -135,7 +136,25 @@ export default defineComponent({
 
 <template>
   <div class="tour-timeline">
-    <h5 class="tour-name">{{ tour!.name }}</h5>
+    <div class="tour-name-container">
+      <div class="dropdown">
+        <button
+          class="btn btn-sm btn-outline-primary dropdown-toggle"
+          type="button"
+          data-bs-toggle="dropdown"
+          aria-expanded="false"
+        ></button>
+        <ul class="dropdown-menu">
+          <li>
+            <button type="button" class="dropdown-item" @click="insertDriveElements(tour)">
+              <font-awesome-icon icon="car-side" />
+              Fahrten einfügen
+            </button>
+          </li>
+        </ul>
+      </div>
+      <h5 class="tour-name">{{ tour!.name }}</h5>
+    </div>
     <div
       class="jwler-name-container"
       @dragover="event => allowDrop(event, ObjectType.JWLER, ObjectType.ASSIGNED_JWLER)"

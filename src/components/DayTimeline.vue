@@ -187,7 +187,7 @@ export default defineComponent({
 
 <template>
   <div class="day-timeline" ref="rootElement">
-    <div class="btn-group-sm" role="group">
+    <div class="btn-group-sm pb-2" role="group">
       <button type="button" class="btn btn-primary" @click="addNewTour">
         <font-awesome-icon icon="plus" />
         Neue Tour

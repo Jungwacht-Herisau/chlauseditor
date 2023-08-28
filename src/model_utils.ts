@@ -1,4 +1,4 @@
-import type {ClientAvailability, JWler, JWlerAvailability, Tour} from "@/api";
+import type {ClientAvailability, JWler, JWlerAvailability, Tour, TourElement} from "@/api";
 import {parseApiDateTime, toDateISOString, toFractionHours} from "@/util";
 import type {DayKey} from "@/types";
 import {useStore} from "@/store";
@@ -95,4 +95,48 @@ export function findNewTourElementId(): number {
     max = Math.max(max, ...value.map(te => te.id!));
   });
   return max + 1;
+}
+
+export function insertDriveElements(tour: Tour) {
+  const store = useStore();
+  const elements = store.tourElements.get(tour.id!)!;
+
+  function searchElement(
+    idx: number,
+    direction: -1 | 1,
+    type: string,
+  ): [number, TourElement] | [null, null] {
+    let i = idx + direction;
+    while (i >= 0 && i < elements.length) {
+      if (elements[i].type == (type as TourElement.type)) {
+        return [i, elements[i]];
+      }
+      i += direction;
+    }
+    return [null, null];
+  }
+
+  for (let i = 0; i < elements.length; i++) {
+    const iElement = elements[i];
+    if (iElement.type == ("V" as TourElement.type.V)) {
+      const [lastVisitIdx, lastVisitElement] = searchElement(i, -1, "V");
+      const [lastDriveIdx, lastDriveElement] = searchElement(i, -1, "D");
+      if (lastVisitIdx != null) {
+        if (lastDriveIdx != null && lastDriveIdx > lastVisitIdx) {
+          //there is already a drive between last visit and current visit
+          //todo update time
+        } else {
+          //todo create drive element at i-1 (don't forget to update i)
+        }
+      } else {
+        if (lastDriveIdx != null) {
+          //drive from base to this location already exists
+          //todo update time
+        } else {
+          //todo add drive from base to this location
+        }
+      }
+    }
+  }
+  //todo make sure there is a drive element from last visit back to base
 }
