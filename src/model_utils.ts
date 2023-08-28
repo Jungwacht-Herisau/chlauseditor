@@ -53,7 +53,7 @@ export function getJwlerAvailabilitiesOfTour(tour: Tour): JWlerAvailability[] {
 function getHoursOfTour(tour: Tour): number[] {
   return getJwlerAvailabilitiesOfTour(tour).flatMap(av => {
     return [av.start, av.end].map(dstr => {
-        return toFractionHours(parseApiDateTime(dstr));
+      return toFractionHours(parseApiDateTime(dstr));
     });
   });
 }
@@ -76,4 +76,12 @@ export function getJwlerAvailabilityOnDay(jwlerId: number, day: DayKey): JWlerAv
     }
   }
   return null;
+}
+
+export function findNewTourId(): number {
+  let max = 1;
+  useStore().tourElements.forEach(value => {
+    max = Math.max(max, ...value.map(te => te.id!));
+  });
+  return max + 1;
 }

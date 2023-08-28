@@ -8,6 +8,7 @@ import {extractId} from "@/model_utils";
 import {formatHours, formatStartEnd, parseApiDateTime, toFractionHours} from "@/util";
 import ClientLabel from "@/components/ClientLabel.vue";
 import {Tooltip} from "bootstrap";
+import {ObjectType, startDrag} from "@/drag_drop";
 
 export default defineComponent({
   name: "TimelineElement",
@@ -42,6 +43,16 @@ export default defineComponent({
         this.timelineWidthPx != 0 ? fraction * this.timelineWidthPx + "px" : fraction * 100 + "%";
       console.log(fraction, cssWidth);
       return cssWidth;
+    },
+    startDrag(event: DragEvent) {
+      const rect = (this.$refs.timelineElement as HTMLElement).getBoundingClientRect();
+      startDrag(
+        event,
+        ObjectType.TOUR_ELEMENT,
+        `${this.tour?.id};${this.tourElement?.id}`,
+        event.clientX - rect.left,
+        event.clientY - rect.top,
+      );
     },
   },
   computed: {
@@ -105,6 +116,8 @@ export default defineComponent({
       data-bs-html="true"
       :data-bs-title="tooltipHtml"
       ref="timelineElement"
+      draggable="true"
+      @dragstart="event => startDrag(event)"
     >
       <div v-if="tourElement!.type == 'D'">
         <font-awesome-icon icon="car-side" />
@@ -139,17 +152,19 @@ export default defineComponent({
   justify-content: space-around;
   overflow: hidden;
   pointer-events: auto;
+
+  font-size: small;
 }
 
 [data-type="V"] {
-  background-color: #3498db;
+  background-color: rgba(52, 152, 219, 0.5);
 }
 
 [data-type="D"] {
-  background-color: saddlebrown;
+  background-color: rgba(139, 69, 19, 0.5);
 }
 
 [data-type="B"] {
-  background-color: orange;
+  background-color: rgba(255, 165, 0, 0.5);
 }
 </style>

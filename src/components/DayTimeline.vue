@@ -72,7 +72,7 @@ export default defineComponent({
       this.store.createTour("Neue Tour", this.dayKey);
     },
     startPossibleClientDrag(possibleClient: PossibleClientData, event: DragEvent) {
-      startDrag(event, ObjectType.CLIENT, possibleClient.client.id!);
+      startDrag(event, ObjectType.CLIENT, possibleClient.client.id!, 0, 20);
       const endDate = new Date(
         this.rangeStartAsDate.getTime() + parseFloat(possibleClient.client.required_time!) * 1000,
       );

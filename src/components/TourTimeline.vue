@@ -2,11 +2,16 @@
 import type {PropType} from "vue";
 import {defineComponent} from "vue";
 import type {JWlerAvailability, Tour, TourElement} from "@/api";
-import {getDayKeyOfTour, getJwlerAvailabilitiesOfTour, getJwlersOfTour} from "@/model_utils";
+import {
+  findNewTourId,
+  getDayKeyOfTour,
+  getJwlerAvailabilitiesOfTour,
+  getJwlersOfTour,
+} from "@/model_utils";
 import JWlerLabel from "@/components/JWlerLabel.vue";
 import {parseApiDateTime} from "@/util";
 import {HourRange} from "@/types";
-import {allowDrop, drop, ObjectType, startDrag} from "@/drag_drop";
+import {allowDrop, getDragData, getDraggedIdInt, ObjectType, startDrag} from "@/drag_drop";
 import {getClientUrl, getJwlerUrl, getUrl} from "@/api_url_builder";
 import {useStore} from "@/store";
 import TimelineElement from "@/components/TimelineElement.vue";
@@ -47,7 +52,7 @@ export default defineComponent({
   },
   methods: {
     startDrag,
-    drop,
+    drop: getDraggedIdInt,
     allowDrop,
     parseApiDateTime,
     calcWidth(availability: JWlerAvailability): string {
@@ -68,25 +73,52 @@ export default defineComponent({
       currentTourMutable.jwlers.push(jwlerUrl);
     },
     dropClient(event: DragEvent) {
-      let clientId = drop(event);
+      const dragData = getDragData(event);
       const dropZoneRect = (this.$refs.dropZone as HTMLElement).getBoundingClientRect();
-      const x = (event.clientX - dropZoneRect.left) / dropZoneRect.width;
+      const x = (event.clientX - dragData.cursorOffsetX - dropZoneRect.left) / dropZoneRect.width;
       const hourStart = this.range!.start + x * this.range!.span();
       const todayMorning = new Date(this.tour!.date);
       const start = new Date(todayMorning.getTime() + hourStart * 60 * 60 * 1000);
-      const durationSecs = parseFloat(this.store.clients.get(clientId)!.required_time!);
-      const end = new Date(start.getTime() + durationSecs * 1000);
-      const newElement: TourElement = {
-        tour: getUrl("tour", this.tourId),
-        start: start.toISOString(),
-        end: end.toISOString(),
-        type: "V" as TourElement.type,
-        client: getClientUrl(clientId),
-      };
-      if (this.store.tourElements.has(this.tourId)) {
-        this.store.tourElements.get(this.tourId)!.push(newElement);
-      } else {
-        this.store.tourElements.set(this.tourId, [newElement]);
+      if (dragData.type == ObjectType.CLIENT) {
+        const clientId = getDraggedIdInt(event);
+        const durationSecs = parseFloat(this.store.clients.get(clientId)!.required_time!);
+        const end = new Date(start.getTime() + durationSecs * 1000);
+        const newElement: TourElement = {
+          id: findNewTourId(),
+          tour: getUrl("tour", this.tourId),
+          start: start.toISOString(),
+          end: end.toISOString(),
+          type: "V" as TourElement.type,
+          client: getClientUrl(clientId),
+        };
+        if (this.store.tourElements.has(this.tourId)) {
+          this.store.tourElements.get(this.tourId)!.push(newElement);
+        } else {
+          this.store.tourElements.set(this.tourId, [newElement]);
+        }
+      } else if (dragData.type == ObjectType.TOUR_ELEMENT) {
+        const [oldTourId, elementId] = (dragData.id as string).split(";");
+        const oldTourIdInt = parseInt(oldTourId);
+        const elementIdInt = parseInt(elementId);
+        const element = this.store.tourElements
+          .get(oldTourIdInt)!
+          .find(te => te.id == elementIdInt)!;
+        if (oldTourIdInt != this.tourId) {
+          this.store.tourElements.set(
+            oldTourIdInt,
+            this.store.tourElements.get(oldTourIdInt)!.filter(te => te.id != elementIdInt),
+          );
+          if (this.store.tourElements.has(this.tourId)) {
+            this.store.tourElements.get(this.tourId)!.push(element);
+          } else {
+            this.store.tourElements.set(this.tourId, [element]);
+          }
+          element.tour = getUrl("tour", this.tourId);
+        }
+        const durationMs =
+          parseApiDateTime(element.end).getTime() - parseApiDateTime(element.start).getTime();
+        element.start = start.toISOString();
+        element.end = new Date(start.getTime() + durationMs).toISOString();
       }
     },
   },
@@ -122,7 +154,7 @@ export default defineComponent({
         ></div>
       </div>
       <div
-        @dragover="event => allowDrop(event, ObjectType.CLIENT)"
+        @dragover="event => allowDrop(event, ObjectType.CLIENT, ObjectType.TOUR_ELEMENT)"
         @drop="event => dropClient(event)"
         ref="dropZone"
         class="drop-zone"
