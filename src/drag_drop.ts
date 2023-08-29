@@ -1,5 +1,7 @@
 import {useStore} from "@/store";
 import {extractId} from "@/model_utils";
+import {Tour, TourElement} from "@/api";
+import {getUrl} from "@/api_url_builder";
 
 export enum ObjectType {
   /**id=jwler*/
@@ -85,5 +87,33 @@ export function deleteDroppedElement(event: DragEvent) {
       tour.jwlers = tour.jwlers.filter(jwlerUrl => parseInt(extractId(jwlerUrl)) != jwlerId);
       break;
     }
+  }
+}
+
+export function dropTourElement(event: DragEvent, currentTour: Tour, newStart: Date) {
+  event.stopPropagation();
+  const store = useStore();
+  const [oldTourId, elementId] = getTwoDraggedIds(event);
+  const oldElement = store.tourElements.get(oldTourId)!.find(te => te.id == elementId)!;
+  const oldTourRemainingElements = store.tourElements
+    .get(oldTourId)!
+    .filter(te => te.id != elementId);
+  if (oldTourRemainingElements.length > 0) {
+    store.tourElements.set(oldTourId, oldTourRemainingElements);
+  } else {
+    store.tourElements.delete(oldTourId);
+  }
+  const newElement = {
+    id: oldElement.id,
+    tour: getUrl("tour", currentTour.id!),
+    start: newStart,
+    end: new Date(newStart.getTime() + oldElement.end.getTime() - oldElement.start.getTime()),
+    type: oldElement.type,
+    client: oldElement.client,
+  } as TourElement;
+  if (store.tourElements.has(currentTour.id!)) {
+    store.tourElements.get(currentTour.id!)!.push(newElement);
+  } else {
+    store.tourElements.set(currentTour.id!, [newElement]);
   }
 }

@@ -1,5 +1,4 @@
-import type {PiniaPluginContext, StateTree} from "pinia";
-import {toRaw} from "vue";
+import type {StateTree} from "pinia";
 
 export class UndoRedoData {
   stack: Array<StateTree>;
@@ -19,9 +18,11 @@ export class UndoRedoData {
   }
 }
 
+/*
 export function PiniaUndoRedo({store}: PiniaPluginContext) {
   const cloneStoreState = () => {
-    const clone = structuredClone(toRaw(store.$state));
+    const rawState = toRaw(store.$state);
+    const clone = structuredClone(rawState);
     delete clone.undoRedoData;
     return clone;
   };
@@ -78,4 +79,4 @@ declare module "pinia" {
     clearUndoRedo: () => void;
     undoRedoData: UndoRedoData;
   }
-}
+}*/

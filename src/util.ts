@@ -35,7 +35,7 @@ export function formatHours(time: number): string {
   if (isNaN(time)) {
     return "";
   }
-  return new Date(time * 60 * 60 * 1000).toTimeString().substring(0, 5);
+  return new Date(time * 60 * 60 * 1000).toUTCString().substring(17, 22);
 }
 
 export function formatDeltaSeconds(seconds: number): string {

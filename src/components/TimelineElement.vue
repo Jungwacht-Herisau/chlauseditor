@@ -7,7 +7,7 @@ import {extractId} from "@/model_utils";
 import {formatHours, formatStartEnd, toFractionHours} from "@/util";
 import ClientLabel from "@/components/ClientLabel.vue";
 import {Tooltip} from "bootstrap";
-import {ObjectType, startDrag} from "@/drag_drop";
+import {allowDrop, dropTourElement, getDragData, ObjectType, startDrag} from "@/drag_drop";
 import type {TourElement} from "@/api/models/TourElement";
 
 export default defineComponent({
@@ -38,6 +38,18 @@ export default defineComponent({
     new Tooltip(this.$refs.timelineElement as Element);
   },
   methods: {
+    allowDrop,
+    otherElementDropped(event: DragEvent) {
+      const dragData = getDragData(event);
+      const spacerRect = (this.$refs.spacer as HTMLElement).getBoundingClientRect();
+      const x =
+        (event.clientX - dragData.cursorOffsetX - spacerRect.left) /
+        (spacerRect.width / this.range!.calcFraction(this.durationHours, true));
+      const hourStart = this.range!.start + x * this.range!.span();
+      const todayMorning = new Date(this.tour!.date);
+      const start = new Date(todayMorning.getTime() + hourStart * 60 * 60 * 1000);
+      dropTourElement(event, this.tour!, start);
+    },
     fractionToCssWidth(fraction: number) {
       return this.timelineWidthPx != 0
         ? fraction * this.timelineWidthPx + "px"
@@ -55,6 +67,9 @@ export default defineComponent({
     },
   },
   computed: {
+    ObjectType() {
+      return ObjectType;
+    },
     tour() {
       return this.store.tours.get(parseInt(extractId(this.tourElement?.tour!)));
     },
@@ -106,7 +121,7 @@ export default defineComponent({
 
 <template>
   <div class="timeline-element-container">
-    <div v-if="offset" class="spacer"></div>
+    <div v-if="offset" class="spacer" ref="spacer"></div>
     <div
       :data-type="tourElement?.type"
       class="timeline-element"
@@ -117,6 +132,8 @@ export default defineComponent({
       ref="timelineElement"
       draggable="true"
       @dragstart="event => startDrag(event)"
+      @dragover="event => allowDrop(event, ObjectType.TOUR_ELEMENT)"
+      @drop="event => otherElementDropped(event)"
     >
       <div v-if="tourElement!.type == 'D'">
         <font-awesome-icon icon="car-side" />

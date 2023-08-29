@@ -16,6 +16,7 @@ import type {ClientAvailability} from "@/api/models/ClientAvailability";
 import type {Tour} from "@/api/models/Tour";
 import type {TourElement} from "@/api/models/TourElement";
 import type {Location} from "@/api/models/Location";
+import {DrivingTimeMatrix} from "@/api";
 
 export const useStore = defineStore("data", {
   state: () => {
@@ -27,8 +28,10 @@ export const useStore = defineStore("data", {
       locations: new Map<number, Location>(),
       tours: new Map<number, Tour>(),
       tourElements: new Map<number, TourElement[]>(),
+      baseLocation: {} as Location,
+      drivingTimeMatrix: {} as DrivingTimeMatrix,
 
-      fetchedEntities: new Set<string>(),
+      fetchedEntities: new Set<string>(), //do not forget to update const.FETCHED_ENTITY_TYPE_COUNT
     };
   },
   getters: {
@@ -95,7 +98,18 @@ export const useStore = defineStore("data", {
         .finally(() => this.fetchedEntities.add("clientAvailability"));
       apiClient
         .listLocations()
-        .then(response => response.forEach(l => this.locations.set(l.id!, l)))
+        .then(response => {
+          response.forEach(l => this.locations.set(l.id!, l));
+          const locationsCSV = response
+            .map(l => l.id!)
+            .sort()
+            .join(";");
+          apiClient
+            .retrieveDrivingTimeMatrix(locationsCSV)
+            .then(response => (this.drivingTimeMatrix = response))
+            .catch(console.log)
+            .finally(() => this.fetchedEntities.add("drivingTimeMatrix"));
+        })
         .catch(console.log)
         .finally(() => this.fetchedEntities.add("location"));
 
@@ -112,6 +126,11 @@ export const useStore = defineStore("data", {
         })
         .catch(console.log)
         .finally(() => this.fetchedEntities.add("tourElement"));
+      apiClient
+        .baseLocation()
+        .then(response => (this.baseLocation = response))
+        .catch(console.log)
+        .finally(() => this.fetchedEntities.add("baseLocation"));
     },
   },
 });

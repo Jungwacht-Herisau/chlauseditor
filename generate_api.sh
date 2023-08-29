@@ -36,3 +36,6 @@ sed -i -e "s/import { Configuration}/import type { Configuration }/g" src/api/ty
 
 sed -i -e "s/, HttpFile,/,/g" src/api/types/PromiseAPI.ts
 sed -i -e "s/import { Configuration}/import type { Configuration }/g" src/api/types/PromiseAPI.ts
+
+sed -i -e "s/export { Configuration }/export type { Configuration }/g" src/api/index.ts
+sed -i -e "s/export { PromiseMiddleware as Middleware }/export type { PromiseMiddleware as Middleware }/g" src/api/index.ts

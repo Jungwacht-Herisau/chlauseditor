@@ -20,7 +20,7 @@ export default {
   watch: {
     dataReady() {
       if (this.dataReady) {
-        this.store.clearUndoRedo();
+        //this.store.clearUndoRedo();
       }
     },
   },
@@ -54,6 +54,7 @@ export default {
         <ul class="navbar-nav">
           <li class="nav-item">
             <div class="btn-group" role="group">
+              <!--
               <button
                 type="button"
                 class="btn btn-lg"
@@ -70,6 +71,7 @@ export default {
               >
                 <font-awesome-icon icon="rotate-right" />
               </button>
+              -->
               <button type="button" class="btn btn-lg btn-primary">
                 <font-awesome-icon icon="floppy-disk" />
               </button>

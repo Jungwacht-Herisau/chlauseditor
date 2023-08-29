@@ -2,14 +2,13 @@ import {toDateISOString, toFractionHours} from "@/util";
 import type {DayKey} from "@/types";
 import {useStore} from "@/store";
 import {DEFAULT_TIME_RANGE} from "@/const";
-import {inject} from "vue";
-import type {PromiseApiApi} from "@/api/types/PromiseAPI";
 import type {Tour} from "@/api/models/Tour";
 import type {JWlerAvailability} from "@/api/models/JWlerAvailability";
 import type {ClientAvailability} from "@/api/models/ClientAvailability";
 import type {JWler} from "@/api/models/JWler";
 import type {TourElement} from "@/api/models/TourElement";
 import {TourElementTypeEnum} from "@/api/models/TourElement";
+import {getUrl} from "@/api_url_builder";
 
 export function getDayKeyOfDate(date: Date): DayKey {
   return toDateISOString(date);
@@ -108,9 +107,28 @@ export function getDurationMs(obj: TourElement): number {
   return obj.end.getTime() - obj.start.getTime();
 }
 
+export function getDriveTimeMs(location0: number, location1: number): number {
+  const dtm = useStore().drivingTimeMatrix;
+  const locIdxs = dtm.locationsCSV.split(";").map(s => parseInt(s));
+  const idx0 = locIdxs.indexOf(location0);
+  const idx1 = locIdxs.indexOf(location1);
+  if (idx0 < 0 || idx1 < 0) {
+    throw RangeError(`location(s) [${location0}, ${location1}] not in matrix ${locIdxs}`);
+  }
+  return dtm.matrix[idx0][idx1] * 1000;
+}
+
 export async function insertDriveElements(tour: Tour) {
+  //todo there are still some ordering issues
   const store = useStore();
-  const elements = store.tourElements.get(tour.id!)!;
+  const oldElements = store.tourElements
+    .get(tour.id!)!
+    .sort((a, b) => a.start.getTime() - b.start.getTime());
+  const newElements = [] as TourElement[];
+  const hoursOfTour = getHoursOfTour(tour);
+  const earliestPossibleTourStart = new Date(
+    Date.parse(tour.date) + Math.min(...hoursOfTour) * 60 * 60 * 1000,
+  );
 
   function searchElement(
     idx: number,
@@ -118,43 +136,106 @@ export async function insertDriveElements(tour: Tour) {
     type: TourElementTypeEnum,
   ): [number, TourElement] | [null, null] {
     let i = idx + direction;
-    while (i >= 0 && i < elements.length) {
-      if (elements[i].type == type) {
-        return [i, elements[i]];
+    while (i >= 0 && i < oldElements.length) {
+      if (oldElements[i].type == type) {
+        return [i, oldElements[i]];
       }
       i += direction;
     }
     return [null, null];
   }
 
-  for (let i = 0; i < elements.length; i++) {
-    const iElement = elements[i];
+  function adjustExistingDriveElementTime(
+    driveIdx: number,
+    driveElement: TourElement,
+    driveTimeMs: number,
+  ) {
+    const elementAfterLastDrive = oldElements[driveIdx + 1];
+    const elementBeforeLastDrive = driveIdx >= 1 ? oldElements[driveIdx - 1] : null;
+    const driveEarliestStart =
+      elementBeforeLastDrive != null ? elementBeforeLastDrive.end : earliestPossibleTourStart;
+    const driveLatestEnd = elementAfterLastDrive.start;
+    if (driveLatestEnd.getTime() - driveEarliestStart.getTime() > driveTimeMs) {
+      //no overlapping needed
+      if (driveEarliestStart.getTime() > driveElement.start.getTime()) {
+        //currently overlaps with previous element
+        driveElement.start = driveEarliestStart;
+        driveElement.end = new Date(driveEarliestStart.getTime() + driveTimeMs);
+      } else if (driveLatestEnd.getTime() < driveElement.end.getTime()) {
+        //currently overlaps with next element
+        driveElement.end = driveLatestEnd;
+        driveElement.start = new Date(driveLatestEnd.getTime() - driveTimeMs);
+      }
+    } else {
+      driveElement.end = driveLatestEnd;
+      driveElement.start = new Date(driveLatestEnd.getTime() - driveTimeMs);
+    }
+  }
+
+  function insertNewDriveElementBefore(idx: number, element: TourElement, driveTimeMs: number) {
+    const driveElement: TourElement = {
+      start: new Date(element.start.getTime() - driveTimeMs),
+      end: element.start,
+      tour: getUrl("tour", tour.id!),
+      type: TourElementTypeEnum.D,
+      client: null,
+    };
+    newElements.push(driveElement);
+  }
+
+  for (let i = 0; i < oldElements.length; i++) {
+    const iElement = oldElements[i];
     if (iElement.type == TourElementTypeEnum.V) {
       const [lastVisitIdx, lastVisitElement] = searchElement(i, -1, TourElementTypeEnum.V);
       const [lastDriveIdx, lastDriveElement] = searchElement(i, -1, TourElementTypeEnum.D);
-      if (lastVisitIdx != null) {
+      const currentClient = useStore().clients.get(parseInt(extractId(iElement.client!)))!;
+      const currentLocation = parseInt(extractId(currentClient.visitLocation));
+      if (lastVisitIdx != null && lastVisitElement != null) {
         const lastClient = useStore().clients.get(parseInt(extractId(lastVisitElement.client!)))!;
-        const currentClient = useStore().clients.get(parseInt(extractId(iElement.client!)))!;
         const lastLocation = parseInt(extractId(lastClient.visitLocation));
-        const currentLocation = parseInt(extractId(currentClient.visitLocation));
-        const betweenData = await(
-          inject("apiClient") as PromiseApiApi,
-        ).getTimeBetweenDrivingTimeMatrix(lastLocation, currentLocation);
-        if (lastDriveIdx != null && lastDriveIdx > lastVisitIdx) {
+        const driveTimeMs = getDriveTimeMs(lastLocation, currentLocation);
+        if (lastDriveIdx != null && lastDriveElement != null && lastDriveIdx > lastVisitIdx) {
           //there is already a drive between last visit and current visit
-          //todo update time
+          adjustExistingDriveElementTime(lastDriveIdx, lastDriveElement, driveTimeMs);
         } else {
-          //todo create drive element at i-1 (don't forget to update i)
+          insertNewDriveElementBefore(i, iElement, driveTimeMs);
         }
       } else {
-        if (lastDriveIdx != null) {
+        const driveTimeMs = getDriveTimeMs(store.baseLocation.id!, currentLocation);
+        if (lastDriveIdx != null && lastDriveElement != null) {
           //drive from base to this location already exists
-          //todo update time
+          adjustExistingDriveElementTime(lastDriveIdx, lastDriveElement, driveTimeMs);
         } else {
-          //todo add drive from base to this location
+          insertNewDriveElementBefore(i, iElement, driveTimeMs);
         }
       }
     }
+    newElements.push(iElement);
   }
-  //todo make sure there is a drive element from last visit back to base
+  const [lastVisitIdx, lastVisitElement] = searchElement(
+    oldElements.length,
+    -1,
+    TourElementTypeEnum.V,
+  );
+  const [lastDriveIdx, lastDriveElement] = searchElement(
+    oldElements.length,
+    -1,
+    TourElementTypeEnum.D,
+  );
+  if (lastVisitIdx != null && (lastDriveIdx == null || lastVisitIdx > lastDriveIdx)) {
+    const lastClient = store.clients.get(parseInt(extractId(lastVisitElement.client!)))!;
+    const driveTimeMs = getDriveTimeMs(
+      parseInt(extractId(lastClient.visitLocation)),
+      store.baseLocation.id!,
+    );
+    const driveElement: TourElement = {
+      start: lastVisitElement.end,
+      end: new Date(lastVisitElement.end.getTime() + driveTimeMs),
+      tour: getUrl("tour", tour.id!),
+      type: TourElementTypeEnum.D,
+      client: null,
+    };
+    newElements.push(driveElement);
+  }
+  store.tourElements.set(tour.id!, newElements);
 }

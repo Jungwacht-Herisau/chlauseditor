@@ -12,9 +12,9 @@ import JWlerLabel from "@/components/JWlerLabel.vue";
 import {HourRange} from "@/types";
 import {
   allowDrop,
+  dropTourElement,
   getDragData,
   getDraggedIdInt,
-  getTwoDraggedIds,
   ObjectType,
   startDrag,
 } from "@/drag_drop";
@@ -116,23 +116,7 @@ export default defineComponent({
           this.store.tourElements.set(this.tourId, [newElement]);
         }
       } else if (dragData.type == ObjectType.TOUR_ELEMENT) {
-        const [oldTourId, elementId] = getTwoDraggedIds(event);
-        const element = this.store.tourElements.get(oldTourId)!.find(te => te.id == elementId)!;
-        if (oldTourId != this.tourId) {
-          this.store.tourElements.set(
-            oldTourId,
-            this.store.tourElements.get(oldTourId)!.filter(te => te.id != elementId),
-          );
-          if (this.store.tourElements.has(this.tourId)) {
-            this.store.tourElements.get(this.tourId)!.push(element);
-          } else {
-            this.store.tourElements.set(this.tourId, [element]);
-          }
-          element.tour = getUrl("tour", this.tourId);
-        }
-        const durationMs = element.end.getTime() - element.start.getTime();
-        element.start = start;
-        element.end = new Date(start.getTime() + durationMs);
+        dropTourElement(event, this.tour!, start);
       }
     },
   },
@@ -151,7 +135,7 @@ export default defineComponent({
         ></button>
         <ul class="dropdown-menu">
           <li>
-            <button type="button" class="dropdown-item" @click="insertDriveElements(tour)">
+            <button type="button" class="dropdown-item" @click="insertDriveElements(tour!)">
               <font-awesome-icon icon="car-side" />
               Fahrten einfügen
             </button>
