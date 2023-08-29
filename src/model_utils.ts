@@ -1,8 +1,10 @@
 import type {ClientAvailability, JWler, JWlerAvailability, Tour, TourElement} from "@/api";
+import {ApiClient} from "@/api";
 import {parseApiDateTime, toDateISOString, toFractionHours} from "@/util";
 import type {DayKey} from "@/types";
 import {useStore} from "@/store";
 import {DEFAULT_TIME_RANGE} from "@/const";
+import {inject} from "vue";
 
 export function getDayKeyOfDate(date: Date): DayKey {
   return toDateISOString(date);
@@ -97,7 +99,11 @@ export function findNewTourElementId(): number {
   return max + 1;
 }
 
-export function insertDriveElements(tour: Tour) {
+export function getDurationMs(obj: TourElement): number {
+  return parseApiDateTime(obj.end).getTime() - parseApiDateTime(obj.start).getTime();
+}
+
+export async function insertDriveElements(tour: Tour) {
   const store = useStore();
   const elements = store.tourElements.get(tour.id!)!;
 
@@ -122,6 +128,13 @@ export function insertDriveElements(tour: Tour) {
       const [lastVisitIdx, lastVisitElement] = searchElement(i, -1, "V");
       const [lastDriveIdx, lastDriveElement] = searchElement(i, -1, "D");
       if (lastVisitIdx != null) {
+        const lastClient = useStore().clients.get(parseInt(extractId(lastVisitElement.client!)))!;
+        const currentClient = useStore().clients.get(parseInt(extractId(iElement.client!)))!;
+        const lastLocation = parseInt(extractId(lastClient.visit_location));
+        const currentLocation = parseInt(extractId(currentClient.visit_location));
+        const betweenData = await(
+          inject("apiClient") as ApiClient,
+        ).api.getTimeBetweenDrivingTimeMatrix(lastLocation, currentLocation);
         if (lastDriveIdx != null && lastDriveIdx > lastVisitIdx) {
           //there is already a drive between last visit and current visit
           //todo update time

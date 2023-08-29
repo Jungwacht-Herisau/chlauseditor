@@ -16,8 +16,8 @@ import {
 } from "@/model_utils";
 import type {DayKey} from "@/types";
 import {groupBy} from "@/util";
-import {API_URL} from "@/const";
 import {defineStore} from "pinia";
+import {inject} from "vue";
 
 export const useStore = defineStore("data", {
   state: () => {
@@ -68,6 +68,7 @@ export const useStore = defineStore("data", {
   },
   actions: {
     fetchData() {
+      const apiClient = inject("apiClient") as ApiClient;
       apiClient.api
         .listJWlers()
         .then(response => response.forEach(j => this.jwlers.set(j.id!, j)))
@@ -116,10 +117,3 @@ export const useStore = defineStore("data", {
     },
   },
 });
-
-const apiClient = new ApiClient({BASE: API_URL});
-
-export function touch(x: any) {
-  // noinspection BadExpressionStatementJS
-  x;
-}
