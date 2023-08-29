@@ -1,25 +1,30 @@
-import type {ClientAvailability, JWler, JWlerAvailability, Tour, TourElement} from "@/api";
-import {ApiClient} from "@/api";
-import {parseApiDateTime, toDateISOString, toFractionHours} from "@/util";
+import {toDateISOString, toFractionHours} from "@/util";
 import type {DayKey} from "@/types";
 import {useStore} from "@/store";
 import {DEFAULT_TIME_RANGE} from "@/const";
 import {inject} from "vue";
+import type {PromiseApiApi} from "@/api/types/PromiseAPI";
+import type {Tour} from "@/api/models/Tour";
+import type {JWlerAvailability} from "@/api/models/JWlerAvailability";
+import type {ClientAvailability} from "@/api/models/ClientAvailability";
+import type {JWler} from "@/api/models/JWler";
+import type {TourElement} from "@/api/models/TourElement";
+import {TourElementTypeEnum} from "@/api/models/TourElement";
 
 export function getDayKeyOfDate(date: Date): DayKey {
   return toDateISOString(date);
 }
 
 export function getDayKeyOfTour(tour: Tour): DayKey {
-  return toDateISOString(parseApiDateTime(tour.date!));
+  return tour.date!; //todo inline if it works
 }
 
 export function getDayKeyOfJwlerAvailability(ja: JWlerAvailability): DayKey {
-  return toDateISOString(parseApiDateTime(ja.start!));
+  return toDateISOString(ja.start!);
 }
 
 export function getDayKeyOfClientAvailability(ca: ClientAvailability): DayKey {
-  return toDateISOString(parseApiDateTime(ca.start!));
+  return toDateISOString(ca.start!);
 }
 
 export function extractId(url: string): string {
@@ -37,14 +42,14 @@ export function getJwlersOfTour(tour: Tour): JWler[] {
 }
 
 export function getJwlerAvailabilitiesOfTour(tour: Tour): JWlerAvailability[] {
-  const tourDate = parseApiDateTime(tour.date).toDateString();
+  const tourDate = new Date(Date.parse(tour.date)).toDateString();
   const availabilities = [] as JWlerAvailability[];
   for (let iJw = 0; iJw < tour.jwlers.length!; iJw++) {
     const url = tour.jwlers[iJw]!;
     const jwlerId = parseInt(extractId(url));
     const allAv = useStore().jwlerAvailabilities.get(jwlerId)!;
     for (let iAv = 0; iAv < allAv.length; iAv++) {
-      if (parseApiDateTime(allAv[iAv].start).toDateString() == tourDate) {
+      if (allAv[iAv].start.toDateString() == tourDate) {
         availabilities.push(allAv[iAv]);
         break;
       }
@@ -56,7 +61,7 @@ export function getJwlerAvailabilitiesOfTour(tour: Tour): JWlerAvailability[] {
 function getHoursOfTour(tour: Tour): number[] {
   return getJwlerAvailabilitiesOfTour(tour).flatMap(av => {
     return [av.start, av.end].map(dstr => {
-      return toFractionHours(parseApiDateTime(dstr));
+      return toFractionHours(dstr);
     });
   });
 }
@@ -100,7 +105,7 @@ export function findNewTourElementId(): number {
 }
 
 export function getDurationMs(obj: TourElement): number {
-  return parseApiDateTime(obj.end).getTime() - parseApiDateTime(obj.start).getTime();
+  return obj.end.getTime() - obj.start.getTime();
 }
 
 export async function insertDriveElements(tour: Tour) {
@@ -110,11 +115,11 @@ export async function insertDriveElements(tour: Tour) {
   function searchElement(
     idx: number,
     direction: -1 | 1,
-    type: string,
+    type: TourElementTypeEnum,
   ): [number, TourElement] | [null, null] {
     let i = idx + direction;
     while (i >= 0 && i < elements.length) {
-      if (elements[i].type == (type as TourElement.type)) {
+      if (elements[i].type == type) {
         return [i, elements[i]];
       }
       i += direction;
@@ -124,17 +129,17 @@ export async function insertDriveElements(tour: Tour) {
 
   for (let i = 0; i < elements.length; i++) {
     const iElement = elements[i];
-    if (iElement.type == ("V" as TourElement.type.V)) {
-      const [lastVisitIdx, lastVisitElement] = searchElement(i, -1, "V");
-      const [lastDriveIdx, lastDriveElement] = searchElement(i, -1, "D");
+    if (iElement.type == TourElementTypeEnum.V) {
+      const [lastVisitIdx, lastVisitElement] = searchElement(i, -1, TourElementTypeEnum.V);
+      const [lastDriveIdx, lastDriveElement] = searchElement(i, -1, TourElementTypeEnum.D);
       if (lastVisitIdx != null) {
         const lastClient = useStore().clients.get(parseInt(extractId(lastVisitElement.client!)))!;
         const currentClient = useStore().clients.get(parseInt(extractId(iElement.client!)))!;
-        const lastLocation = parseInt(extractId(lastClient.visit_location));
-        const currentLocation = parseInt(extractId(currentClient.visit_location));
+        const lastLocation = parseInt(extractId(lastClient.visitLocation));
+        const currentLocation = parseInt(extractId(currentClient.visitLocation));
         const betweenData = await(
-          inject("apiClient") as ApiClient,
-        ).api.getTimeBetweenDrivingTimeMatrix(lastLocation, currentLocation);
+          inject("apiClient") as PromiseApiApi,
+        ).getTimeBetweenDrivingTimeMatrix(lastLocation, currentLocation);
         if (lastDriveIdx != null && lastDriveIdx > lastVisitIdx) {
           //there is already a drive between last visit and current visit
           //todo update time

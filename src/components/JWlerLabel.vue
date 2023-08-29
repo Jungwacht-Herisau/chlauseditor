@@ -1,7 +1,7 @@
 <script lang="ts">
 import type {PropType} from "vue";
 import {defineComponent} from "vue";
-import type {JWler} from "@/api";
+import type {JWler} from "@/api/models/JWler";
 
 export default defineComponent({
   name: "JWlerLabel",

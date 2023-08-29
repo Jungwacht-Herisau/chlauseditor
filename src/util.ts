@@ -4,10 +4,6 @@ export interface HasForEach<T> {
   forEach(callback: (elem: T) => void): void;
 }
 
-export function parseApiDateTime(value: string): Date {
-  return new Date(Date.parse(value));
-}
-
 export function sortAndUnique<T>(arr: T[]): T[] {
   return [...new Set(arr)].sort();
 }
@@ -58,8 +54,8 @@ export function formatDeltaSeconds(seconds: number): string {
 }
 
 export function formatStartEnd(obj: StartEnd): string {
-  const start = parseApiDateTime(obj.start);
-  const end = parseApiDateTime(obj.end);
+  const start = obj.start;
+  const end = obj.end;
   return formatHours(toFractionHours(start)) + "-" + formatHours(toFractionHours(end));
 }
 

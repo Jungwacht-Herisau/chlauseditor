@@ -1,14 +1,14 @@
 <script lang="ts">
 import type {PropType} from "vue";
 import {defineComponent} from "vue";
-import type {TourElement} from "@/api";
 import {useStore} from "@/store";
 import type {HourRange} from "@/types";
 import {extractId} from "@/model_utils";
-import {formatHours, formatStartEnd, parseApiDateTime, toFractionHours} from "@/util";
+import {formatHours, formatStartEnd, toFractionHours} from "@/util";
 import ClientLabel from "@/components/ClientLabel.vue";
 import {Tooltip} from "bootstrap";
 import {ObjectType, startDrag} from "@/drag_drop";
+import type {TourElement} from "@/api/models/TourElement";
 
 export default defineComponent({
   name: "TimelineElement",
@@ -59,10 +59,10 @@ export default defineComponent({
       return this.store.tours.get(parseInt(extractId(this.tourElement?.tour!)));
     },
     startDate() {
-      return parseApiDateTime(this.tourElement?.start!);
+      return this.tourElement?.start ?? new Date(0);
     },
     endDate() {
-      return parseApiDateTime(this.tourElement?.end!);
+      return this.tourElement?.end ?? new Date(0);
     },
     startHour() {
       return toFractionHours(this.startDate);
@@ -93,9 +93,9 @@ export default defineComponent({
       if (this.client != null) {
         html += "<hr>";
         const locationStr = this.store.locations.get(
-          parseInt(extractId(this.client!.visit_location)),
+          parseInt(extractId(this.client!.visitLocation)),
         )?.string;
-        html += `${this.client?.first_name} ${this.client?.last_name}<br>`;
+        html += `${this.client?.firstName} ${this.client?.lastName}<br>`;
         html += `${locationStr}<br>`;
       }
       return html;

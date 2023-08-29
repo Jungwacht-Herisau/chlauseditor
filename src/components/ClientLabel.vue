@@ -1,6 +1,7 @@
 <script lang="ts">
-import {defineComponent, PropType} from "vue";
-import type {Client} from "@/api";
+import type {PropType} from "vue";
+import {defineComponent} from "vue";
+import type {Client} from "@/api/models/Client";
 
 export default defineComponent({
   name: "ClientLabel",
@@ -13,7 +14,7 @@ export default defineComponent({
 </script>
 
 <template>
-  <span> {{ client.first_name }} {{ client.last_name }} </span>
+  <span> {{ client!.firstName }} {{ client!.lastName }} </span>
 </template>
 
 <style scoped></style>

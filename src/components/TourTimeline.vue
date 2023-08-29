@@ -1,15 +1,14 @@
 <script lang="ts">
 import type {PropType} from "vue";
 import {defineComponent} from "vue";
-import type {JWlerAvailability, Tour, TourElement} from "@/api";
 import {
   findNewTourElementId,
   getDayKeyOfTour,
   getJwlerAvailabilitiesOfTour,
   getJwlersOfTour,
+  insertDriveElements,
 } from "@/model_utils";
 import JWlerLabel from "@/components/JWlerLabel.vue";
-import {parseApiDateTime} from "@/util";
 import {HourRange} from "@/types";
 import {
   allowDrop,
@@ -23,6 +22,10 @@ import {getClientUrl, getJwlerUrl, getUrl} from "@/api_url_builder";
 import {useStore} from "@/store";
 import TimelineElement from "@/components/TimelineElement.vue";
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
+import type {TourElement} from "@/api/models/TourElement";
+import {TourElementTypeEnum} from "@/api/models/TourElement";
+import type {JWlerAvailability} from "@/api/models/JWlerAvailability";
+import type {Tour} from "@/api/models/Tour";
 
 export default defineComponent({
   name: "TourTimeline",
@@ -43,7 +46,7 @@ export default defineComponent({
   },
   computed: {
     date() {
-      return parseApiDateTime(this.tour?.date!);
+      return this.tour?.date!;
     },
     jwlers() {
       return getJwlersOfTour(this.tour!);
@@ -59,13 +62,16 @@ export default defineComponent({
     },
   },
   methods: {
+    insertDriveElements,
     startDrag,
     drop: getDraggedIdInt,
     allowDrop,
-    parseApiDateTime,
+    parseApiDateTime: function (value: Date): Date {
+      return value;
+    },
     calcWidth(availability: JWlerAvailability): string {
-      const endFraction = this.range?.calcFraction(parseApiDateTime(availability.end))!;
-      const startFraction = this.range?.calcFraction(parseApiDateTime(availability.start))!;
+      const endFraction = this.range?.calcFraction(availability.end)!;
+      const startFraction = this.range?.calcFraction(availability.start)!;
       return (endFraction - startFraction) * 100 + "%";
     },
     dropJwler(event: DragEvent) {
@@ -94,14 +100,14 @@ export default defineComponent({
       const start = new Date(todayMorning.getTime() + hourStart * 60 * 60 * 1000);
       if (dragData.type == ObjectType.CLIENT) {
         const clientId = getDraggedIdInt(event);
-        const durationSecs = parseFloat(this.store.clients.get(clientId)!.required_time!);
+        const durationSecs = parseFloat(this.store.clients.get(clientId)!.requiredTime!);
         const end = new Date(start.getTime() + durationSecs * 1000);
         const newElement: TourElement = {
           id: findNewTourElementId(),
           tour: getUrl("tour", this.tourId),
-          start: start.toISOString(),
-          end: end.toISOString(),
-          type: "V" as TourElement.type,
+          start: start,
+          end: end,
+          type: TourElementTypeEnum.V,
           client: getClientUrl(clientId),
         };
         if (this.store.tourElements.has(this.tourId)) {
@@ -124,10 +130,9 @@ export default defineComponent({
           }
           element.tour = getUrl("tour", this.tourId);
         }
-        const durationMs =
-          parseApiDateTime(element.end).getTime() - parseApiDateTime(element.start).getTime();
-        element.start = start.toISOString();
-        element.end = new Date(start.getTime() + durationMs).toISOString();
+        const durationMs = element.end.getTime() - element.start.getTime();
+        element.start = start;
+        element.end = new Date(start.getTime() + durationMs);
       }
     },
   },

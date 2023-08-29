@@ -28,6 +28,6 @@ export class HourRange {
 }
 
 export interface StartEnd {
-  start: string;
-  end: string;
+  start: Date;
+  end: Date;
 }

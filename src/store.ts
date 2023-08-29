@@ -1,13 +1,3 @@
-import type {
-  Client,
-  ClientAvailability,
-  JWler,
-  JWlerAvailability,
-  Location,
-  Tour,
-  TourElement,
-} from "@/api";
-import {ApiClient} from "@/api";
 import {
   extractId,
   getDayKeyOfClientAvailability,
@@ -18,6 +8,14 @@ import type {DayKey} from "@/types";
 import {groupBy} from "@/util";
 import {defineStore} from "pinia";
 import {inject} from "vue";
+import type {PromiseApiApi} from "@/api/types/PromiseAPI";
+import type {JWler} from "@/api/models/JWler";
+import type {JWlerAvailability} from "@/api/models/JWlerAvailability";
+import type {Client} from "@/api/models/Client";
+import type {ClientAvailability} from "@/api/models/ClientAvailability";
+import type {Tour} from "@/api/models/Tour";
+import type {TourElement} from "@/api/models/TourElement";
+import type {Location} from "@/api/models/Location";
 
 export const useStore = defineStore("data", {
   state: () => {
@@ -68,13 +66,13 @@ export const useStore = defineStore("data", {
   },
   actions: {
     fetchData() {
-      const apiClient = inject("apiClient") as ApiClient;
-      apiClient.api
+      const apiClient = inject("apiClient") as PromiseApiApi;
+      apiClient
         .listJWlers()
         .then(response => response.forEach(j => this.jwlers.set(j.id!, j)))
         .catch(console.log)
         .finally(() => this.fetchedEntities.add("jwler"));
-      apiClient.api
+      apiClient
         .listJWlerAvailabilitys()
         .then(response => {
           const grouped = groupBy(response, ja => parseInt(extractId(ja.jwler)));
@@ -82,12 +80,12 @@ export const useStore = defineStore("data", {
         })
         .catch(console.log)
         .finally(() => this.fetchedEntities.add("jwlerAvailability"));
-      apiClient.api
+      apiClient
         .listClients()
         .then(response => response.forEach(c => this.clients.set(c.id!, c)))
         .catch(console.log)
         .finally(() => this.fetchedEntities.add("client"));
-      apiClient.api
+      apiClient
         .listClientAvailabilitys()
         .then(response => {
           const grouped = groupBy(response, ca => parseInt(extractId(ca.client)));
@@ -95,18 +93,18 @@ export const useStore = defineStore("data", {
         })
         .catch(console.log)
         .finally(() => this.fetchedEntities.add("clientAvailability"));
-      apiClient.api
+      apiClient
         .listLocations()
         .then(response => response.forEach(l => this.locations.set(l.id!, l)))
         .catch(console.log)
         .finally(() => this.fetchedEntities.add("location"));
 
-      apiClient.api
+      apiClient
         .listTours()
         .then(response => response.forEach(t => this.tours.set(t.id!, t)))
         .catch(console.log)
         .finally(() => this.fetchedEntities.add("tour"));
-      apiClient.api
+      apiClient
         .listTourElements()
         .then(response => {
           const grouped = groupBy(response, te => parseInt(extractId(te.tour)));

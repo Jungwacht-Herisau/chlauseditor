@@ -1,7 +1,6 @@
 <script lang="ts">
 import {defineComponent} from "vue";
 import TourTimeline from "@/components/TourTimeline.vue";
-import type {Client, ClientAvailability, JWler, JWlerAvailability, Tour, TourElement} from "@/api";
 import {
   extractId,
   findNewTourId,
@@ -24,6 +23,13 @@ import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 import TimelineElement from "@/components/TimelineElement.vue";
 import {getClientUrl} from "@/api_url_builder";
 import {DEFAULT_TIME_RANGE} from "@/const";
+import type {Client} from "@/api/models/Client";
+import type {ClientAvailability} from "@/api/models/ClientAvailability";
+import type {JWler} from "@/api/models/JWler";
+import type {JWlerAvailability} from "@/api/models/JWlerAvailability";
+import type {TourElement} from "@/api/models/TourElement";
+import {TourElementTypeEnum} from "@/api/models/TourElement";
+import type {Tour} from "@/api/models/Tour";
 
 type PossibleClientData = {
   client: Client;
@@ -58,7 +64,11 @@ export default defineComponent({
       store: useStore(),
       mounted: false,
       ObjectType,
-      draggingTourElement: {} as TourElement,
+      draggingTourElement: {
+        tour: "",
+        start: new Date(0),
+        end: new Date(0),
+      } as TourElement,
     };
   },
   mounted() {
@@ -83,13 +93,13 @@ export default defineComponent({
     startPossibleClientDrag(possibleClient: PossibleClientData, event: DragEvent) {
       startDrag(event, ObjectType.CLIENT, possibleClient.client.id!, 0, 20);
       const endDate = new Date(
-        this.rangeStartAsDate.getTime() + parseFloat(possibleClient.client.required_time!) * 1000,
+        this.rangeStartAsDate.getTime() + parseFloat(possibleClient.client.requiredTime!) * 1000,
       );
       this.draggingTourElement = {
         tour: "",
-        start: this.rangeStartAsDate.toISOString(),
-        end: endDate.toISOString(),
-        type: "V" as TourElement.type,
+        start: this.rangeStartAsDate,
+        end: endDate,
+        type: TourElementTypeEnum.V,
         client: getClientUrl(possibleClient.client.id!),
       };
 
@@ -136,7 +146,7 @@ export default defineComponent({
           }
         }
         if (avToday != null) {
-          const visitLocationId = parseInt(extractId(client.visit_location));
+          const visitLocationId = parseInt(extractId(client.visitLocation));
           const location = this.store.locations.get(visitLocationId);
           result.push({
             client: client,
@@ -168,7 +178,7 @@ export default defineComponent({
           });
         }
       });
-      result.sort((a, b) => a.availability.start.localeCompare(b.availability.start));
+      result.sort((a, b) => a.availability.start.getTime() - b.availability.start.getTime());
       return result;
     },
     timelineWidthPx(): number {
@@ -225,7 +235,7 @@ export default defineComponent({
                   <ClientLabel :client="cl.client" />
                 </td>
                 <td>{{ cl.locationString }}</td>
-                <td>{{ formatDeltaSeconds(parseFloat(cl.client.required_time!)) }}</td>
+                <td>{{ formatDeltaSeconds(parseFloat(cl.client.requiredTime!)) }}</td>
                 <td>
                   <span v-if="cl.otherAvailabilities.length == 0"> Nur heute </span>
                   <span v-else> Heute+{{ cl.otherAvailabilities.length }}</span>
@@ -261,6 +271,7 @@ export default defineComponent({
     </CollapsibleContent>
     <div class="offscreen" ref="draggingElementImageContainer">
       <TimelineElement
+        v-if="draggingTourElement != null"
         :tour-element="draggingTourElement"
         :timeline-width-px="timelineWidthPx"
         :range="range"
