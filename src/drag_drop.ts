@@ -2,6 +2,7 @@ import {useStore} from "@/store";
 import {extractId} from "@/model_utils";
 import {Tour, TourElement} from "@/api";
 import {getUrl} from "@/api_url_builder";
+import {decodeUpperCase, encodeUpperCase} from "@/util";
 
 export enum ObjectType {
   /**id=jwler*/
@@ -34,18 +35,18 @@ export function startDrag(
     cursorOffsetX: cursorOffsetX,
     cursorOffsetY: cursorOffsetY,
   };
-  event.dataTransfer!.setData("object", JSON.stringify(data));
+  event.dataTransfer!.setData(encodeUpperCase(JSON.stringify(data)), "");
 }
 
 export function allowDrop(event: DragEvent, ...types: ObjectType[]) {
-  const data: DragData = JSON.parse(event.dataTransfer!.getData("object"));
+  const data: DragData = getDragData(event);
   if (types.includes(data.type)) {
     event.preventDefault();
   }
 }
 
 export function getDragData(event: DragEvent): DragData {
-  return JSON.parse(event.dataTransfer!.getData("object"));
+  return JSON.parse(decodeUpperCase(event.dataTransfer!.types[0]));
 }
 
 export function getDraggedIdInt(event: DragEvent): number {

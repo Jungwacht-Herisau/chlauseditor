@@ -136,9 +136,9 @@ export async function insertDriveElements(tour: Tour) {
     type: TourElementTypeEnum,
   ): [number, TourElement] | [null, null] {
     let i = idx + direction;
-    while (i >= 0 && i < oldElements.length) {
-      if (oldElements[i].type == type) {
-        return [i, oldElements[i]];
+    while (i >= 0 && i < newElements.length) {
+      if (newElements[i].type == type) {
+        return [i, newElements[i]];
       }
       i += direction;
     }
@@ -186,8 +186,16 @@ export async function insertDriveElements(tour: Tour) {
   for (let i = 0; i < oldElements.length; i++) {
     const iElement = oldElements[i];
     if (iElement.type == TourElementTypeEnum.V) {
-      const [lastVisitIdx, lastVisitElement] = searchElement(i, -1, TourElementTypeEnum.V);
-      const [lastDriveIdx, lastDriveElement] = searchElement(i, -1, TourElementTypeEnum.D);
+      const [lastVisitIdx, lastVisitElement] = searchElement(
+        newElements.length,
+        -1,
+        TourElementTypeEnum.V,
+      );
+      const [lastDriveIdx, lastDriveElement] = searchElement(
+        newElements.length,
+        -1,
+        TourElementTypeEnum.D,
+      );
       const currentClient = useStore().clients.get(parseInt(extractId(iElement.client!)))!;
       const currentLocation = parseInt(extractId(currentClient.visitLocation));
       if (lastVisitIdx != null && lastVisitElement != null) {
@@ -213,12 +221,12 @@ export async function insertDriveElements(tour: Tour) {
     newElements.push(iElement);
   }
   const [lastVisitIdx, lastVisitElement] = searchElement(
-    oldElements.length,
+    newElements.length,
     -1,
     TourElementTypeEnum.V,
   );
   const [lastDriveIdx, lastDriveElement] = searchElement(
-    oldElements.length,
+    newElements.length,
     -1,
     TourElementTypeEnum.D,
   );
