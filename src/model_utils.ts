@@ -172,8 +172,11 @@ export async function insertDriveElements(tour: Tour) {
     }
   }
 
+  let nextNewElementId = findNewTourElementId();
   function insertNewDriveElementBefore(idx: number, element: TourElement, driveTimeMs: number) {
+    console.log("nextNewElementId", nextNewElementId);
     const driveElement: TourElement = {
+      id: nextNewElementId,
       start: new Date(element.start.getTime() - driveTimeMs),
       end: element.start,
       tour: getUrl("tour", tour.id!),
@@ -181,8 +184,10 @@ export async function insertDriveElements(tour: Tour) {
       client: null,
     };
     newElements.push(driveElement);
+    nextNewElementId += 1;
   }
 
+  let drivenSinceLastVisit = false;
   for (let i = 0; i < oldElements.length; i++) {
     const iElement = oldElements[i];
     if (iElement.type == TourElementTypeEnum.V) {
@@ -217,6 +222,12 @@ export async function insertDriveElements(tour: Tour) {
           insertNewDriveElementBefore(i, iElement, driveTimeMs);
         }
       }
+    } else if (iElement.type == TourElementTypeEnum.D) {
+      if (drivenSinceLastVisit) {
+        continue;
+      } else {
+        drivenSinceLastVisit = true;
+      }
     }
     newElements.push(iElement);
   }
@@ -237,6 +248,7 @@ export async function insertDriveElements(tour: Tour) {
       store.baseLocation.id!,
     );
     const driveElement: TourElement = {
+      id: nextNewElementId,
       start: lastVisitElement.end,
       end: new Date(lastVisitElement.end.getTime() + driveTimeMs),
       tour: getUrl("tour", tour.id!),
@@ -246,4 +258,8 @@ export async function insertDriveElements(tour: Tour) {
     newElements.push(driveElement);
   }
   store.tourElements.set(tour.id!, newElements);
+
+  newElements.forEach(el => {
+    console.log(el.start.toLocaleTimeString(), el.end.toLocaleTimeString(), el.type);
+  });
 }

@@ -46,7 +46,13 @@ export function allowDrop(event: DragEvent, ...types: ObjectType[]) {
 }
 
 export function getDragData(event: DragEvent): DragData {
-  return JSON.parse(decodeUpperCase(event.dataTransfer!.types[0]));
+  const text = decodeUpperCase(event.dataTransfer!.types[0]);
+  console.log(text);
+  if (text[0] == "{") {
+    return JSON.parse(text);
+  } else {
+    return {} as DragData;
+  }
 }
 
 export function getDraggedIdInt(event: DragEvent): number {
@@ -91,30 +97,35 @@ export function deleteDroppedElement(event: DragEvent) {
   }
 }
 
-export function dropTourElement(event: DragEvent, currentTour: Tour, newStart: Date) {
+export function popTourElement(tourId: number, elementId: number): TourElement {
+  const store = useStore();
+  const elements = store.tourElements.get(tourId)!;
+  const poppedElement = elements.find(te => te.id == elementId)!;
+  if (elements.length == 1) {
+    store.tourElements.delete(tourId);
+  } else {
+    const remainingElements = elements.filter(te => te.id != elementId);
+    store.tourElements.set(tourId, remainingElements);
+  }
+  return poppedElement;
+}
+
+export function dropTourElement(event: DragEvent, newTour: Tour, newStart: Date) {
   event.stopPropagation();
   const store = useStore();
   const [oldTourId, elementId] = getTwoDraggedIds(event);
-  const oldElement = store.tourElements.get(oldTourId)!.find(te => te.id == elementId)!;
-  const oldTourRemainingElements = store.tourElements
-    .get(oldTourId)!
-    .filter(te => te.id != elementId);
-  if (oldTourRemainingElements.length > 0) {
-    store.tourElements.set(oldTourId, oldTourRemainingElements);
-  } else {
-    store.tourElements.delete(oldTourId);
-  }
+  const oldElement = popTourElement(oldTourId, elementId);
   const newElement = {
     id: oldElement.id,
-    tour: getUrl("tour", currentTour.id!),
+    tour: getUrl("tour", newTour.id!),
     start: newStart,
     end: new Date(newStart.getTime() + oldElement.end.getTime() - oldElement.start.getTime()),
     type: oldElement.type,
     client: oldElement.client,
   } as TourElement;
-  if (store.tourElements.has(currentTour.id!)) {
-    store.tourElements.get(currentTour.id!)!.push(newElement);
+  if (store.tourElements.has(newTour.id!)) {
+    store.tourElements.get(newTour.id!)!.push(newElement);
   } else {
-    store.tourElements.set(currentTour.id!, [newElement]);
+    store.tourElements.set(newTour.id!, [newElement]);
   }
 }
