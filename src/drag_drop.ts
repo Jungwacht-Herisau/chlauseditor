@@ -47,7 +47,7 @@ export function allowDrop(event: DragEvent, ...types: ObjectType[]) {
 
 export function getDragData(event: DragEvent): DragData {
   const text = decodeUpperCase(event.dataTransfer!.types[0]);
-  console.log(text);
+  console.debug(text);
   if (text[0] == "{") {
     return JSON.parse(text);
   } else {
@@ -80,17 +80,17 @@ export function deleteDroppedElement(event: DragEvent) {
   switch (dragData.type) {
     case ObjectType.TOUR_ELEMENT: {
       const [tourId, elementId] = getTwoDraggedIds(event);
-      const otherElements = store.tourElements.get(tourId)!.filter(te => te.id != elementId);
+      const otherElements = store.data.tourElements.get(tourId)!.filter(te => te.id != elementId);
       if (otherElements.length > 0) {
-        store.tourElements.set(tourId, otherElements);
+        store.data.tourElements.set(tourId, otherElements);
       } else {
-        store.tourElements.delete(tourId);
+        store.data.tourElements.delete(tourId);
       }
       break;
     }
     case ObjectType.ASSIGNED_JWLER: {
       const [tourId, jwlerId] = getTwoDraggedIds(event);
-      const tour = store.tours.get(tourId)!;
+      const tour = store.data.tours.get(tourId)!;
       tour.jwlers = tour.jwlers.filter(jwlerUrl => parseInt(extractId(jwlerUrl)) != jwlerId);
       break;
     }
@@ -99,13 +99,13 @@ export function deleteDroppedElement(event: DragEvent) {
 
 export function popTourElement(tourId: number, elementId: number): TourElement {
   const store = useStore();
-  const elements = store.tourElements.get(tourId)!;
+  const elements = store.data.tourElements.get(tourId)!;
   const poppedElement = elements.find(te => te.id == elementId)!;
   if (elements.length == 1) {
-    store.tourElements.delete(tourId);
+    store.data.tourElements.delete(tourId);
   } else {
     const remainingElements = elements.filter(te => te.id != elementId);
-    store.tourElements.set(tourId, remainingElements);
+    store.data.tourElements.set(tourId, remainingElements);
   }
   return poppedElement;
 }
@@ -123,9 +123,9 @@ export function dropTourElement(event: DragEvent, newTour: Tour, newStart: Date)
     type: oldElement.type,
     client: oldElement.client,
   } as TourElement;
-  if (store.tourElements.has(newTour.id!)) {
-    store.tourElements.get(newTour.id!)!.push(newElement);
+  if (store.data.tourElements.has(newTour.id!)) {
+    store.data.tourElements.get(newTour.id!)!.push(newElement);
   } else {
-    store.tourElements.set(newTour.id!, [newElement]);
+    store.data.tourElements.set(newTour.id!, [newElement]);
   }
 }

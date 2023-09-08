@@ -1,4 +1,5 @@
 import type {StartEnd} from "@/types";
+import {toRaw} from "vue";
 
 export interface HasForEach<T> {
   forEach(callback: (elem: T) => void): void;
@@ -50,6 +51,9 @@ export function formatDeltaSeconds(seconds: number): string {
   if (date.getUTCSeconds() > 0) {
     result += date.getUTCSeconds() + "s";
   }
+  if (result.length == 0) {
+    result += "0s";
+  }
   return result;
 }
 
@@ -77,4 +81,21 @@ export function decodeUpperCase(str: string): string {
     new RegExp(`${escapeRegExp(UPPERCASE_PREFIX)}(.*?)${escapeRegExp(UPPERCASE_SUFFIX)}`, "g"),
     (_, p1: string) => p1.toUpperCase(),
   );
+}
+
+export function deepCloneMap<K, V>(value: Map<K, V>): Map<K, V> {
+  const result = new Map();
+  value.forEach((v, k) => result.set(k, deepCloneObject(v)));
+  return result;
+}
+
+export function deepCloneObject<T>(obj: T): T {
+  let clone: T;
+  obj = toRaw(obj);
+  try {
+    clone = structuredClone(obj);
+  } catch (e) {
+    clone = JSON.parse(JSON.stringify(obj));
+  }
+  return clone;
 }

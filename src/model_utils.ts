@@ -35,7 +35,7 @@ export function getJwlersOfTour(tour: Tour): JWler[] {
   for (let i = 0; i < tour.jwlers.length!; i++) {
     const url = tour.jwlers[i]!;
     const jwlerId = parseInt(extractId(url));
-    jwlers.push(useStore().jwlers.get(jwlerId)!);
+    jwlers.push(useStore().data.jwlers.get(jwlerId)!);
   }
   return jwlers;
 }
@@ -46,7 +46,7 @@ export function getJwlerAvailabilitiesOfTour(tour: Tour): JWlerAvailability[] {
   for (let iJw = 0; iJw < tour.jwlers.length!; iJw++) {
     const url = tour.jwlers[iJw]!;
     const jwlerId = parseInt(extractId(url));
-    const allAv = useStore().jwlerAvailabilities.get(jwlerId)!;
+    const allAv = useStore().data.jwlerAvailabilities.get(jwlerId)!;
     for (let iAv = 0; iAv < allAv.length; iAv++) {
       if (allAv[iAv].start.toDateString() == tourDate) {
         availabilities.push(allAv[iAv]);
@@ -76,7 +76,7 @@ export function getDisplayEndHourOfTour(tour: Tour): number {
 }
 
 export function getJwlerAvailabilityOnDay(jwlerId: number, day: DayKey): JWlerAvailability | null {
-  const avs = useStore().jwlerAvailabilities.get(jwlerId);
+  const avs = useStore().data.jwlerAvailabilities.get(jwlerId);
   if (avs) {
     for (let i = 0; i < avs.length; i++) {
       if (getDayKeyOfJwlerAvailability(avs[i]) == day) {
@@ -89,7 +89,7 @@ export function getJwlerAvailabilityOnDay(jwlerId: number, day: DayKey): JWlerAv
 
 export function findNewTourId(): number {
   let newId = 1;
-  while (useStore().tours.has(newId)) {
+  while (useStore().data.tours.has(newId)) {
     ++newId;
   }
   return newId;
@@ -97,7 +97,7 @@ export function findNewTourId(): number {
 
 export function findNewTourElementId(): number {
   let max = 1;
-  useStore().tourElements.forEach(value => {
+  useStore().data.tourElements.forEach(value => {
     max = Math.max(max, ...value.map(te => te.id!));
   });
   return max + 1;
@@ -108,7 +108,7 @@ export function getDurationMs(obj: TourElement): number {
 }
 
 export function getDriveTimeMs(location0: number, location1: number): number {
-  const dtm = useStore().drivingTimeMatrix;
+  const dtm = useStore().data.drivingTimeMatrix;
   const locIdxs = dtm.locationsCSV.split(";").map(s => parseInt(s));
   const idx0 = locIdxs.indexOf(location0);
   const idx1 = locIdxs.indexOf(location1);
@@ -121,7 +121,7 @@ export function getDriveTimeMs(location0: number, location1: number): number {
 export async function insertDriveElements(tour: Tour) {
   //todo there are still some ordering issues
   const store = useStore();
-  const oldElements = store.tourElements
+  const oldElements = store.data.tourElements
     .get(tour.id!)!
     .sort((a, b) => a.start.getTime() - b.start.getTime());
   const newElements = [] as TourElement[];
@@ -201,10 +201,12 @@ export async function insertDriveElements(tour: Tour) {
         -1,
         TourElementTypeEnum.D,
       );
-      const currentClient = useStore().clients.get(parseInt(extractId(iElement.client!)))!;
+      const currentClient = useStore().data.clients.get(parseInt(extractId(iElement.client!)))!;
       const currentLocation = parseInt(extractId(currentClient.visitLocation));
       if (lastVisitIdx != null && lastVisitElement != null) {
-        const lastClient = useStore().clients.get(parseInt(extractId(lastVisitElement.client!)))!;
+        const lastClient = useStore().data.clients.get(
+          parseInt(extractId(lastVisitElement.client!)),
+        )!;
         const lastLocation = parseInt(extractId(lastClient.visitLocation));
         const driveTimeMs = getDriveTimeMs(lastLocation, currentLocation);
         if (lastDriveIdx != null && lastDriveElement != null && lastDriveIdx > lastVisitIdx) {
@@ -214,7 +216,7 @@ export async function insertDriveElements(tour: Tour) {
           insertNewDriveElementBefore(i, iElement, driveTimeMs);
         }
       } else {
-        const driveTimeMs = getDriveTimeMs(store.baseLocation.id!, currentLocation);
+        const driveTimeMs = getDriveTimeMs(store.data.baseLocation.id!, currentLocation);
         if (lastDriveIdx != null && lastDriveElement != null) {
           //drive from base to this location already exists
           adjustExistingDriveElementTime(lastDriveIdx, lastDriveElement, driveTimeMs);
@@ -242,10 +244,10 @@ export async function insertDriveElements(tour: Tour) {
     TourElementTypeEnum.D,
   );
   if (lastVisitIdx != null && (lastDriveIdx == null || lastVisitIdx > lastDriveIdx)) {
-    const lastClient = store.clients.get(parseInt(extractId(lastVisitElement.client!)))!;
+    const lastClient = store.data.clients.get(parseInt(extractId(lastVisitElement.client!)))!;
     const driveTimeMs = getDriveTimeMs(
       parseInt(extractId(lastClient.visitLocation)),
-      store.baseLocation.id!,
+      store.data.baseLocation.id!,
     );
     const driveElement: TourElement = {
       id: nextNewElementId,
@@ -257,7 +259,7 @@ export async function insertDriveElements(tour: Tour) {
     };
     newElements.push(driveElement);
   }
-  store.tourElements.set(tour.id!, newElements);
+  store.data.tourElements.set(tour.id!, newElements);
 
   newElements.forEach(el => {
     console.log(el.start.toLocaleTimeString(), el.end.toLocaleTimeString(), el.type);

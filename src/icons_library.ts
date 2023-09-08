@@ -4,6 +4,7 @@ import {
   faCaretRight,
   faCarSide,
   faFloppyDisk,
+  faPen,
   faPlus,
   faRotateLeft,
   faRotateRight,
@@ -17,4 +18,5 @@ export function addIconsToLibrary() {
   library.add(faRotateLeft);
   library.add(faRotateRight);
   library.add(faFloppyDisk);
+  library.add(faPen);
 }

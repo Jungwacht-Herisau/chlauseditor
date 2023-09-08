@@ -82,7 +82,7 @@ export default defineComponent({
     getDayKeyOfTour,
     addNewTour() {
       const newId = findNewTourId();
-      this.store.tours.set(newId, {
+      this.store.data.tours.set(newId, {
         id: newId,
         name: "Neue Tour",
         date: this.dayKey,
@@ -135,7 +135,7 @@ export default defineComponent({
     possibleClients() {
       const result = [] as PossibleClientData[];
       this.store.unassignedClients.forEach((client, clientId) => {
-        const avs = this.store.clientAvailabilities.get(clientId)!;
+        const avs = this.store.data.clientAvailabilities.get(clientId)!;
         let avToday = null;
         let otherAvs = [];
         for (let i = 0; i < avs.length; i++) {
@@ -147,7 +147,7 @@ export default defineComponent({
         }
         if (avToday != null) {
           const visitLocationId = parseInt(extractId(client.visitLocation));
-          const location = this.store.locations.get(visitLocationId);
+          const location = this.store.data.locations.get(visitLocationId);
           result.push({
             client: client,
             locationString: location ? location.string : "",
@@ -161,7 +161,7 @@ export default defineComponent({
     },
     possibleJwlers() {
       const jwlerIds = new Set<number>();
-      this.store.jwlers.forEach((_, id) => jwlerIds.add(id));
+      this.store.data.jwlers.forEach((_, id) => jwlerIds.add(id));
       this.tours.forEach(tour =>
         tour.jwlers
           .map(extractId)
@@ -173,7 +173,7 @@ export default defineComponent({
         const av = getJwlerAvailabilityOnDay(id, this.dayKey);
         if (av != null) {
           result.push({
-            jwler: this.store.jwlers.get(id)!,
+            jwler: this.store.data.jwlers.get(id)!,
             availability: av,
           });
         }

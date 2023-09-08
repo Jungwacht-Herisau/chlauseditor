@@ -4,11 +4,11 @@ import {useStore} from "@/store";
 import CollapsibleContent from "@/components/CollapsibleContent.vue";
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 import {allowDropDeletableElements, deleteDroppedElement} from "@/drag_drop";
-import {FETCHED_ENTITY_TYPE_COUNT} from "@/const";
+import SaveDialog from "@/components/SaveDialog.vue";
 
 export default {
   methods: {deleteDroppedElement, allowDropEverything: allowDropDeletableElements},
-  components: {FontAwesomeIcon, CollapsibleContent, DayTimeline},
+  components: {SaveDialog, FontAwesomeIcon, CollapsibleContent, DayTimeline},
   data() {
     return {
       store: useStore(),
@@ -26,10 +26,10 @@ export default {
   },
   computed: {
     dataReady() {
-      return this.store.fetchedEntities.size >= FETCHED_ENTITY_TYPE_COUNT;
+      return this.store.fetchingProgress.finished();
     },
     loadingProgress() {
-      return this.store.fetchedEntities.size / FETCHED_ENTITY_TYPE_COUNT;
+      return this.store.fetchingProgress.progressFraction();
     },
   },
 };
@@ -72,7 +72,12 @@ export default {
                 <font-awesome-icon icon="rotate-right" />
               </button>
               -->
-              <button type="button" class="btn btn-lg btn-primary">
+              <button
+                type="button"
+                class="btn btn-lg btn-primary"
+                data-bs-toggle="modal"
+                data-bs-target="#saveModal"
+              >
                 <font-awesome-icon icon="floppy-disk" />
               </button>
             </div>
@@ -108,6 +113,7 @@ export default {
     </div>
     <!--    <AnimatedSpinner />-->
   </div>
+  <SaveDialog />
 </template>
 
 <style scoped>

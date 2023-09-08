@@ -55,7 +55,7 @@ export default defineComponent({
       return getJwlerAvailabilitiesOfTour(this.tour!);
     },
     elements() {
-      return this.store.tourElements.get(this.tour!.id!);
+      return this.store.data.tourElements.get(this.tour!.id!);
     },
     tourId(): number {
       return this.tour!.id!;
@@ -82,7 +82,7 @@ export default defineComponent({
           : parseInt((dragData.id as string).split(";")[1]);
       const jwlerUrl = getJwlerUrl(jwlerId);
       const sameDayTours = this.store.toursByDay.get(getDayKeyOfTour(this.tour!))!;
-      const currentTourMutable = this.store.tours.get(this.tour!.id!)!;
+      const currentTourMutable = this.store.data.tours.get(this.tour!.id!)!;
       sameDayTours.forEach(to => {
         const idx = to.jwlers.indexOf(jwlerUrl);
         if (idx >= 0) {
@@ -100,7 +100,7 @@ export default defineComponent({
       const start = new Date(todayMorning.getTime() + hourStart * 60 * 60 * 1000);
       if (dragData.type == ObjectType.CLIENT) {
         const clientId = getDraggedIdInt(event);
-        const durationSecs = parseFloat(this.store.clients.get(clientId)!.requiredTime!);
+        const durationSecs = parseFloat(this.store.data.clients.get(clientId)!.requiredTime!);
         const end = new Date(start.getTime() + durationSecs * 1000);
         const newElement: TourElement = {
           id: findNewTourElementId(),
@@ -110,10 +110,10 @@ export default defineComponent({
           type: TourElementTypeEnum.V,
           client: getClientUrl(clientId),
         };
-        if (this.store.tourElements.has(this.tourId)) {
-          this.store.tourElements.get(this.tourId)!.push(newElement);
+        if (this.store.data.tourElements.has(this.tourId)) {
+          this.store.data.tourElements.get(this.tourId)!.push(newElement);
         } else {
-          this.store.tourElements.set(this.tourId, [newElement]);
+          this.store.data.tourElements.set(this.tourId, [newElement]);
         }
       } else if (dragData.type == ObjectType.TOUR_ELEMENT) {
         dropTourElement(event, this.tour!, start);
