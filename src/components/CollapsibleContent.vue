@@ -31,9 +31,10 @@ export default defineComponent({
       <font-awesome-icon v-else icon="caret-right" />
     </button>
     {{ title }}
+    <slot name="afterheader" />
   </component>
   <div v-if="mutableOpen" class="content">
-    <slot></slot>
+    <slot />
   </div>
 </template>
 <style scoped></style>

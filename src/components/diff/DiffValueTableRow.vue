@@ -2,6 +2,7 @@
 import type {PropType} from "vue";
 import {defineComponent} from "vue";
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
+import {formatDeltaSeconds} from "@/util";
 
 export default defineComponent({
   name: "DiffValueTableRow",
@@ -12,17 +13,17 @@ export default defineComponent({
       required: true,
     },
     originalValue: {
-      type: Object as PropType<number | string>,
+      type: [String, Number],
       required: true,
     },
     changedValue: {
-      type: Object as PropType<number | string>,
+      type: [String, Number],
       required: true,
     },
     formatter: {
-      type: Object as PropType<(x: number | string) => string>,
+      type: String,
       required: false,
-      default: (x: number | string) => JSON.stringify(x),
+      default: "none",
     },
     moreIsBetter: {
       type: Boolean,
@@ -59,10 +60,9 @@ export default defineComponent({
   },
   methods: {
     formatValue(value: number | string) {
-      try {
-        return this.formatter(value);
-      } catch (e) {
-        return value;
+      switch (this.formatter) {
+        case "deltaSeconds": return formatDeltaSeconds(value as number);
+        default: return value.toString();
       }
     },
   },

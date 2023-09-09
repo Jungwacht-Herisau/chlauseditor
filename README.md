@@ -27,6 +27,12 @@ See [Vite Configuration Reference](https://vitejs.dev/config/).
 npm install
 ```
 
+### Generate API files
+
+```shell
+npm run generate-api
+```
+
 ### Compile and Hot-Reload for Development
 
 ```sh

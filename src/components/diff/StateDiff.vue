@@ -1,20 +1,36 @@
 <script lang="ts">
 import {defineComponent} from "vue";
-import {useStore} from "@/store";
+import {StateData, useStore} from "@/store";
 import DiffValueTableRow from "@/components/diff/DiffValueTableRow.vue";
 import {formatDeltaSeconds} from "@/util";
+import CollectionDiff from "@/components/diff/CollectionDiff.vue";
+import TourDiff from "@/components/diff/TourDiff.vue";
+import {tourEquals} from "@/model_utils";
 
 export default defineComponent({
   name: "StateDiff",
-  methods: {formatDeltaSeconds},
-  components: {DiffValueTableRow},
+  components: {TourDiff, CollectionDiff, DiffValueTableRow},
   data() {
     const store = useStore();
     return {
       store,
-      original: store.originalData,
-      changed: store.data,
     };
+  },
+  methods: {
+    formatDeltaSeconds,
+    getUnassignedClientNames(data: StateData) {
+      return Array.from(data.getUnassignedClients().values())
+          .map(cl => cl.firstName + ' ' + cl.lastName);
+    }
+  },
+  computed: {
+    changedTours() {
+      let pairs = Array.from(this.store.originalData.tours.keys())
+          .filter(id => this.store.data.tours.has(id))
+          .map(id => [this.store.originalData.tours.get(id)!, this.store.data.tours.get(id)!]);
+      return pairs
+          .filter(pair => !tourEquals(pair[0], pair[1]));
+    },
   },
 });
 </script>
@@ -22,30 +38,39 @@ export default defineComponent({
 <template>
   <table class="table">
     <thead>
-      <tr>
-        <th></th>
-        <th>Original</th>
-        <th>Aktuell</th>
-      </tr>
+    <tr>
+      <th></th>
+      <th>Original</th>
+      <th>Aktuell</th>
+    </tr>
     </thead>
     <DiffValueTableRow
-      attribute-name="Anzahl Touren"
-      :original-value="original.tours.size"
-      :changed-value="changed.tours.size"
+        attribute-name="Anzahl Touren"
+        :original-value="store.originalData.tours.size"
+        :changed-value="store.data.tours.size"
     />
     <DiffValueTableRow
-      attribute-name="Anzahl Besuche"
-      :original-value="original.countVisits()"
-      :changed-value="changed.countVisits()"
+        attribute-name="Anzahl Besuche"
+        :original-value="store.originalData.countVisits()"
+        :changed-value="store.data.countVisits()"
     />
     <DiffValueTableRow
-      attribute-name="Fahrtzeit"
-      :original-value="original.getTotalDriveTimeS()"
-      :changed-value="changed.getTotalDriveTimeS()"
-      :formatter="x => formatDeltaSeconds(x as number)"
-      :more-is-better="false"
+        attribute-name="Fahrtzeit"
+        :original-value="store.originalData.getTotalDriveTimeS()"
+        :changed-value="store.data.getTotalDriveTimeS()"
+        formatter="deltaSeconds"
+        :more-is-better="false"
     />
   </table>
+  <CollectionDiff v-if="store.originalData.getUnassignedClients().size>0 || store.data.getUnassignedClients().size>0"
+                  title="Unbesuchte Kunden"
+                  :more-is-better="false"
+                  :original="getUnassignedClientNames(store.originalData)"
+                  :changed="getUnassignedClientNames(store.data)"/>
+  <span>{{ changedTours }}</span>
+  <TourDiff v-for="pair in changedTours" :key="pair[0].id" :original="pair[0]" :changed="pair[1]"/>
 </template>
 
-<style scoped></style>
+<style scoped>
+
+</style>

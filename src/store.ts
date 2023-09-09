@@ -32,7 +32,7 @@ class FetchingProgress {
   }
 }
 
-class StateData {
+export class StateData {
   jwlers = new Map<number, JWler>();
   jwlerAvailabilities = new Map<number, Array<JWlerAvailability>>();
   clients = new Map<number, Client>();
@@ -63,6 +63,22 @@ class StateData {
         });
     });
     return sum;
+  }
+
+  getUnassignedClients(): Map<number, Client> {
+    const result = new Map<number, Client>();
+    this.clients.forEach((value, key) => result.set(key, value));
+    this.tours.forEach(t => {
+      const elements = this.tourElements.get(t.id!);
+      if (elements != undefined) {
+        elements!.forEach(te => {
+          if (te.client != null) {
+            result.delete(parseInt(extractId(te.client)));
+          }
+        });
+      }
+    });
+    return result;
   }
 
   _assign(other: StateData) {
@@ -104,20 +120,8 @@ export const useStore = defineStore("data", {
       this.data.tours.forEach(t => toursByDay.get(getDayKeyOfTour(t))!.push(t));
       return toursByDay;
     },
-    unassignedClients() {
-      const result = new Map<number, Client>();
-      this.data.clients.forEach((value, key) => result.set(key, value));
-      this.data.tours.forEach(t => {
-        const elements = this.data.tourElements.get(t.id!);
-        if (elements != undefined) {
-          elements!.forEach(te => {
-            if (te.client != null) {
-              result.delete(parseInt(extractId(te.client)));
-            }
-          });
-        }
-      });
-      return result;
+    unassignedClients(): Map<number, Client> {
+      return this.data.getUnassignedClients();
     },
   },
   actions: {
