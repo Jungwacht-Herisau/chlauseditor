@@ -25,3 +25,12 @@ th {
 main {
     padding: var(--content-padding);
 }
+
+.removed-text {
+    color: var(--bs-danger);
+    text-decoration: line-through;
+}
+
+.added-text {
+    color: var(--bs-success)
+}

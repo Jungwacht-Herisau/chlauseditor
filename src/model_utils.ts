@@ -6,10 +6,13 @@ import {Tour} from "@/api/models/Tour";
 import {JWlerAvailability} from "@/api/models/JWlerAvailability";
 import {ClientAvailability} from "@/api/models/ClientAvailability";
 import {JWler} from "@/api/models/JWler";
-import {TourElement} from "@/api/models/TourElement";
-import {TourElementTypeEnum} from "@/api/models/TourElement";
+import {TourElement, TourElementTypeEnum} from "@/api/models/TourElement";
+import {Location} from "@/api/models/Location";
 import {getUrl} from "@/api_url_builder";
 import {toRaw} from "vue";
+import {AdultInfo, ChildInfo, Client, DrivingTimeMatrix, FamilyClientDetails, TimeBetweenData} from "@/api";
+
+const ENTITY_CLASSES = [AdultInfo, ChildInfo, Client, ClientAvailability, DrivingTimeMatrix, FamilyClientDetails, JWler, JWlerAvailability, Location, TimeBetweenData, Tour, TourElement];
 
 export function getDayKeyOfDate(date: Date): DayKey {
     return toDateISOString(date);
@@ -274,4 +277,28 @@ export function tourEquals(a: Tour, b: Tour) {
         && a.name == b.name
         && arrayEquals(a.jwlers, b.jwlers)
         && arrayEquals(a.elements, b.elements);
+}
+
+export function deepCloneMap<K, V>(value: Map<K, V>): Map<K, V> {
+    const result = new Map();
+    value.forEach((v, k) => result.set(k, deepCloneObject(v)));
+    return result;
+}
+
+export function deepCloneObject<T>(obj: T): T {
+    let clone: T;
+    obj = toRaw(obj);
+
+    for (const entityClass of ENTITY_CLASSES) {
+        if (obj instanceof entityClass) {
+            return Object.assign(Object.create(Object.getPrototypeOf(obj)), obj);
+        }
+    }
+
+    try {
+        clone = structuredClone(obj);
+    } catch (e) {
+        clone = JSON.parse(JSON.stringify(obj));
+    }
+    return clone;
 }

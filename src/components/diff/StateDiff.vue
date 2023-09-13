@@ -11,9 +11,7 @@ export default defineComponent({
   name: "StateDiff",
   components: {TourDiff, CollectionDiff, DiffValueTableRow},
   data() {
-    const store = useStore();
     return {
-      store,
     };
   },
   methods: {
@@ -24,10 +22,17 @@ export default defineComponent({
     }
   },
   computed: {
+    originalData() {
+      return useStore().originalData;
+    },
+    changedData() {
+      return useStore().data;
+    },
     changedTours() {
-      let pairs = Array.from(this.store.originalData.tours.keys())
-          .filter(id => this.store.data.tours.has(id))
-          .map(id => [this.store.originalData.tours.get(id)!, this.store.data.tours.get(id)!]);
+      const store = useStore();
+      let pairs = Array.from(store.originalData.tours.keys())
+          .filter(id => store.data.tours.has(id))
+          .map(id => [store.originalData.tours.get(id)!, store.data.tours.get(id)!]);
       return pairs
           .filter(pair => !tourEquals(pair[0], pair[1]));
     },
@@ -46,28 +51,27 @@ export default defineComponent({
     </thead>
     <DiffValueTableRow
         attribute-name="Anzahl Touren"
-        :original-value="store.originalData.tours.size"
-        :changed-value="store.data.tours.size"
+        :original-value="originalData.tours.size"
+        :changed-value="changedData.tours.size"
     />
     <DiffValueTableRow
         attribute-name="Anzahl Besuche"
-        :original-value="store.originalData.countVisits()"
-        :changed-value="store.data.countVisits()"
+        :original-value="originalData.countVisits()"
+        :changed-value="changedData.countVisits()"
     />
     <DiffValueTableRow
         attribute-name="Fahrtzeit"
-        :original-value="store.originalData.getTotalDriveTimeS()"
-        :changed-value="store.data.getTotalDriveTimeS()"
+        :original-value="originalData.getTotalDriveTimeS()"
+        :changed-value="changedData.getTotalDriveTimeS()"
         formatter="deltaSeconds"
         :more-is-better="false"
     />
   </table>
-  <CollectionDiff v-if="store.originalData.getUnassignedClients().size>0 || store.data.getUnassignedClients().size>0"
+  <CollectionDiff v-if="originalData.getUnassignedClients().size>0 || changedData.getUnassignedClients().size>0"
                   title="Unbesuchte Kunden"
                   :more-is-better="false"
-                  :original="getUnassignedClientNames(store.originalData)"
-                  :changed="getUnassignedClientNames(store.data)"/>
-  <span>{{ changedTours }}</span>
+                  :original="getUnassignedClientNames(originalData)"
+                  :changed="getUnassignedClientNames(changedData)"/>
   <TourDiff v-for="pair in changedTours" :key="pair[0].id" :original="pair[0]" :changed="pair[1]"/>
 </template>
 

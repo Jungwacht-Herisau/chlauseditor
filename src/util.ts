@@ -83,23 +83,6 @@ export function decodeUpperCase(str: string): string {
     );
 }
 
-export function deepCloneMap<K, V>(value: Map<K, V>): Map<K, V> {
-    const result = new Map();
-    value.forEach((v, k) => result.set(k, deepCloneObject(v)));
-    return result;
-}
-
-export function deepCloneObject<T>(obj: T): T {
-    let clone: T;
-    obj = toRaw(obj);
-    try {
-        clone = structuredClone(obj);
-    } catch (e) {
-        clone = JSON.parse(JSON.stringify(obj));
-    }
-    return clone;
-}
-
 export function arrayEquals<T>(a: T[], b: T[]): boolean {
     if (a.length != b.length) {
         return false;

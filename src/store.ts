@@ -1,11 +1,12 @@
 import {
+  deepCloneMap, deepCloneObject,
   extractId,
   getDayKeyOfClientAvailability,
   getDayKeyOfJwlerAvailability,
   getDayKeyOfTour,
 } from "@/model_utils";
 import type {DayKey} from "@/types";
-import {deepCloneMap, deepCloneObject, groupBy} from "@/util";
+import {groupBy} from "@/util";
 import {defineStore} from "pinia";
 import {inject} from "vue";
 import type {PromiseApiApi} from "@/api/types/PromiseAPI";

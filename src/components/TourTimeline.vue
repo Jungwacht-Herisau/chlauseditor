@@ -26,10 +26,11 @@ import type {TourElement} from "@/api/models/TourElement";
 import {TourElementTypeEnum} from "@/api/models/TourElement";
 import type {JWlerAvailability} from "@/api/models/JWlerAvailability";
 import type {Tour} from "@/api/models/Tour";
+import TextInputModal from "@/components/TextInputModal.vue";
 
 export default defineComponent({
   name: "TourTimeline",
-  components: {FontAwesomeIcon, TimelineElement, JWlerLabel},
+  components: {TextInputModal, FontAwesomeIcon, TimelineElement, JWlerLabel},
   props: {
     tour: {
       type: Object as PropType<Tour>,
@@ -77,9 +78,9 @@ export default defineComponent({
     dropJwler(event: DragEvent) {
       const dragData = getDragData(event);
       let jwlerId =
-        dragData.type == ObjectType.JWLER
-          ? getDraggedIdInt(event)
-          : parseInt((dragData.id as string).split(";")[1]);
+          dragData.type == ObjectType.JWLER
+              ? getDraggedIdInt(event)
+              : parseInt((dragData.id as string).split(";")[1]);
       const jwlerUrl = getJwlerUrl(jwlerId);
       const sameDayTours = this.store.toursByDay.get(getDayKeyOfTour(this.tour!))!;
       const currentTourMutable = this.store.data.tours.get(this.tour!.id!)!;
@@ -119,6 +120,9 @@ export default defineComponent({
         dropTourElement(event, this.tour!, start);
       }
     },
+    renameTour() {
+      (this.$refs.tourNameModal as TextInputModal).open(this.tour!.name);
+    },
   },
 });
 </script>
@@ -128,16 +132,20 @@ export default defineComponent({
     <div class="tour-name-container">
       <div class="dropdown">
         <button
-          class="btn btn-sm btn-outline-primary dropdown-toggle"
-          type="button"
-          data-bs-toggle="dropdown"
-          aria-expanded="false"
+            class="btn btn-sm btn-outline-primary dropdown-toggle"
+            type="button"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
         ></button>
         <ul class="dropdown-menu">
           <li>
             <button type="button" class="dropdown-item" @click="insertDriveElements(tour!)">
-              <font-awesome-icon icon="car-side" />
+              <font-awesome-icon icon="car-side"/>
               Fahrten einfügen
+            </button>
+            <button type="button" class="dropdown-item" @click="renameTour">
+              <font-awesome-icon icon="pen"/>
+              Umbenennen
             </button>
           </li>
         </ul>
@@ -145,41 +153,42 @@ export default defineComponent({
       <h5 class="tour-name">{{ tour!.name }}</h5>
     </div>
     <div
-      class="jwler-name-container"
-      @dragover="event => allowDrop(event, ObjectType.JWLER, ObjectType.ASSIGNED_JWLER)"
-      @drop="event => dropJwler(event)"
+        class="jwler-name-container"
+        @dragover="event => allowDrop(event, ObjectType.JWLER, ObjectType.ASSIGNED_JWLER)"
+        @drop="event => dropJwler(event)"
     >
       <div
-        v-for="(_, i) in jwlers.length"
-        :key="i"
-        draggable="true"
-        @dragstart="
+          v-for="(_, i) in jwlers.length"
+          :key="i"
+          draggable="true"
+          @dragstart="
           event => startDrag(event, ObjectType.ASSIGNED_JWLER, `${tourId};${jwlers[i].id!}`)
         "
       >
-        <JWlerLabel :jwler="jwlers[i]" />
+        <JWlerLabel :jwler="jwlers[i]"/>
       </div>
     </div>
     <div class="timeline">
       <div class="jwler-availability">
         <div
-          v-for="av in availabilities"
-          :key="av.jwler"
-          :style="{
+            v-for="av in availabilities"
+            :key="av.jwler"
+            :style="{
             'margin-left': range?.calcPercentage(parseApiDateTime(av.start)),
             width: calcWidth(av),
           }"
         ></div>
       </div>
       <div
-        @dragover="event => allowDrop(event, ObjectType.CLIENT, ObjectType.TOUR_ELEMENT)"
-        @drop="event => dropClient(event)"
-        ref="dropZone"
-        class="drop-zone"
+          @dragover="event => allowDrop(event, ObjectType.CLIENT, ObjectType.TOUR_ELEMENT)"
+          @drop="event => dropClient(event)"
+          ref="dropZone"
+          class="drop-zone"
       ></div>
-      <TimelineElement v-for="e in elements" :key="e.id" :tour-element="e" :range="range" />
+      <TimelineElement v-for="e in elements" :key="e.id" :tour-element="e" :range="range"/>
     </div>
   </div>
+  <TextInputModal question="Tourname" ref="tourNameModal" @ok="(newName: string) => tour!.name=newName"/>
 </template>
 
 <style scoped>
@@ -202,6 +211,7 @@ export default defineComponent({
   text-overflow: ellipsis;
   text-align: center;
   width: var(--tour-name-width);
+  height: calc(var(--tour-timeline-height) - 2rem);
 }
 
 .jwler-name-container {
