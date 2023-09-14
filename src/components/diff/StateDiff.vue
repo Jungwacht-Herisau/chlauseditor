@@ -6,12 +6,15 @@ import {formatDeltaSeconds} from "@/util";
 import CollectionDiff from "@/components/diff/CollectionDiff.vue";
 import TourDiff from "@/components/diff/TourDiff.vue";
 import {tourEquals} from "@/model_utils";
+import ChangedTourHeader from "@/components/diff/ChangedTourHeader.vue";
+import CollapsibleContent from "@/components/CollapsibleContent.vue";
 
 export default defineComponent({
   name: "StateDiff",
-  components: {TourDiff, CollectionDiff, DiffValueTableRow},
+  components: {CollapsibleContent, ChangedTourHeader, TourDiff, CollectionDiff, DiffValueTableRow},
   data() {
     return {
+      store: useStore(),
     };
   },
   methods: {
@@ -23,18 +26,25 @@ export default defineComponent({
   },
   computed: {
     originalData() {
-      return useStore().originalData;
+      return this.store.originalData;
     },
     changedData() {
-      return useStore().data;
+      return this.store.data;
     },
     changedTours() {
-      const store = useStore();
-      let pairs = Array.from(store.originalData.tours.keys())
-          .filter(id => store.data.tours.has(id))
-          .map(id => [store.originalData.tours.get(id)!, store.data.tours.get(id)!]);
+      let pairs = Array.from(this.store.originalData.tours.keys())
+          .filter(id => this.store.data.tours.has(id))
+          .map(id => [this.store.originalData.tours.get(id)!, this.store.data.tours.get(id)!]);
       return pairs
           .filter(pair => !tourEquals(pair[0], pair[1]));
+    },
+    addedTours() {
+      return Array.from(this.store.data.tours.values())
+          .filter(t => !this.store.originalData.tours.has(t.id!));
+    },
+    removedTours() {
+      return Array.from(this.store.originalData.tours.values())
+          .filter(t => !this.store.data.tours.has(t.id!));
     },
   },
 });
@@ -72,7 +82,14 @@ export default defineComponent({
                   :more-is-better="false"
                   :original="getUnassignedClientNames(originalData)"
                   :changed="getUnassignedClientNames(changedData)"/>
-  <TourDiff v-for="pair in changedTours" :key="pair[0].id" :original="pair[0]" :changed="pair[1]"/>
+  <CollapsibleContent title="Veränderte Touren" header-tag="h4" :open="false">
+    <template #afterheader>
+      <span class="badge bg-secondary">{{ changedTours.length + removedTours.length + addedTours.length }}</span>
+    </template>
+    <TourDiff v-for="pair in changedTours" :key="pair[0].id" :original="pair[0]" :changed="pair[1]"/>
+    <ChangedTourHeader v-for="tour in removedTours" :key="tour.id" :old-name="tour.name"/>
+    <ChangedTourHeader v-for="tour in addedTours" :key="tour.id" :new-name="tour.name"/>
+  </CollapsibleContent>
 </template>
 
 <style scoped>

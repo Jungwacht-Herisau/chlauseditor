@@ -4,10 +4,11 @@ import {defineComponent} from 'vue'
 import {Tour, TourElement, TourElementTypeEnum} from "@/api";
 import DiffValueTableRow from "@/components/diff/DiffValueTableRow.vue";
 import {useStore} from "@/store";
+import ChangedTourHeader from "@/components/diff/ChangedTourHeader.vue";
 
 export default defineComponent({
   name: "TourDiff",
-  components: {DiffValueTableRow},
+  components: {ChangedTourHeader, DiffValueTableRow},
   props: {
     original: {
       type: Object as PropType<Tour>,
@@ -60,11 +61,7 @@ export default defineComponent({
 </script>
 
 <template>
-  <h5 v-if="original.name!==changed.name">
-    <span class="removed-text">{{ original.name }}</span>
-    <span class="added-text">{{ changed.name }}</span>
-  </h5>
-  <h5 v-else>{{ original.name }}</h5>
+  <ChangedTourHeader :old-name="original.name" :new-name="changed.name"/>
   <table class="table">
     <thead>
     <tr>
@@ -106,5 +103,7 @@ export default defineComponent({
 </template>
 
 <style scoped>
-
+table {
+  margin-left: 1rem;
+}
 </style>

@@ -37,4 +37,13 @@ export default defineComponent({
     <slot />
   </div>
 </template>
-<style scoped></style>
+<style scoped>
+.content {
+  margin-left: 1rem;
+}
+
+button {
+  padding-left: 0;
+  padding-right: 0;
+}
+</style>

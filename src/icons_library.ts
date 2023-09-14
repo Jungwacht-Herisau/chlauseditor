@@ -3,6 +3,9 @@ import {
     faCaretDown,
     faCaretRight,
     faCarSide,
+    faFileCircleMinus,
+    faFileCirclePlus,
+    faFilePen,
     faFloppyDisk,
     faPen,
     faPlus,
@@ -21,4 +24,7 @@ export function addIconsToLibrary() {
     library.add(faFloppyDisk);
     library.add(faPen);
     library.add(faTrashCan);
+    library.add(faFilePen);
+    library.add(faFileCirclePlus);
+    library.add(faFileCircleMinus);
 }
