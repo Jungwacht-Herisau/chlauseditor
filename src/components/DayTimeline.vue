@@ -3,6 +3,7 @@ import {defineComponent} from "vue";
 import TourTimeline from "@/components/TourTimeline.vue";
 import {
   extractId,
+  extractIdInt,
   findNewTourId,
   getDayKeyOfClientAvailability,
   getDayKeyOfDate,
@@ -146,7 +147,7 @@ export default defineComponent({
           }
         }
         if (avToday != null) {
-          const visitLocationId = parseInt(extractId(client.visitLocation));
+          const visitLocationId = extractIdInt(client.visitLocation);
           const location = this.store.data.locations.get(visitLocationId);
           result.push({
             client: client,
@@ -262,7 +263,7 @@ export default defineComponent({
                 <td>
                   <JWlerLabel :jwler="j.jwler" />
                 </td>
-                <td v-if="false">{{ formatStartEnd(j.availability) }}</td>
+                <td>{{ formatStartEnd(j.availability) }}</td>
               </tr>
             </tbody>
           </table>

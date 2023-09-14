@@ -1,5 +1,4 @@
 import type {StartEnd} from "@/types";
-import {toRaw} from "vue";
 
 export interface HasForEach<T> {
     forEach(callback: (elem: T) => void): void;
@@ -40,21 +39,18 @@ export function formatHours(time: number): string {
 }
 
 export function formatDeltaSeconds(seconds: number): string {
-    const date = new Date(seconds * 1000);
-    let result = "";
-    if (date.getUTCHours() > 0) {
-        result += date.getUTCHours() + "h";
+    const sizes = [24 * 60 * 60, 60 * 60, 60, 1];
+    const units = ["d", "h", "m", "s"];
+    for (let i = 0; i < sizes.length; i++) {
+        if (seconds > sizes[i] || i + 1 == sizes.length) {
+            const value = seconds / sizes[i];
+            const valueAtLeast2SignificantDigits = value < 10
+                ? value.toFixed(1)
+                : Math.round(value).toFixed(0);
+            return valueAtLeast2SignificantDigits + units[i];
+        }
     }
-    if (date.getUTCMinutes() > 0) {
-        result += date.getUTCMinutes() + "m";
-    }
-    if (date.getUTCSeconds() > 0) {
-        result += date.getUTCSeconds() + "s";
-    }
-    if (result.length == 0) {
-        result += "0s";
-    }
-    return result;
+    return "0s";
 }
 
 export function formatStartEnd(obj: StartEnd): string {

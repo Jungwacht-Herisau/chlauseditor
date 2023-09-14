@@ -30,30 +30,30 @@ export default defineComponent({
     },
   },
   methods: {
-    sumElementTimeH(elements: Array<TourElement>, type: TourElementTypeEnum): number {
+    sumElementTimeS(elements: Array<TourElement>, type: TourElementTypeEnum): number {
       return elements
           .filter(e => e.type == type)
           .map(e => e.end.getTime() - e.start.getTime())
-          .map(ms => ms / (1000 * 60 * 60))
+          .map(ms => ms / 1000)
           .reduce((a, b) => a + b, 0);
     },
-    getTotalTimeH(elements: Array<TourElement>): number {
+    getTotalTimeS(elements: Array<TourElement>): number {
       return elements.length == 0
           ? 0
-          : (elements[elements.length - 1].end.getTime() - elements[0].start.getTime()) / (1000 * 60 * 60);
+          : (elements[elements.length - 1].end.getTime() - elements[0].start.getTime()) / 1000;
     },
-    getTotalBreakTimeH(elements: Array<TourElement>): number {
+    getTotalBreakTimeS(elements: Array<TourElement>): number {
       if (elements.length == 0) {
         return 0;
       }
       let totalMs = 0;
       let lastEnd = elements[0].start.getTime();
-      elements.forEach(e => {
+      for (const e of elements) {
         const breakUntil = (e.type == TourElementTypeEnum.B ? e.end : e.start).getTime();
-        totalMs += lastEnd - breakUntil;
+        totalMs += breakUntil - lastEnd;
         lastEnd = e.end.getTime();
-      });
-      return totalMs / (1000 * 60 * 60);
+      }
+      return totalMs / 1000;
     }
   }
 })
@@ -80,23 +80,27 @@ export default defineComponent({
     />
     <DiffValueTableRow
         attribute-name="Gesamtzeit"
-        :original-value="getTotalTimeH(originalElements)"
-        :changed-value="getTotalTimeH(changedElements)"
+        :original-value="getTotalTimeS(originalElements)"
+        :changed-value="getTotalTimeS(changedElements)"
+        formatter="deltaSeconds"
     />
     <DiffValueTableRow
         attribute-name="∑ Besuche"
-        :original-value="sumElementTimeH(originalElements, TourElementTypeEnum.V)"
-        :changed-value="sumElementTimeH(changedElements, TourElementTypeEnum.V)"
+        :original-value="sumElementTimeS(originalElements, TourElementTypeEnum.V)"
+        :changed-value="sumElementTimeS(changedElements, TourElementTypeEnum.V)"
+        formatter="deltaSeconds"
     />
     <DiffValueTableRow
         attribute-name="∑ Fahrt"
-        :original-value="sumElementTimeH(originalElements, TourElementTypeEnum.D)"
-        :changed-value="sumElementTimeH(changedElements, TourElementTypeEnum.D)"
+        :original-value="sumElementTimeS(originalElements, TourElementTypeEnum.D)"
+        :changed-value="sumElementTimeS(changedElements, TourElementTypeEnum.D)"
+        formatter="deltaSeconds"
     />
     <DiffValueTableRow
         attribute-name="∑ Pause"
-        :original-value="getTotalBreakTimeH(originalElements)"
-        :changed-value="getTotalBreakTimeH(changedElements)"
+        :original-value="getTotalBreakTimeS(originalElements)"
+        :changed-value="getTotalBreakTimeS(changedElements)"
+        formatter="deltaSeconds"
     />
   </table>
 </template>

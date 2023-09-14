@@ -1,6 +1,7 @@
 import {
-  deepCloneMap, deepCloneObject,
-  extractId,
+  deepCloneMap,
+  deepCloneObject,
+  extractIdInt,
   getDayKeyOfClientAvailability,
   getDayKeyOfJwlerAvailability,
   getDayKeyOfTour,
@@ -74,7 +75,7 @@ export class StateData {
       if (elements != undefined) {
         elements!.forEach(te => {
           if (te.client != null) {
-            result.delete(parseInt(extractId(te.client)));
+            result.delete(extractIdInt(te.client));
           }
         });
       }
@@ -142,7 +143,7 @@ export const useStore = defineStore("data", {
             apiClient
               .listJWlerAvailabilitys()
               .then(response => {
-                const grouped = groupBy(response, ja => parseInt(extractId(ja.jwler)));
+                const grouped = groupBy(response, ja => extractIdInt(ja.jwler));
                 grouped.forEach((value, key) => this.data.jwlerAvailabilities.set(key, value));
               })
               .then(() => "jwlerAvailabilities"),
@@ -159,7 +160,7 @@ export const useStore = defineStore("data", {
             apiClient
               .listClientAvailabilitys()
               .then(response => {
-                const grouped = groupBy(response, ca => parseInt(extractId(ca.client)));
+                const grouped = groupBy(response, ca => extractIdInt(ca.client));
                 grouped.forEach((value, key) => this.data.clientAvailabilities.set(key, value));
               })
               .then(() => "clientAvailabilities"),
@@ -194,7 +195,7 @@ export const useStore = defineStore("data", {
             apiClient
               .listTourElements()
               .then(response => {
-                const grouped = groupBy(response, te => parseInt(extractId(te.tour)));
+                const grouped = groupBy(response, te => extractIdInt(te.tour));
                 grouped.forEach((value, key) => this.data.tourElements.set(key, value));
               })
               .then(() => "tourElements"),

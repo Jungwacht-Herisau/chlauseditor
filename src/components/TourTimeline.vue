@@ -2,6 +2,7 @@
 import type {PropType} from "vue";
 import {defineComponent} from "vue";
 import {
+  addTourElement,
   findNewTourElementId,
   getDayKeyOfTour,
   getJwlerAvailabilitiesOfTour,
@@ -10,14 +11,7 @@ import {
 } from "@/model_utils";
 import JWlerLabel from "@/components/JWlerLabel.vue";
 import {HourRange} from "@/types";
-import {
-  allowDrop,
-  dropTourElement,
-  getDragData,
-  getDraggedIdInt,
-  ObjectType,
-  startDrag,
-} from "@/drag_drop";
+import {allowDrop, dropTourElement, getDragData, getDraggedIdInt, ObjectType, startDrag,} from "@/drag_drop";
 import {getClientUrl, getJwlerUrl, getUrl} from "@/api_url_builder";
 import {useStore} from "@/store";
 import TimelineElement from "@/components/TimelineElement.vue";
@@ -111,17 +105,13 @@ export default defineComponent({
           type: TourElementTypeEnum.V,
           client: getClientUrl(clientId),
         };
-        if (this.store.data.tourElements.has(this.tourId)) {
-          this.store.data.tourElements.get(this.tourId)!.push(newElement);
-        } else {
-          this.store.data.tourElements.set(this.tourId, [newElement]);
-        }
+        addTourElement(this.tourId, newElement);
       } else if (dragData.type == ObjectType.TOUR_ELEMENT) {
         dropTourElement(event, this.tour!, start);
       }
     },
     renameTour() {
-      (this.$refs.tourNameModal as TextInputModal).open(this.tour!.name);
+      (this.$refs.tourNameModal as typeof TextInputModal).open(this.tour!.name);
     },
   },
 });

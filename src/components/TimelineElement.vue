@@ -3,7 +3,7 @@ import type {PropType} from "vue";
 import {defineComponent} from "vue";
 import {useStore} from "@/store";
 import type {HourRange} from "@/types";
-import {extractId} from "@/model_utils";
+import {extractIdInt} from "@/model_utils";
 import {formatHours, formatStartEnd, toFractionHours} from "@/util";
 import ClientLabel from "@/components/ClientLabel.vue";
 import {Tooltip} from "bootstrap";
@@ -71,7 +71,7 @@ export default defineComponent({
       return ObjectType;
     },
     tour() {
-      return this.store.data.tours.get(parseInt(extractId(this.tourElement?.tour!)));
+      return this.store.data.tours.get(extractIdInt(this.tourElement?.tour!));
     },
     startDate() {
       return this.tourElement?.start ?? new Date(0);
@@ -96,7 +96,7 @@ export default defineComponent({
     },
     client() {
       if (this.tourElement!.client != null) {
-        return this.store.data.clients.get(parseInt(extractId(this.tourElement!.client)));
+        return this.store.data.clients.get(extractIdInt(this.tourElement!.client));
       } else {
         return null;
       }
@@ -108,7 +108,7 @@ export default defineComponent({
       if (this.client != null) {
         html += "<hr>";
         const locationStr = this.store.data.locations.get(
-          parseInt(extractId(this.client!.visitLocation)),
+            extractIdInt(this.client!.visitLocation),
         )?.string;
         html += `${this.client?.firstName} ${this.client?.lastName}<br>`;
         html += `${locationStr}<br>`;

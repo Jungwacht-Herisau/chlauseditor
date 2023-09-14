@@ -20,15 +20,23 @@ export default defineComponent({
       <template v-else>🥷</template>
       <template v-if="jwler?.driver">🚗</template>
     </span>
-    <span>{{ jwler!.name }}</span>
+    <span class="jwler-name">{{ jwler!.name }}</span>
   </span>
 </template>
 
 <style scoped>
+.jwler-label {
+  display: inline-block;
+  height: 1.6rem;
+}
 .icons-container {
   display: inline-block;
   width: 2.5rem;
   overflow-x: hidden;
   white-space: nowrap;
+}
+
+.jwler-name {
+  vertical-align: top;
 }
 </style>

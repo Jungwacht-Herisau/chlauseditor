@@ -7,12 +7,8 @@ import {JWlerAvailability} from "@/api/models/JWlerAvailability";
 import {ClientAvailability} from "@/api/models/ClientAvailability";
 import {JWler} from "@/api/models/JWler";
 import {TourElement, TourElementTypeEnum} from "@/api/models/TourElement";
-import {Location} from "@/api/models/Location";
 import {getUrl} from "@/api_url_builder";
-import {toRaw} from "vue";
-import {AdultInfo, ChildInfo, Client, DrivingTimeMatrix, FamilyClientDetails, TimeBetweenData} from "@/api";
 
-const ENTITY_CLASSES = [AdultInfo, ChildInfo, Client, ClientAvailability, DrivingTimeMatrix, FamilyClientDetails, JWler, JWlerAvailability, Location, TimeBetweenData, Tour, TourElement];
 
 export function getDayKeyOfDate(date: Date): DayKey {
     return toDateISOString(date);
@@ -34,11 +30,15 @@ export function extractId(url: string): string {
     return url.substring(url.lastIndexOf("/", url.length - 2) + 1, url.length - 1);
 }
 
+export function extractIdInt(url: string): number {
+    return parseInt(extractId(url));
+}
+
 export function getJwlersOfTour(tour: Tour): JWler[] {
     const jwlers = [] as JWler[];
     for (let i = 0; i < tour.jwlers.length!; i++) {
         const url = tour.jwlers[i]!;
-        const jwlerId = parseInt(extractId(url));
+        const jwlerId = extractIdInt(url);
         jwlers.push(useStore().data.jwlers.get(jwlerId)!);
     }
     return jwlers;
@@ -49,7 +49,7 @@ export function getJwlerAvailabilitiesOfTour(tour: Tour): JWlerAvailability[] {
     const availabilities = [] as JWlerAvailability[];
     for (let iJw = 0; iJw < tour.jwlers.length!; iJw++) {
         const url = tour.jwlers[iJw]!;
-        const jwlerId = parseInt(extractId(url));
+        const jwlerId = extractIdInt(url);
         const allAv = useStore().data.jwlerAvailabilities.get(jwlerId)!;
         for (let iAv = 0; iAv < allAv.length; iAv++) {
             if (allAv[iAv].start.toDateString() == tourDate) {
@@ -206,13 +206,13 @@ export async function insertDriveElements(tour: Tour) {
                 -1,
                 TourElementTypeEnum.D,
             );
-            const currentClient = useStore().data.clients.get(parseInt(extractId(iElement.client!)))!;
-            const currentLocation = parseInt(extractId(currentClient.visitLocation));
+            const currentClient = useStore().data.clients.get(extractIdInt(iElement.client!))!;
+            const currentLocation = extractIdInt(currentClient.visitLocation);
             if (lastVisitIdx != null && lastVisitElement != null) {
                 const lastClient = useStore().data.clients.get(
-                    parseInt(extractId(lastVisitElement.client!)),
+                    extractIdInt(lastVisitElement.client!),
                 )!;
-                const lastLocation = parseInt(extractId(lastClient.visitLocation));
+                const lastLocation = extractIdInt(lastClient.visitLocation);
                 const driveTimeMs = getDriveTimeMs(lastLocation, currentLocation);
                 if (lastDriveIdx != null && lastDriveElement != null && lastDriveIdx > lastVisitIdx) {
                     //there is already a drive between last visit and current visit
@@ -249,9 +249,9 @@ export async function insertDriveElements(tour: Tour) {
         TourElementTypeEnum.D,
     );
     if (lastVisitIdx != null && (lastDriveIdx == null || lastVisitIdx > lastDriveIdx)) {
-        const lastClient = store.data.clients.get(parseInt(extractId(lastVisitElement.client!)))!;
+        const lastClient = store.data.clients.get(extractIdInt(lastVisitElement.client!))!;
         const driveTimeMs = getDriveTimeMs(
-            parseInt(extractId(lastClient.visitLocation)),
+            extractIdInt(lastClient.visitLocation),
             store.data.baseLocation.id!,
         );
         const driveElement: TourElement = {
@@ -266,13 +266,14 @@ export async function insertDriveElements(tour: Tour) {
     }
     store.data.tourElements.set(tour.id!, newElements);
 
+    tour.elements = newElements.map(el => getUrl("tourelement", el.id!));
+
     newElements.forEach(el => {
         console.log(el.start.toLocaleTimeString(), el.end.toLocaleTimeString(), el.type);
     });
 }
 
 export function tourEquals(a: Tour, b: Tour) {
-    console.log(a.elements, b.elements);
     return a.date == b.date
         && a.name == b.name
         && arrayEquals(a.jwlers, b.jwlers)
@@ -286,19 +287,33 @@ export function deepCloneMap<K, V>(value: Map<K, V>): Map<K, V> {
 }
 
 export function deepCloneObject<T>(obj: T): T {
-    let clone: T;
-    obj = toRaw(obj);
+    //this seems to be the simplest solution that is reliable enough...
+    return JSON.parse(JSON.stringify(obj));
+}
 
-    for (const entityClass of ENTITY_CLASSES) {
-        if (obj instanceof entityClass) {
-            return Object.assign(Object.create(Object.getPrototypeOf(obj)), obj);
-        }
+export function popTourElement(tourId: number, elementId: number): TourElement {
+    const store = useStore();
+    const elements = store.data.tourElements.get(tourId)!;
+    const poppedElement = elements.find(te => te.id == elementId)!;
+    if (elements.length == 1) {
+        store.data.tourElements.delete(tourId);
+    } else {
+        const remainingElements = elements.filter(te => te.id != elementId);
+        store.data.tourElements.set(tourId, remainingElements);
     }
+    const tour = store.data.tours.get(tourId);
+    if (tour) {
+        tour.elements = tour.elements.filter(e => extractIdInt(e) != elementId);
+    }
+    return poppedElement;
+}
 
-    try {
-        clone = structuredClone(obj);
-    } catch (e) {
-        clone = JSON.parse(JSON.stringify(obj));
+export function addTourElement(tourId: number, newElement: TourElement) {
+    const store = useStore();
+    if (store.data.tourElements.has(tourId)) {
+        store.data.tourElements.get(tourId)!.push(newElement);
+    } else {
+        store.data.tourElements.set(tourId, [newElement]);
     }
-    return clone;
+    store.data.tours.get(tourId)!.elements.push(getUrl("tourelement", newElement.id!));
 }
