@@ -11,8 +11,6 @@ import type {DayKey} from "@/types";
 import type {HasId} from "@/util";
 import {groupBy} from "@/util";
 import {defineStore} from "pinia";
-import {inject} from "vue";
-import type {PromiseApiApi} from "@/api/types/PromiseAPI";
 import {TourElementTypeEnum} from "@/api/models/TourElement";
 import {
   Client,
@@ -25,6 +23,8 @@ import {
   TourElement,
 } from "@/api";
 import {Changeset, ModelChangeset} from "@/changeset";
+import {ApiClientFactory} from "@/api_client_factory";
+import type {PromiseApiApi} from "@/api/types/PromiseAPI";
 
 class FetchingProgress {
   total: number = -1;
@@ -133,7 +133,7 @@ export const useStore = defineStore("data", {
   },
   actions: {
     fetchData() {
-      const apiClient = inject("apiClient") as PromiseApiApi;
+      const apiClient = ApiClientFactory.getInstance();
 
       const fetchers = [
         [
@@ -232,75 +232,116 @@ export const useStore = defineStore("data", {
       };
       fetchers.forEach(farr => runFunc(this.fetchingProgress, farr, 0));
     },
-    uploadDataChanges() {
-      const apiClient = inject("apiClient") as PromiseApiApi;
+    uploadDataChanges(): [number, string[]] {
+      const apiClient = ApiClientFactory.getInstance();
 
-      const stage0promises = [
-        ...this._uploadModelChangeset(
-          this.changeset.jwlerAvailabilities,
-          apiClient.createJWlerAvailability,
-          apiClient.updateJWlerAvailability,
-          apiClient.destroyJWlerAvailability,
-        ),
-        ...this._uploadModelChangeset(
-          this.changeset.clientAvailabilities,
-          apiClient.createClientAvailability,
-          apiClient.updateClientAvailability,
-          apiClient.destroyClientAvailability,
-        ),
-        ...this._uploadModelChangeset(
-          this.changeset.tourElements,
-          apiClient.createTourElement,
-          apiClient.updateTourElement,
-          apiClient.destroyTourElement,
-        ),
-      ];
+      const errors = [] as string[];
+      let successes = 0;
+      const addErrors = (res: PromiseSettledResult<any>) => {
+        if (res.status == "rejected") {
+          errors.push(res.reason);
+        } else {
+          ++successes;
+        }
+      };
 
-      Promise.allSettled(stage0promises).then(result => {
-        console.log(result); //todo error handling
-        const stage1promises = [
-          ...this._uploadModelChangeset(
-            this.changeset.jwlers,
-            apiClient.createJWler,
-            apiClient.updateJWler,
-            apiClient.destroyJWler,
-          ),
-          ...this._uploadModelChangeset(
-            this.changeset.clients,
-            apiClient.createClient,
-            apiClient.updateClient,
-            apiClient.destroyClient,
-          ),
-          ...this._uploadModelChangeset(
-            this.changeset.locations,
-            apiClient.createLocation,
-            apiClient.updateLocation,
-            apiClient.destroyLocation,
-          ),
-          ...this._uploadModelChangeset(
-            this.changeset.tours,
-            apiClient.createTour,
-            apiClient.updateTour,
-            apiClient.destroyTour,
-          ),
-        ];
-        Promise.allSettled(stage1promises).then(result => {
-          //todo error handling
-          console.log(result);
-        });
-      });
+      this._uploadChangesStage0(apiClient)
+        .then(res0 => {
+          res0.forEach(addErrors);
+          this._uploadChangesStage1(apiClient)
+            .then(res1 => res1.forEach(addErrors))
+            .catch(err1 => errors.push(err1));
+        })
+        .catch(err0 => errors.push(err0));
+
+      console.info(successes, errors);
+      return [successes, errors];
     },
-    _uploadModelChangeset<T extends AnyModelType & HasId>(
+    async _uploadChangesStage0(apiClient: PromiseApiApi) {
+      return Promise.allSettled([
+        this._uploadModelChangeset(
+          this.changeset.jwlerAvailabilities,
+          obj => apiClient.createJWlerAvailability(obj),
+          (id, obj) => apiClient.updateJWlerAvailability(id, obj),
+          id => apiClient.destroyJWlerAvailability(id),
+        ),
+        this._uploadModelChangeset(
+          this.changeset.clientAvailabilities,
+          obj => apiClient.createClientAvailability(obj),
+          (id, obj) => apiClient.updateClientAvailability(id, obj),
+          id => apiClient.destroyClientAvailability(id),
+        ),
+        this._uploadModelChangeset(
+          this.changeset.tourElements,
+          obj => apiClient.createTourElement(obj),
+          (id, obj) => apiClient.updateTourElement(id, obj),
+          id => apiClient.destroyTourElement(id),
+        ),
+      ]);
+    },
+    async _uploadChangesStage1(apiClient: PromiseApiApi) {
+      return Promise.allSettled([
+        this._uploadModelChangeset(
+          this.changeset.jwlers,
+          obj => apiClient.createJWler(obj),
+          (id, obj) => apiClient.updateJWler(id, obj),
+          id => apiClient.destroyJWler(id),
+        ),
+        this._uploadModelChangeset(
+          this.changeset.clients,
+          obj => apiClient.createClient(obj),
+          (id, obj) => apiClient.updateClient(id, obj),
+          id => apiClient.destroyClient(id),
+        ),
+        this._uploadModelChangeset(
+          this.changeset.locations,
+          obj => apiClient.createLocation(obj),
+          (id, obj) => apiClient.updateLocation(id, obj),
+          id => apiClient.destroyLocation(id),
+        ),
+        this._uploadModelChangeset(
+          this.changeset.tours,
+          obj => apiClient.createTour(obj),
+          (id, obj) => apiClient.updateTour(id, obj),
+          apiClient.destroyTour,
+        ),
+      ]);
+    },
+    async _uploadModelChangeset<T extends AnyModelType & HasId>(
       changeset: ModelChangeset<T>,
-      createFunc: (obj: T) => Promise<any>,
-      updateFunc: (id: string, obj: T) => Promise<any>,
-      destroyFunc: (id: string) => Promise<any>,
+      createFunc: (obj: T) => Promise<T>,
+      updateFunc: (id: string, obj: T) => Promise<T>,
+      destroyFunc: (id: string) => Promise<void>,
     ) {
-      return [
-        ...changeset.added.map(obj => createFunc(obj)),
-        ...changeset.changed.map(obj => updateFunc(obj.id!.toString(), obj)),
-        ...changeset.removed.map(obj => destroyFunc(obj.id!.toString())),
-      ];
+      const errors = [] as string[];
+      for (const obj of changeset.added) {
+        try {
+          createFunc(obj)
+            .then(newObj => {
+              if (obj.id != newObj.id) {
+                console.log("id change not implemented yet");
+              }
+            })
+            .catch(error => errors.push(error));
+        } catch (e) {
+          errors.push(e as string);
+        }
+      }
+      for (const obj of changeset.changed) {
+        try {
+          updateFunc(obj.id!.toString(), obj).catch(error => errors.push(error));
+        } catch (e) {
+          errors.push(e as string);
+        }
+      }
+      for (const obj of changeset.removed) {
+        try {
+          destroyFunc(obj.id!.toString()).catch(error => errors.push(error));
+        } catch (e) {
+          errors.push(e as string);
+        }
+      }
+      return errors;
     },
 
     _afterFetch() {

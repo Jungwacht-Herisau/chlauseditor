@@ -68,7 +68,11 @@ export function getDayKeyOfClientAvailability(ca: ClientAvailability): DayKey {
 }
 
 export function extractId(url: string): string {
-  return url.substring(url.lastIndexOf("/", url.length - 2) + 1, url.length - 1);
+  const match = url.match("(\\d+)/?$");
+  if (match == null) {
+    return "";
+  }
+  return match[1];
 }
 
 export function extractIdInt(url: string): number {
