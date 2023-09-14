@@ -1,7 +1,7 @@
 import type {StartEnd} from "@/types";
 
 export interface HasForEach<T> {
-    forEach(callback: (elem: T) => void): void;
+  forEach(callback: (elem: T) => void): void;
 }
 
 export function sortAndUnique<T>(arr: T[]): T[] {
@@ -89,4 +89,40 @@ export function arrayEquals<T>(a: T[], b: T[]): boolean {
         }
     }
     return true;
+}
+
+/**
+ * returns [added, unchanged, removed]
+ */
+export function mapEntryDiff<K, V>(oldMap: Map<K, V>, newMap: Map<K, V>): [V[], [V, V][], V[]] {
+    const unchanged = [] as [V, V][];
+    const added = [] as V[];
+    const removed = [] as V[];
+    const allKeys = new Set([...oldMap.keys(), ...newMap.keys()]);
+    allKeys.forEach(key => {
+        if (oldMap.has(key)) {
+            if (newMap.has(key)) {
+                unchanged.push([oldMap.get(key)!, newMap.get(key)!]);
+            } else {
+                removed.push(oldMap.get(key)!);
+            }
+        } else {
+            added.push(newMap.get(key)!);
+        }
+    })
+    return [added, unchanged, removed];
+}
+
+export interface HasId {
+    'id'?: number;
+}
+
+export function flattenMapToArray<T extends HasId>(map: Map<any, T[]>): Map<number, T> {
+    const result = new Map<number, T>();
+    for (const arr of map.values()) {
+        for (const elem of arr) {
+            result.set(elem.id!, elem);
+        }
+    }
+    return result;
 }

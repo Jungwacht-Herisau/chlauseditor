@@ -1,3 +1,4 @@
+import type {AnyModelType} from "@/model_utils";
 import {
   deepCloneMap,
   deepCloneObject,
@@ -7,19 +8,23 @@ import {
   getDayKeyOfTour,
 } from "@/model_utils";
 import type {DayKey} from "@/types";
+import type {HasId} from "@/util";
 import {groupBy} from "@/util";
 import {defineStore} from "pinia";
 import {inject} from "vue";
 import type {PromiseApiApi} from "@/api/types/PromiseAPI";
-import type {JWler} from "@/api/models/JWler";
-import type {JWlerAvailability} from "@/api/models/JWlerAvailability";
-import type {Client} from "@/api/models/Client";
-import type {ClientAvailability} from "@/api/models/ClientAvailability";
-import type {Tour} from "@/api/models/Tour";
-import type {TourElement} from "@/api/models/TourElement";
 import {TourElementTypeEnum} from "@/api/models/TourElement";
-import type {Location} from "@/api/models/Location";
-import {DrivingTimeMatrix} from "@/api";
+import {
+  Client,
+  ClientAvailability,
+  DrivingTimeMatrix,
+  JWler,
+  JWlerAvailability,
+  Location,
+  Tour,
+  TourElement,
+} from "@/api";
+import {Changeset, ModelChangeset} from "@/changeset";
 
 class FetchingProgress {
   total: number = -1;
@@ -36,9 +41,9 @@ class FetchingProgress {
 
 export class StateData {
   jwlers = new Map<number, JWler>();
-  jwlerAvailabilities = new Map<number, Array<JWlerAvailability>>();
+  jwlerAvailabilities = new Map<number, JWlerAvailability[]>();
   clients = new Map<number, Client>();
-  clientAvailabilities = new Map<number, Array<ClientAvailability>>();
+  clientAvailabilities = new Map<number, ClientAvailability[]>();
   locations = new Map<number, Location>();
   tours = new Map<number, Tour>();
   tourElements = new Map<number, TourElement[]>();
@@ -108,12 +113,8 @@ export const useStore = defineStore("data", {
   getters: {
     days() {
       const newDays = new Set<DayKey>();
-      this.data.jwlerAvailabilities.forEach(avs =>
-        avs.forEach(av => newDays.add(getDayKeyOfJwlerAvailability(av))),
-      );
-      this.data.clientAvailabilities.forEach(avs =>
-        avs.forEach(av => newDays.add(getDayKeyOfClientAvailability(av))),
-      );
+      this.data.jwlerAvailabilities.forEach(avs => avs.forEach(av => newDays.add(getDayKeyOfJwlerAvailability(av))));
+      this.data.clientAvailabilities.forEach(avs => avs.forEach(av => newDays.add(getDayKeyOfClientAvailability(av))));
       return [...newDays].sort();
     },
     toursByDay() {
@@ -124,6 +125,10 @@ export const useStore = defineStore("data", {
     },
     unassignedClients(): Map<number, Client> {
       return this.data.getUnassignedClients();
+    },
+    changeset(): Changeset {
+      console.warn("calc changeset");
+      return new Changeset(this.originalData, this.data);
     },
   },
   actions: {
@@ -227,6 +232,77 @@ export const useStore = defineStore("data", {
       };
       fetchers.forEach(farr => runFunc(this.fetchingProgress, farr, 0));
     },
+    uploadDataChanges() {
+      const apiClient = inject("apiClient") as PromiseApiApi;
+
+      const stage0promises = [
+        ...this._uploadModelChangeset(
+          this.changeset.jwlerAvailabilities,
+          apiClient.createJWlerAvailability,
+          apiClient.updateJWlerAvailability,
+          apiClient.destroyJWlerAvailability,
+        ),
+        ...this._uploadModelChangeset(
+          this.changeset.clientAvailabilities,
+          apiClient.createClientAvailability,
+          apiClient.updateClientAvailability,
+          apiClient.destroyClientAvailability,
+        ),
+        ...this._uploadModelChangeset(
+          this.changeset.tourElements,
+          apiClient.createTourElement,
+          apiClient.updateTourElement,
+          apiClient.destroyTourElement,
+        ),
+      ];
+
+      Promise.allSettled(stage0promises).then(result => {
+        console.log(result); //todo error handling
+        const stage1promises = [
+          ...this._uploadModelChangeset(
+            this.changeset.jwlers,
+            apiClient.createJWler,
+            apiClient.updateJWler,
+            apiClient.destroyJWler,
+          ),
+          ...this._uploadModelChangeset(
+            this.changeset.clients,
+            apiClient.createClient,
+            apiClient.updateClient,
+            apiClient.destroyClient,
+          ),
+          ...this._uploadModelChangeset(
+            this.changeset.locations,
+            apiClient.createLocation,
+            apiClient.updateLocation,
+            apiClient.destroyLocation,
+          ),
+          ...this._uploadModelChangeset(
+            this.changeset.tours,
+            apiClient.createTour,
+            apiClient.updateTour,
+            apiClient.destroyTour,
+          ),
+        ];
+        Promise.allSettled(stage1promises).then(result => {
+          //todo error handling
+          console.log(result);
+        });
+      });
+    },
+    _uploadModelChangeset<T extends AnyModelType & HasId>(
+      changeset: ModelChangeset<T>,
+      createFunc: (obj: T) => Promise<any>,
+      updateFunc: (id: string, obj: T) => Promise<any>,
+      destroyFunc: (id: string) => Promise<any>,
+    ) {
+      return [
+        ...changeset.added.map(obj => createFunc(obj)),
+        ...changeset.changed.map(obj => updateFunc(obj.id!.toString(), obj)),
+        ...changeset.removed.map(obj => destroyFunc(obj.id!.toString())),
+      ];
+    },
+
     _afterFetch() {
       this.originalData._assign(this.data);
     },

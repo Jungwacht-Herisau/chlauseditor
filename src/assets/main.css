@@ -27,10 +27,14 @@ main {
 }
 
 .removed-text {
-    color: var(--bs-danger);
-    text-decoration: line-through;
+    color: var(--bs-danger) !important;
+    text-decoration: line-through !important;
 }
 
 .added-text {
-    color: var(--bs-success)
+    color: var(--bs-success) !important;
+}
+
+.changed-text {
+    color: var(--bs-primary) !important;
 }
