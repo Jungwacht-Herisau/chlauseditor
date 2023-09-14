@@ -332,7 +332,13 @@ export function modelEquals<T extends {[key: string]: any}>(a: T, b: T) {
       return type.getAttributeTypeMap().every(attr => {
         const va = a[attr.name];
         const vb = b[attr.name];
-        return attr.type.includes("Array") ? arrayEquals(va, vb) : va == vb;
+        if (attr.type == "Date") {
+          return Math.abs(new Date(va).getTime() - new Date(vb).getTime()) < 1000;
+        } else if (attr.type.includes("Array")) {
+          return arrayEquals(va, vb);
+        } else {
+          return va == vb;
+        }
       });
     }
   }
