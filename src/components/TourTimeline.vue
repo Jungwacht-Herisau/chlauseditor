@@ -113,6 +113,10 @@ export default defineComponent({
     renameTour() {
       (this.$refs.tourNameModal as typeof TextInputModal).open(this.tour!.name);
     },
+    deleteTour() {
+      this.store.data.tourElements.delete(this.tourId);
+      this.store.data.tours.delete(this.tourId);
+    }
   },
 });
 </script>
@@ -136,6 +140,10 @@ export default defineComponent({
             <button type="button" class="dropdown-item" @click="renameTour">
               <font-awesome-icon icon="pen"/>
               Umbenennen
+            </button>
+            <button type="button" class="dropdown-item" @click="deleteTour">
+              <font-awesome-icon icon="trash-can"/>
+              Löschen
             </button>
           </li>
         </ul>
