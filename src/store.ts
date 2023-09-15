@@ -13,6 +13,7 @@ import {groupBy} from "@/util";
 import {defineStore} from "pinia";
 import {TourElementTypeEnum} from "@/api/models/TourElement";
 import {
+  ApiException,
   Client,
   ClientAvailability,
   DrivingTimeMatrix,
@@ -232,27 +233,25 @@ export const useStore = defineStore("data", {
       };
       fetchers.forEach(farr => runFunc(this.fetchingProgress, farr, 0));
     },
-    uploadDataChanges(): [number, string[]] {
+    async uploadDataChanges(): Promise<[number, string[]]> {
       const apiClient = ApiClientFactory.getInstance();
 
       const errors = [] as string[];
       let successes = 0;
-      const addErrors = (res: PromiseSettledResult<any>) => {
+      const addErrors = (res: PromiseSettledResult<string[]>) => {
         if (res.status == "rejected") {
           errors.push(res.reason);
+        } else if (res.value.length > 0) {
+          errors.push(...res.value);
         } else {
           ++successes;
         }
       };
 
-      this._uploadChangesStage0(apiClient)
-        .then(res0 => {
-          res0.forEach(addErrors);
-          this._uploadChangesStage1(apiClient)
-            .then(res1 => res1.forEach(addErrors))
-            .catch(err1 => errors.push(err1));
-        })
-        .catch(err0 => errors.push(err0));
+      const res0 = await this._uploadChangesStage0(apiClient);
+      const res1 = await this._uploadChangesStage1(apiClient);
+      res0.forEach(addErrors);
+      res1.forEach(addErrors);
 
       console.info(successes, errors);
       return [successes, errors];
@@ -314,33 +313,34 @@ export const useStore = defineStore("data", {
       destroyFunc: (id: string) => Promise<void>,
     ) {
       const errors = [] as string[];
+      const handleException = (e: any) => {
+        const apiExc = e as ApiException<string>;
+        return errors.push(apiExc.body);
+      };
+
       for (const obj of changeset.added) {
         try {
-          createFunc(obj)
-            .then(newObj => {
-              if (obj.id != newObj.id) {
-                console.log("id change not implemented yet");
-              }
-            })
-            .catch(error => errors.push(error));
+          const newObj = await createFunc(obj);
+          changeset.updateId(obj.id!, newObj.id!);
         } catch (e) {
-          errors.push(e as string);
+          handleException(e);
         }
       }
       for (const obj of changeset.changed) {
         try {
-          updateFunc(obj.id!.toString(), obj).catch(error => errors.push(error));
+          await updateFunc(obj.id!.toString(), obj);
         } catch (e) {
-          errors.push(e as string);
+          handleException(e);
         }
       }
       for (const obj of changeset.removed) {
         try {
-          destroyFunc(obj.id!.toString()).catch(error => errors.push(error));
+          await destroyFunc(obj.id!.toString());
         } catch (e) {
-          errors.push(e as string);
+          handleException(e);
         }
       }
+      console.log(errors);
       return errors;
     },
 

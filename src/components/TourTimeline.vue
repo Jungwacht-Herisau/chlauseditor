@@ -1,17 +1,17 @@
 <script lang="ts">
 import type {PropType} from "vue";
-import {defineComponent} from "vue";
+import {defineComponent, toRaw} from "vue";
 import {
   addTourElement,
   findNewTourElementId,
   getDayKeyOfTour,
   getJwlerAvailabilitiesOfTour,
   getJwlersOfTour,
-  insertDriveElements,
+  insertDriveElements
 } from "@/model_utils";
 import JWlerLabel from "@/components/JWlerLabel.vue";
 import {HourRange} from "@/types";
-import {allowDrop, dropTourElement, getDragData, getDraggedIdInt, ObjectType, startDrag,} from "@/drag_drop";
+import {allowDrop, dropTourElement, getDragData, getDraggedIdInt, ObjectType, startDrag} from "@/drag_drop";
 import {getClientUrl, getJwlerUrl, getUrl} from "@/api_url_builder";
 import {useStore} from "@/store";
 import TimelineElement from "@/components/TimelineElement.vue";
@@ -72,9 +72,7 @@ export default defineComponent({
     dropJwler(event: DragEvent) {
       const dragData = getDragData(event);
       let jwlerId =
-          dragData.type == ObjectType.JWLER
-              ? getDraggedIdInt(event)
-              : parseInt((dragData.id as string).split(";")[1]);
+        dragData.type == ObjectType.JWLER ? getDraggedIdInt(event) : parseInt((dragData.id as string).split(";")[1]);
       const jwlerUrl = getJwlerUrl(jwlerId);
       const sameDayTours = this.store.toursByDay.get(getDayKeyOfTour(this.tour!))!;
       const currentTourMutable = this.store.data.tours.get(this.tour!.id!)!;
@@ -116,34 +114,42 @@ export default defineComponent({
     deleteTour() {
       this.store.data.tourElements.delete(this.tourId);
       this.store.data.tours.delete(this.tourId);
-    }
+    },
+    printDebugInfo() {
+      console.debug(toRaw(this.tour));
+      console.debug(toRaw(this.elements));
+    },
   },
 });
 </script>
 
-<template>
+<template
   <div class="tour-timeline">
     <div class="tour-name-container">
       <div class="dropdown">
         <button
-            class="btn btn-sm btn-outline-primary dropdown-toggle"
-            type="button"
-            data-bs-toggle="dropdown"
-            aria-expanded="false"
+          class="btn btn-sm btn-outline-primary dropdown-toggle"
+          type="button"
+          data-bs-toggle="dropdown"
+          aria-expanded="false"
         ></button>
         <ul class="dropdown-menu">
           <li>
             <button type="button" class="dropdown-item" @click="insertDriveElements(tour!)">
-              <font-awesome-icon icon="car-side"/>
+              <font-awesome-icon icon="car-side" />
               Fahrten einfügen
             </button>
             <button type="button" class="dropdown-item" @click="renameTour">
-              <font-awesome-icon icon="pen"/>
+              <font-awesome-icon icon="pen" />
               Umbenennen
             </button>
             <button type="button" class="dropdown-item" @click="deleteTour">
-              <font-awesome-icon icon="trash-can"/>
+              <font-awesome-icon icon="trash-can" />
               Löschen
+            </button>
+            <button type="button" class="dropdown-item" @click="printDebugInfo">
+              <font-awesome-icon icon="bug" />
+              Debug
             </button>
           </li>
         </ul>
@@ -151,42 +157,40 @@ export default defineComponent({
       <h5 class="tour-name">{{ tour!.name }}</h5>
     </div>
     <div
-        class="jwler-name-container"
-        @dragover="event => allowDrop(event, ObjectType.JWLER, ObjectType.ASSIGNED_JWLER)"
-        @drop="event => dropJwler(event)"
+      class="jwler-name-container"
+      @dragover="event => allowDrop(event, ObjectType.JWLER, ObjectType.ASSIGNED_JWLER)"
+      @drop="event => dropJwler(event)"
     >
       <div
-          v-for="(_, i) in jwlers.length"
-          :key="i"
-          draggable="true"
-          @dragstart="
-          event => startDrag(event, ObjectType.ASSIGNED_JWLER, `${tourId};${jwlers[i].id!}`)
-        "
+        v-for="(_, i) in jwlers.length"
+        :key="i"
+        draggable="true"
+        @dragstart="event => startDrag(event, ObjectType.ASSIGNED_JWLER, `${tourId};${jwlers[i].id!}`)"
       >
-        <JWlerLabel :jwler="jwlers[i]"/>
+        <JWlerLabel :jwler="jwlers[i]" />
       </div>
     </div>
     <div class="timeline">
       <div class="jwler-availability">
         <div
-            v-for="av in availabilities"
-            :key="av.jwler"
-            :style="{
+          v-for="av in availabilities"
+          :key="av.jwler"
+          :style="{
             'margin-left': range?.calcPercentage(parseApiDateTime(av.start)),
             width: calcWidth(av),
           }"
         ></div>
       </div>
       <div
-          @dragover="event => allowDrop(event, ObjectType.CLIENT, ObjectType.TOUR_ELEMENT)"
-          @drop="event => dropClient(event)"
-          ref="dropZone"
-          class="drop-zone"
+        @dragover="event => allowDrop(event, ObjectType.CLIENT, ObjectType.TOUR_ELEMENT)"
+        @drop="event => dropClient(event)"
+        ref="dropZone"
+        class="drop-zone"
       ></div>
-      <TimelineElement v-for="e in elements" :key="e.id" :tour-element="e" :range="range"/>
+      <TimelineElement v-for="e in elements" :key="e.id" :tour-element="e" :range="range" />
     </div>
   </div>
-  <TextInputModal question="Tourname" ref="tourNameModal" @ok="(newName: string) => tour!.name=newName"/>
+  <TextInputModal question="Tourname" ref="tourNameModal" @ok="(newName: string) => (tour!.name = newName)" />
 </template>
 
 <style scoped>

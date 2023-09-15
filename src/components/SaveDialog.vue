@@ -20,8 +20,12 @@ export default defineComponent({
     element.addEventListener("hidden.bs.modal", () => (this.showing = false));
   },
   methods: {
-    save() {
-      [this.successes, this.errors] = useStore().uploadDataChanges();
+    async save() {
+      this.successes = -1;
+      this.errors = [];
+      const [s, e] = await useStore().uploadDataChanges();
+      this.successes = s;
+      this.errors = e;
       if (this.errors.length == 0) {
         const element = document.getElementById("saveModal")!;
         Modal.getOrCreateInstance(element).hide();
@@ -42,7 +46,7 @@ export default defineComponent({
         <div class="modal-body">
           <StateDiff v-if="showing" />
           <hr />
-          <span v-for="e in errors" :key="e" class="invalid-feedback">{{ e }}</span>
+          <span v-for="e in errors" :key="e" class="save-error-msg">{{ e }}</span>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Abbrechen</button>
@@ -53,4 +57,8 @@ export default defineComponent({
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+.save-error-msg {
+  color: var(--bs-form-invalid-color);
+}
+</style>
