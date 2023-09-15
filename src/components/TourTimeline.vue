@@ -8,12 +8,12 @@ import {
   getJwlerAvailabilitiesOfTour,
   getJwlersOfTour,
   insertDriveElements,
-} from "@/model_utils";
+} from "@/model/model_utils";
 import JWlerLabel from "@/components/JWlerLabel.vue";
 import {HourRange} from "@/types";
 import {allowDrop, dropTourElement, getDragData, getDraggedIdInt, ObjectType, startDrag} from "@/drag_drop";
 import {getClientUrl, getJwlerUrl, getUrl} from "@/api_url_builder";
-import {useStore} from "@/store";
+import {useStore} from "@/model/store";
 import TimelineElement from "@/components/TimelineElement.vue";
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 import type {TourElement} from "@/api/models/TourElement";

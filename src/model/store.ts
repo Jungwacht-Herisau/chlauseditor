@@ -1,4 +1,3 @@
-import type {AnyModelType} from "@/model_utils";
 import {
   deepCloneMap,
   deepCloneObject,
@@ -6,16 +5,12 @@ import {
   getDayKeyOfClientAvailability,
   getDayKeyOfJwlerAvailability,
   getDayKeyOfTour,
-  handleAfterApiDestroy,
-  handleIdChangeAfterApiCreate,
-} from "@/model_utils";
+} from "@/model/model_utils";
 import type {DayKey} from "@/types";
-import type {HasId} from "@/util";
 import {groupBy} from "@/util";
 import {defineStore} from "pinia";
 import {TourElementTypeEnum} from "@/api/models/TourElement";
 import {
-  ApiException,
   Client,
   ClientAvailability,
   DrivingTimeMatrix,
@@ -25,9 +20,9 @@ import {
   Tour,
   TourElement,
 } from "@/api";
-import {Changeset, ModelChangeset} from "@/changeset";
+import {Changeset} from "@/model/changeset";
 import {ApiClientFactory} from "@/api_client_factory";
-import type {PromiseApiApi} from "@/api/types/PromiseAPI";
+import {StoreUploader} from "@/model/upload";
 
 class FetchingProgress {
   total: number = -1;
@@ -235,144 +230,11 @@ export const useStore = defineStore("data", {
       };
       fetchers.forEach(farr => runFunc(this.fetchingProgress, farr, 0));
     },
-    async uploadDataChanges(): Promise<[number, string[]]> {
-      const apiClient = ApiClientFactory.getInstance();
-
-      const errors = [] as string[];
-      let successes = 0;
-      const addErrors = (res: PromiseSettledResult<string[]>) => {
-        if (res.status == "rejected") {
-          throw res.reason;
-        } else if (res.value.length > 0) {
-          errors.push(...res.value);
-        } else {
-          ++successes;
-        }
-      };
-
-      const res0 = await Promise.allSettled([
-        this._uploadJWlers(apiClient),
-        this._uploadClients(apiClient),
-        this._uploadLocations(apiClient),
-        this._uploadTours(apiClient),
-      ]);
-      const res1 = await Promise.allSettled([
-        this._uploadJWlerAvailabilities(apiClient),
-        this._uploadClientAvailabilities(apiClient),
-        this._uploadTourElements(apiClient),
-      ]);
-      res0.forEach(addErrors);
-      res1.forEach(addErrors);
-
-      console.info(successes, errors);
-      return [successes, errors];
-    },
-    _uploadJWlerAvailabilities(apiClient: PromiseApiApi) {
-      return this._uploadModelChangeset(
-        this.changeset.jwlerAvailabilities,
-        obj => apiClient.createJWlerAvailability(obj),
-        (id, obj) => apiClient.updateJWlerAvailability(id, obj),
-        id => apiClient.destroyJWlerAvailability(i),
-      );
-    },
-    _uploadClientAvailabilities(apiClient: PromiseApiApi) {
-      return this._uploadModelChangeset(
-        this.changeset.clientAvailabilities,
-        obj => apiClient.createClientAvailability(obj),
-        (id, obj) => apiClient.updateClientAvailability(id, obj),
-        id => apiClient.destroyClientAvailability(i),
-      );
-    },
-    _uploadTourElements(apiClient: PromiseApiApi) {
-      return this._uploadModelChangeset(
-        this.changeset.tourElements,
-        obj => apiClient.createTourElement(obj),
-        (id, obj) => apiClient.updateTourElement(id, obj),
-        id => apiClient.destroyTourElement(i),
-      );
-    },
-    _uploadTours(apiClient: PromiseApiApi) {
-      return this._uploadModelChangeset(
-        this.changeset.tours,
-        obj => apiClient.createTour(obj),
-        (id, obj) => apiClient.updateTour(id, obj),
-        id => apiClient.destroyTour(i),
-      );
-    },
-    _uploadLocations(apiClient: PromiseApiApi) {
-      return this._uploadModelChangeset(
-        this.changeset.locations,
-        obj => apiClient.createLocation(obj),
-        (id, obj) => apiClient.updateLocation(id, obj),
-        id => apiClient.destroyLocation(id),
-      );
-    },
-    _uploadClients(apiClient: PromiseApiApi) {
-      return this._uploadModelChangeset(
-        this.changeset.clients,
-        obj => apiClient.createClient(obj),
-        (id, obj) => apiClient.updateClient(id, obj),
-        id => apiClient.destroyClient(id),
-      );
-    },
-    _uploadJWlers(apiClient: PromiseApiApi) {
-      return this._uploadModelChangeset(
-        this.changeset.jwlers,
-        obj => apiClient.createJWler(obj),
-        (id, obj) => apiClient.updateJWler(id, obj),
-        id => apiClient.destroyJWler(id),
-      );
-    },
-    async _uploadModelChangeset<T extends AnyModelType & HasId>(
-      changeset: ModelChangeset<T>,
-      createFunc: (obj: T) => Promise<T>,
-      updateFunc: (id: string, obj: T) => Promise<T>,
-      destroyFunc: (id: string) => Promise<void>,
-    ) {
-      const errors = [] as string[];
-      const handleException = (e: any) => {
-        if (e instanceof ApiException) {
-          const apiExc = e as ApiException<string>;
-          return errors.push(apiExc.body);
-        } else {
-          throw e;
-        }
-      };
-
-      const idChanges = new Map<T, T>();
-      for (const obj of changeset.added) {
-        try {
-          const newObj = await createFunc(obj);
-          if (obj.id != newObj.id) {
-            idChanges.set(obj, newObj);
-          }
-        } catch (e) {
-          handleException(e);
-        }
-      }
-      handleIdChangeAfterApiCreate(idChanges);
-
-      for (const obj of changeset.changed) {
-        try {
-          await updateFunc(obj.id!.toString(), obj);
-        } catch (e) {
-          handleException(e);
-        }
-      }
-
-      for (const obj of changeset.removed) {
-        try {
-          await destroyFunc(obj.id!.toString());
-          handleAfterApiDestroy(obj);
-        } catch (e) {
-          handleException(e);
-        }
-      }
-      return errors;
-    },
-
     _afterFetch() {
       this.originalData._assign(this.data);
+    },
+    async uploadDataChanges() {
+      return await StoreUploader.upload(this.changeset);
     },
   },
 });

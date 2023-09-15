@@ -11,10 +11,10 @@ import {
   getDisplayEndHourOfTour,
   getDisplayStartHourOfTour,
   getJwlerAvailabilityOnDay,
-} from "@/model_utils";
+} from "@/model/model_utils";
 import TimeRuler from "@/components/TimeRuler.vue";
 import {HourRange} from "@/types";
-import {useStore} from "@/store";
+import {useStore} from "@/model/store";
 import ClientLabel from "@/components/ClientLabel.vue";
 import {formatDeltaSeconds, formatStartEnd} from "@/util";
 import JWlerLabel from "@/components/JWlerLabel.vue";
@@ -104,9 +104,9 @@ export default defineComponent({
         client: getClientUrl(possibleClient.client.id!),
       };
 
-      const imgElement = (
-        this.$refs.draggingElementImageContainer as HTMLElement
-      ).getElementsByClassName("timeline-element")[0];
+      const imgElement = (this.$refs.draggingElementImageContainer as HTMLElement).getElementsByClassName(
+        "timeline-element",
+      )[0];
       event.dataTransfer!.setDragImage(imgElement, 0, 20);
     },
   },
@@ -184,9 +184,7 @@ export default defineComponent({
     },
     timelineWidthPx(): number {
       if (this.mounted) {
-        const ruler = (this.$refs.rootElement as HTMLElement).getElementsByClassName(
-          "time-ruler",
-        )[0];
+        const ruler = (this.$refs.rootElement as HTMLElement).getElementsByClassName("time-ruler")[0];
         return ruler.getBoundingClientRect().width;
       } else {
         return 0;

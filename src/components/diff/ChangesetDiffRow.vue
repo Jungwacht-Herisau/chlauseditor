@@ -1,6 +1,6 @@
 <script lang="ts">
 import {defineComponent} from "vue";
-import {ModelChangeset} from "@/changeset";
+import {ModelChangeset} from "@/model/changeset";
 
 export default defineComponent({
   name: "ChangesetDiffRow",

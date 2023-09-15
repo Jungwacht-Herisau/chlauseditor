@@ -1,6 +1,6 @@
-import type {StateData} from "@/store";
-import type {AnyModelType} from "@/model_utils";
-import {modelEquals} from "@/model_utils";
+import type {StateData} from "@/model/store";
+import type {AnyModelType} from "@/model/model_utils";
+import {modelEquals} from "@/model/model_utils";
 import type {HasId} from "@/util";
 import {flattenMapToArray, mapEntryDiff} from "@/util";
 import {Client, ClientAvailability, JWler, JWlerAvailability, Location, Tour, TourElement} from "@/api";

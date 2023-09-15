@@ -1,7 +1,7 @@
 import type {HasId} from "@/util";
 import {arrayEquals, toDateISOString, toFractionHours} from "@/util";
 import type {DayKey} from "@/types";
-import {useStore} from "@/store";
+import {useStore} from "@/model/store";
 import {DEFAULT_TIME_RANGE} from "@/const";
 import {TourElementTypeEnum} from "@/api/models/TourElement";
 import {getUrl} from "@/api_url_builder";

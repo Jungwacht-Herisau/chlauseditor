@@ -1,7 +1,7 @@
 <script lang="ts">
 import {defineComponent} from "vue";
 import StateDiff from "@/components/diff/StateDiff.vue";
-import {useStore} from "@/store";
+import {useStore} from "@/model/store";
 import {Modal} from "bootstrap";
 
 export default defineComponent({

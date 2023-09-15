@@ -1,9 +1,9 @@
 <script lang="ts">
 import type {PropType} from "vue";
 import {defineComponent} from "vue";
-import {useStore} from "@/store";
+import {useStore} from "@/model/store";
 import type {HourRange} from "@/types";
-import {extractIdInt} from "@/model_utils";
+import {extractIdInt} from "@/model/model_utils";
 import {formatHours, formatStartEnd, toFractionHours} from "@/util";
 import ClientLabel from "@/components/ClientLabel.vue";
 import {Tooltip} from "bootstrap";
@@ -51,9 +51,7 @@ export default defineComponent({
       dropTourElement(event, this.tour!, start);
     },
     fractionToCssWidth(fraction: number) {
-      return this.timelineWidthPx != 0
-        ? fraction * this.timelineWidthPx + "px"
-        : fraction * 100 + "%";
+      return this.timelineWidthPx != 0 ? fraction * this.timelineWidthPx + "px" : fraction * 100 + "%";
     },
     startDrag(event: DragEvent) {
       const rect = (this.$refs.timelineElement as HTMLElement).getBoundingClientRect();
@@ -102,14 +100,10 @@ export default defineComponent({
       }
     },
     tooltipHtml() {
-      let html =
-        `Zeit: ${formatStartEnd(this.tourElement!)}<br>` +
-        `Dauer: ${formatHours(this.durationHours)}<br>`;
+      let html = `Zeit: ${formatStartEnd(this.tourElement!)}<br>` + `Dauer: ${formatHours(this.durationHours)}<br>`;
       if (this.client != null) {
         html += "<hr>";
-        const locationStr = this.store.data.locations.get(
-            extractIdInt(this.client!.visitLocation),
-        )?.string;
+        const locationStr = this.store.data.locations.get(extractIdInt(this.client!.visitLocation))?.string;
         html += `${this.client?.firstName} ${this.client?.lastName}<br>`;
         html += `${locationStr}<br>`;
       }

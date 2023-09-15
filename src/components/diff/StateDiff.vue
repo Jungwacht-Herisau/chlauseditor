@@ -1,11 +1,11 @@
 <script lang="ts">
 import {defineComponent} from "vue";
-import {StateData, useStore} from "@/store";
+import {StateData, useStore} from "@/model/store";
 import DiffValueTableRow from "@/components/diff/DiffValueTableRow.vue";
 import {formatDeltaSeconds} from "@/util";
 import CollectionDiff from "@/components/diff/CollectionDiff.vue";
 import TourDiff from "@/components/diff/TourDiff.vue";
-import {modelEquals} from "@/model_utils";
+import {modelEquals} from "@/model/model_utils";
 import ChangedTourHeader from "@/components/diff/ChangedTourHeader.vue";
 import CollapsibleContent from "@/components/CollapsibleContent.vue";
 import ChangesetDiff from "@/components/diff/ChangesetDiff.vue";

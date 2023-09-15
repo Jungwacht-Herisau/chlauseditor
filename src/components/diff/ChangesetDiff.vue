@@ -1,7 +1,7 @@
 <script lang="ts">
 import {defineComponent} from "vue";
 import ChangesetDiffRow from "@/components/diff/ChangesetDiffRow.vue";
-import {useStore} from "@/store";
+import {useStore} from "@/model/store";
 
 export default defineComponent({
   name: "ChangesetDiff",

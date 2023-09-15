@@ -1,6 +1,6 @@
 <script lang="ts">
 import DayTimeline from "@/components/DayTimeline.vue";
-import {useStore} from "@/store";
+import {useStore} from "@/model/store";
 import CollapsibleContent from "@/components/CollapsibleContent.vue";
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 import {allowDropDeletableElements, deleteDroppedElement} from "@/drag_drop";
@@ -72,12 +72,7 @@ export default {
                 <font-awesome-icon icon="rotate-right" />
               </button>
               -->
-              <button
-                type="button"
-                class="btn btn-lg btn-primary"
-                data-bs-toggle="modal"
-                data-bs-target="#saveModal"
-              >
+              <button type="button" class="btn btn-lg btn-primary" data-bs-toggle="modal" data-bs-target="#saveModal">
                 <font-awesome-icon icon="floppy-disk" />
               </button>
             </div>
@@ -86,11 +81,7 @@ export default {
       </div>
     </div>
   </nav>
-  <main
-    v-if="dataReady"
-    @dragover="event => allowDropEverything(event)"
-    @drop="event => deleteDroppedElement(event)"
-  >
+  <main v-if="dataReady" @dragover="event => allowDropEverything(event)" @drop="event => deleteDroppedElement(event)">
     <CollapsibleContent
       v-for="dateKey in store.days"
       :key="dateKey"

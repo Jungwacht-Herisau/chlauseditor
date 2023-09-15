@@ -1,18 +1,18 @@
-import {useStore} from "@/store";
-import {addTourElement, extractIdInt, popTourElement} from "@/model_utils";
+import {useStore} from "@/model/store";
+import {addTourElement, extractIdInt, popTourElement} from "@/model/model_utils";
 import {Tour, TourElement} from "@/api";
 import {getUrl} from "@/api_url_builder";
 import {decodeUpperCase, encodeUpperCase} from "@/util";
 
 export enum ObjectType {
-    /**id=jwler*/
-    JWLER,
-    /**id=tour;jwler*/
-    ASSIGNED_JWLER,
-    /**id=client*/
-    CLIENT,
-    /*id=tour;tourElement*/
-    TOUR_ELEMENT,
+  /**id=jwler*/
+  JWLER,
+  /**id=tour;jwler*/
+  ASSIGNED_JWLER,
+  /**id=client*/
+  CLIENT,
+  /*id=tour;tourElement*/
+  TOUR_ELEMENT,
 }
 
 type DragData = {
