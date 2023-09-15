@@ -11,11 +11,11 @@ const router = createRouter({
       component: LoginView,
     },
     {
-      path:"/timeline"",
+      path: "/timeline",
       name: "timeline",
       component: TimelineView,
     },
   ],
 });
 
-export default router
+export default router;

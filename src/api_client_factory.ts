@@ -44,7 +44,7 @@ export async function getApiToken(user: string, pass: string) {
   const init: RequestInit = {
     method: "post",
     body: JSON.stringify({username: user, password: pass}),
-    headers: {"Content-Type": "application/json",
+    headers: {"Content-Type": "application/json"},
   };
   const response = await fetch("http://127.0.0.1:8000/api-token-auth/", init);
   const json: any = await response.json();
