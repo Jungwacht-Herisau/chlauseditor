@@ -1,3 +1,4 @@
+import type {HasId} from "@/util";
 import {arrayEquals, toDateISOString, toFractionHours} from "@/util";
 import type {DayKey} from "@/types";
 import {useStore} from "@/store";
@@ -336,16 +337,73 @@ export function modelEquals<T extends {[key: string]: any}>(a: T, b: T) {
       return type.getAttributeTypeMap().every(attr => {
         const va = a[attr.name];
         const vb = b[attr.name];
+        let equals: boolean;
         if (attr.type == "Date") {
-          return Math.abs(new Date(va).getTime() - new Date(vb).getTime()) < 1000;
+          equals = Math.abs(new Date(va).getTime() - new Date(vb).getTime()) < 1000;
         } else if (attr.type.includes("Array")) {
-          return arrayEquals(va, vb);
+          equals = arrayEquals(va, vb);
         } else {
-          return va == vb;
+          equals = va == vb;
         }
+        return equals;
       });
     }
   }
   console.warn("type not in list, doing json comparison", a, b);
   return JSON.stringify(a) == JSON.stringify(b);
+}
+
+/**
+ * @param changes key is old id and value is object with new id
+ */
+export function handleIdChangeAfterApiCreate<T extends AnyModelType & HasId>(changes: Map<T, T>) {
+  const store = useStore();
+  const newTourElements = new Map<number, TourElement[]>();
+  const newClientAvailabilities = new Map<number, ClientAvailability[]>();
+  const newJWlerAvailabilities = new Map<number, JWlerAvailability[]>();
+  changes.forEach((newObj, oldObj) => {
+    const oldId = oldObj.id!;
+    const newId = newObj.id!;
+    if (newObj instanceof Tour) {
+      const elements = store.data.tourElements.get(oldId);
+      if (elements) {
+        elements.forEach(e => (e.tour = getUrl("tour", newId)));
+        store.data.tourElements.delete(oldId);
+        newTourElements.set(newId, elements);
+      }
+    } else if (newObj instanceof Client) {
+      const availabilities = store.data.clientAvailabilities.get(oldId);
+      if (availabilities) {
+        availabilities.forEach(av => (av.client = getUrl("client", newId)));
+        store.data.clientAvailabilities.delete(oldId);
+        newClientAvailabilities.set(newId, availabilities);
+      }
+    } else if (newObj instanceof JWler) {
+      const availabilities = store.data.jwlerAvailabilities.get(oldId);
+      if (availabilities) {
+        availabilities.forEach(av => (av.jwler = getUrl("jwler", newId)));
+        store.data.jwlerAvailabilities.delete(oldId);
+        newJWlerAvailabilities.set(newId, availabilities);
+      }
+    }
+    oldObj.id = newId; //because of reactivity, this change is propagated back to the store
+  });
+  newTourElements.forEach((v, k) => store.data.tourElements.set(k, v));
+}
+
+/**
+ * This function deletes referenced elements when an element is deleted because the same thing is happening on the server
+ * @param obj the object which was destroyed
+ */
+export function handleAfterApiDestroy<T extends AnyModelType & HasId>(obj: T) {
+  const rawObj = toRaw(obj);
+  const store = useStore();
+  const id = obj.id!;
+  if (rawObj instanceof Tour) {
+    store.data.tourElements.delete(id);
+  } else if (rawObj instanceof JWler) {
+    store.data.jwlerAvailabilities.delete(id);
+  } else if (rawObj instanceof Client) {
+    store.data.clientAvailabilities.delete(id);
+  }
 }

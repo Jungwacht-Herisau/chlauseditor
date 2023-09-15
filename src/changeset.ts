@@ -49,16 +49,4 @@ export class ModelChangeset<T extends AnyModelType & HasId> {
     this.changed = possiblyChanged.filter(pair => !modelEquals(pair[0], pair[1])).map(pair => pair[1]);
     this.removed = removed;
   }
-
-  updateId(oldId: number, newId: number) {
-    if (oldId != newId) {
-      console.log("id change", oldId, newId);
-      const obj = this.added.find(obj => obj.id == oldId);
-      if (obj) {
-        obj.id = newId;
-        this.changedMap.set(newId, obj);
-        this.changedMap.delete(oldId);
-      }
-    }
-  }
 }

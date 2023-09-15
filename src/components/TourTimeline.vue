@@ -7,7 +7,7 @@ import {
   getDayKeyOfTour,
   getJwlerAvailabilitiesOfTour,
   getJwlersOfTour,
-  insertDriveElements
+  insertDriveElements,
 } from "@/model_utils";
 import JWlerLabel from "@/components/JWlerLabel.vue";
 import {HourRange} from "@/types";
@@ -123,7 +123,7 @@ export default defineComponent({
 });
 </script>
 
-<template
+<template>
   <div class="tour-timeline">
     <div class="tour-name-container">
       <div class="dropdown">
@@ -143,7 +143,7 @@ export default defineComponent({
               <font-awesome-icon icon="pen" />
               Umbenennen
             </button>
-            <button type="button" class="dropdown-item" @click="deleteTour">
+            <button type="button" class="dropdown-item text-danger" @click="deleteTour">
               <font-awesome-icon icon="trash-can" />
               Löschen
             </button>

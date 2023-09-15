@@ -6,6 +6,8 @@ import {
   getDayKeyOfClientAvailability,
   getDayKeyOfJwlerAvailability,
   getDayKeyOfTour,
+  handleAfterApiDestroy,
+  handleIdChangeAfterApiCreate,
 } from "@/model_utils";
 import type {DayKey} from "@/types";
 import type {HasId} from "@/util";
@@ -217,9 +219,9 @@ export const useStore = defineStore("data", {
       this.fetchingProgress.total = fetchers.map(arr => arr.length).reduce((a, b) => a + b, 0);
       const runFunc = (progress: FetchingProgress, funcs: Array<() => Promise<any>>, i: number) => {
         funcs[i]()
-          .then(eName => console.log(`successfully fetched ${eName}`))
+          .then(eName => console.debug(`successfully fetched ${eName}`))
           .catch(error => {
-            console.log("Error while fetching entity: ", error);
+            console.error("Error while fetching entity: ", error);
           })
           .finally(() => {
             if (funcs.length > i + 1) {
@@ -240,7 +242,7 @@ export const useStore = defineStore("data", {
       let successes = 0;
       const addErrors = (res: PromiseSettledResult<string[]>) => {
         if (res.status == "rejected") {
-          errors.push(res.reason);
+          throw res.reason;
         } else if (res.value.length > 0) {
           errors.push(...res.value);
         } else {
@@ -248,63 +250,78 @@ export const useStore = defineStore("data", {
         }
       };
 
-      const res0 = await this._uploadChangesStage0(apiClient);
-      const res1 = await this._uploadChangesStage1(apiClient);
+      const res0 = await Promise.allSettled([
+        this._uploadJWlers(apiClient),
+        this._uploadClients(apiClient),
+        this._uploadLocations(apiClient),
+        this._uploadTours(apiClient),
+      ]);
+      const res1 = await Promise.allSettled([
+        this._uploadJWlerAvailabilities(apiClient),
+        this._uploadClientAvailabilities(apiClient),
+        this._uploadTourElements(apiClient),
+      ]);
       res0.forEach(addErrors);
       res1.forEach(addErrors);
 
       console.info(successes, errors);
       return [successes, errors];
     },
-    async _uploadChangesStage0(apiClient: PromiseApiApi) {
-      return Promise.allSettled([
-        this._uploadModelChangeset(
-          this.changeset.jwlerAvailabilities,
-          obj => apiClient.createJWlerAvailability(obj),
-          (id, obj) => apiClient.updateJWlerAvailability(id, obj),
-          id => apiClient.destroyJWlerAvailability(id),
-        ),
-        this._uploadModelChangeset(
-          this.changeset.clientAvailabilities,
-          obj => apiClient.createClientAvailability(obj),
-          (id, obj) => apiClient.updateClientAvailability(id, obj),
-          id => apiClient.destroyClientAvailability(id),
-        ),
-        this._uploadModelChangeset(
-          this.changeset.tourElements,
-          obj => apiClient.createTourElement(obj),
-          (id, obj) => apiClient.updateTourElement(id, obj),
-          id => apiClient.destroyTourElement(id),
-        ),
-      ]);
+    _uploadJWlerAvailabilities(apiClient: PromiseApiApi) {
+      return this._uploadModelChangeset(
+        this.changeset.jwlerAvailabilities,
+        obj => apiClient.createJWlerAvailability(obj),
+        (id, obj) => apiClient.updateJWlerAvailability(id, obj),
+        id => apiClient.destroyJWlerAvailability(i),
+      );
     },
-    async _uploadChangesStage1(apiClient: PromiseApiApi) {
-      return Promise.allSettled([
-        this._uploadModelChangeset(
-          this.changeset.jwlers,
-          obj => apiClient.createJWler(obj),
-          (id, obj) => apiClient.updateJWler(id, obj),
-          id => apiClient.destroyJWler(id),
-        ),
-        this._uploadModelChangeset(
-          this.changeset.clients,
-          obj => apiClient.createClient(obj),
-          (id, obj) => apiClient.updateClient(id, obj),
-          id => apiClient.destroyClient(id),
-        ),
-        this._uploadModelChangeset(
-          this.changeset.locations,
-          obj => apiClient.createLocation(obj),
-          (id, obj) => apiClient.updateLocation(id, obj),
-          id => apiClient.destroyLocation(id),
-        ),
-        this._uploadModelChangeset(
-          this.changeset.tours,
-          obj => apiClient.createTour(obj),
-          (id, obj) => apiClient.updateTour(id, obj),
-          apiClient.destroyTour,
-        ),
-      ]);
+    _uploadClientAvailabilities(apiClient: PromiseApiApi) {
+      return this._uploadModelChangeset(
+        this.changeset.clientAvailabilities,
+        obj => apiClient.createClientAvailability(obj),
+        (id, obj) => apiClient.updateClientAvailability(id, obj),
+        id => apiClient.destroyClientAvailability(i),
+      );
+    },
+    _uploadTourElements(apiClient: PromiseApiApi) {
+      return this._uploadModelChangeset(
+        this.changeset.tourElements,
+        obj => apiClient.createTourElement(obj),
+        (id, obj) => apiClient.updateTourElement(id, obj),
+        id => apiClient.destroyTourElement(i),
+      );
+    },
+    _uploadTours(apiClient: PromiseApiApi) {
+      return this._uploadModelChangeset(
+        this.changeset.tours,
+        obj => apiClient.createTour(obj),
+        (id, obj) => apiClient.updateTour(id, obj),
+        id => apiClient.destroyTour(i),
+      );
+    },
+    _uploadLocations(apiClient: PromiseApiApi) {
+      return this._uploadModelChangeset(
+        this.changeset.locations,
+        obj => apiClient.createLocation(obj),
+        (id, obj) => apiClient.updateLocation(id, obj),
+        id => apiClient.destroyLocation(id),
+      );
+    },
+    _uploadClients(apiClient: PromiseApiApi) {
+      return this._uploadModelChangeset(
+        this.changeset.clients,
+        obj => apiClient.createClient(obj),
+        (id, obj) => apiClient.updateClient(id, obj),
+        id => apiClient.destroyClient(id),
+      );
+    },
+    _uploadJWlers(apiClient: PromiseApiApi) {
+      return this._uploadModelChangeset(
+        this.changeset.jwlers,
+        obj => apiClient.createJWler(obj),
+        (id, obj) => apiClient.updateJWler(id, obj),
+        id => apiClient.destroyJWler(id),
+      );
     },
     async _uploadModelChangeset<T extends AnyModelType & HasId>(
       changeset: ModelChangeset<T>,
@@ -314,18 +331,27 @@ export const useStore = defineStore("data", {
     ) {
       const errors = [] as string[];
       const handleException = (e: any) => {
-        const apiExc = e as ApiException<string>;
-        return errors.push(apiExc.body);
+        if (e instanceof ApiException) {
+          const apiExc = e as ApiException<string>;
+          return errors.push(apiExc.body);
+        } else {
+          throw e;
+        }
       };
 
+      const idChanges = new Map<T, T>();
       for (const obj of changeset.added) {
         try {
           const newObj = await createFunc(obj);
-          changeset.updateId(obj.id!, newObj.id!);
+          if (obj.id != newObj.id) {
+            idChanges.set(obj, newObj);
+          }
         } catch (e) {
           handleException(e);
         }
       }
+      handleIdChangeAfterApiCreate(idChanges);
+
       for (const obj of changeset.changed) {
         try {
           await updateFunc(obj.id!.toString(), obj);
@@ -333,14 +359,15 @@ export const useStore = defineStore("data", {
           handleException(e);
         }
       }
+
       for (const obj of changeset.removed) {
         try {
           await destroyFunc(obj.id!.toString());
+          handleAfterApiDestroy(obj);
         } catch (e) {
           handleException(e);
         }
       }
-      console.log(errors);
       return errors;
     },
 
