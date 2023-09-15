@@ -10,6 +10,7 @@ import {
   faFloppyDisk,
   faPen,
   faPlus,
+  faRightFromBracket,
   faRotateLeft,
   faRotateRight,
   faTrashCan,
@@ -29,4 +30,5 @@ export function addIconsToLibrary() {
   library.add(faFileCirclePlus);
   library.add(faFileCircleMinus);
   library.add(faBug);
+  library.add(faRightFromBracket);
 }

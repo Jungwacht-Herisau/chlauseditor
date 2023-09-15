@@ -5,17 +5,30 @@ import CollapsibleContent from "@/components/CollapsibleContent.vue";
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 import {allowDropDeletableElements, deleteDroppedElement} from "@/drag_drop";
 import SaveDialog from "@/components/SaveDialog.vue";
+import {deleteApiToken, hasApiToken} from "@/api_client_factory";
+import router from "@/router";
 
 export default {
-  methods: {deleteDroppedElement, allowDropEverything: allowDropDeletableElements},
   components: {SaveDialog, FontAwesomeIcon, CollapsibleContent, DayTimeline},
   data() {
     return {
       store: useStore(),
     };
   },
-  created() {
-    this.store.fetchData();
+  mounted() {
+    if (!hasApiToken()) {
+      router.push("/");
+    } else if (!this.dataReady) {
+      this.store.fetchData();
+    }
+  },
+  methods: {
+    deleteDroppedElement,
+    allowDropDeletableElements,
+    logout() {
+      deleteApiToken();
+      router.push("/");
+    },
   },
   watch: {
     dataReady() {
@@ -75,13 +88,20 @@ export default {
               <button type="button" class="btn btn-lg btn-primary" data-bs-toggle="modal" data-bs-target="#saveModal">
                 <font-awesome-icon icon="floppy-disk" />
               </button>
+              <button type="button" class="btn btn-lg btn-secondary" @click="logout">
+                <font-awesome-icon icon="right-from-bracket" />
+              </button>
             </div>
           </li>
         </ul>
       </div>
     </div>
   </nav>
-  <main v-if="dataReady" @dragover="event => allowDropEverything(event)" @drop="event => deleteDroppedElement(event)">
+  <main
+    v-if="dataReady"
+    @dragover="event => allowDropDeletableElements(event)"
+    @drop="event => deleteDroppedElement(event)"
+  >
     <CollapsibleContent
       v-for="dateKey in store.days"
       :key="dateKey"

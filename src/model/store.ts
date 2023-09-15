@@ -33,7 +33,7 @@ class FetchingProgress {
   }
 
   finished() {
-    return this.fetched >= this.total;
+    return this.total >= 0 && this.fetched >= this.total;
   }
 }
 
