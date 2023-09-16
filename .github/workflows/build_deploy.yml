@@ -17,7 +17,7 @@ jobs:
       - run: npm run generate-api
       - run: npm run build
       - name: Upload Artifact
-        uses: actions/upload-pages-artifact
+        uses: actions/upload-pages-artifact@v2
         with:
           path: "./dist"
 
