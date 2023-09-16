@@ -14,6 +14,7 @@ jobs:
         with:
           node-version: 18.x
           cache: 'npm'
+      - run: npm install
       - run: npm run generate-api
       - run: npm run build
       - name: Upload Artifact
