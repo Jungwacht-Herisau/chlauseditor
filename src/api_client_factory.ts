@@ -46,7 +46,7 @@ export async function getApiToken(user: string, pass: string) {
     body: JSON.stringify({username: user, password: pass}),
     headers: {"Content-Type": "application/json"},
   };
-  const response = await fetch("http://127.0.0.1:8000/api-token-auth/", init);
+  const response = await fetch(`${API_URL}/api-token-auth/`, init);
   const json: any = await response.json();
   if ("token" in json) {
     localStorage.setItem("api-token", json.token);

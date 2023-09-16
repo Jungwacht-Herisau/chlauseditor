@@ -23,6 +23,11 @@ export default defineComponent({
         this.error = err;
       }
     },
+    inputPasswordKeydown(event: KeyboardEvent) {
+      if (event.key == "Enter") {
+        this.tryLogin();
+      }
+    },
   },
 });
 </script>
@@ -36,7 +41,14 @@ export default defineComponent({
     </div>
     <div class="mb-3">
       <label for="inputPass" class="form-label">Passwort</label>
-      <input type="password" class="form-control" id="inputPass" v-model="pass" autocomplete="current-password" />
+      <input
+        type="password"
+        class="form-control"
+        id="inputPass"
+        v-model="pass"
+        autocomplete="current-password"
+        @keydown="inputPasswordKeydown"
+      />
     </div>
     <div class="invalid-feedback mb-3" v-if="error">{{ error }}</div>
     <button type="button" class="btn btn-primary" @click="tryLogin">Login</button>
