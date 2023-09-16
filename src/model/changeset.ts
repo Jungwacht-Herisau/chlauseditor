@@ -38,12 +38,8 @@ export class ModelChangeset<T extends AnyModelType & HasId> {
   added: T[];
   changed: T[];
   removed: T[];
-  private originalMap: Map<number, T>;
-  private changedMap: Map<number, T>;
 
   constructor(original: Map<number, T>, changed: Map<number, T>) {
-    this.originalMap = original;
-    this.changedMap = changed;
     const [added, possiblyChanged, removed] = mapEntryDiff(original, changed);
     this.added = added;
     this.changed = possiblyChanged.filter(pair => !modelEquals(pair[0], pair[1])).map(pair => pair[1]);

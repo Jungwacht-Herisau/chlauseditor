@@ -164,8 +164,8 @@ export default defineComponent({
       const jwlerIds = new Set<number>();
       this.store.data.jwlers.forEach((_, id) => jwlerIds.add(id));
       this.tours.forEach(tour =>
-        tour.jwlers
-          .map(extractId)
+        tour
+          .jwlers!.map(extractId)
           .map(x => parseInt(x))
           .forEach(id => jwlerIds.delete(id)),
       );

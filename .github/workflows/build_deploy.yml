@@ -1,0 +1,40 @@
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Use Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18.x
+          cache: 'npm'
+      - run: npm run generate-api
+      - run: npm run build
+      - name: Upload Artifact
+        uses: actions/upload-pages-artifact
+        with:
+          path: "./dist"
+
+  deploy:
+    needs: build
+
+    permissions:
+      pages: write      # to deploy to Pages
+      id-token: write   # to verify the deployment originates from an appropriate source
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v2

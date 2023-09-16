@@ -82,8 +82,8 @@ export function extractIdInt(url: string): number {
 
 export function getJwlersOfTour(tour: Tour): JWler[] {
   const jwlers = [] as JWler[];
-  for (let i = 0; i < tour.jwlers.length!; i++) {
-    const url = tour.jwlers[i]!;
+  for (let i = 0; i < tour.jwlers!.length!; i++) {
+    const url = tour.jwlers![i];
     const jwlerId = extractIdInt(url);
     jwlers.push(useStore().data.jwlers.get(jwlerId)!);
   }
@@ -93,8 +93,8 @@ export function getJwlersOfTour(tour: Tour): JWler[] {
 export function getJwlerAvailabilitiesOfTour(tour: Tour): JWlerAvailability[] {
   const tourDate = new Date(Date.parse(tour.date)).toDateString();
   const availabilities = [] as JWlerAvailability[];
-  for (let iJw = 0; iJw < tour.jwlers.length!; iJw++) {
-    const url = tour.jwlers[iJw]!;
+  for (let iJw = 0; iJw < tour.jwlers!.length; iJw++) {
+    const url = tour.jwlers![iJw];
     const jwlerId = extractIdInt(url);
     const allAv = useStore().data.jwlerAvailabilities.get(jwlerId)!;
     for (let iAv = 0; iAv < allAv.length; iAv++) {
@@ -314,7 +314,7 @@ export function popTourElement(tourId: number, elementId: number): TourElement {
   }
   const tour = store.data.tours.get(tourId);
   if (tour) {
-    tour.elements = tour.elements.filter(e => extractIdInt(e) != elementId);
+    tour.elements = tour.elements!.filter(e => extractIdInt(e) != elementId);
   }
   return poppedElement;
 }
@@ -326,7 +326,7 @@ export function addTourElement(tourId: number, newElement: TourElement) {
   } else {
     store.data.tourElements.set(tourId, [newElement]);
   }
-  store.data.tours.get(tourId)!.elements.push(getUrl("tourelement", newElement.id!));
+  store.data.tours.get(tourId)!.elements!.push(getUrl("tourelement", newElement.id!));
 }
 
 export function modelEquals<T extends {[key: string]: any}>(a: T, b: T) {

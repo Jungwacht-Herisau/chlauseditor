@@ -86,7 +86,7 @@ export function deleteDroppedElement(event: DragEvent) {
         case ObjectType.ASSIGNED_JWLER: {
             const [tourId, jwlerId] = getTwoDraggedIds(event);
             const tour = store.data.tours.get(tourId)!;
-            tour.jwlers = tour.jwlers.filter(jwlerUrl => extractIdInt(jwlerUrl) != jwlerId);
+            tour.jwlers = tour.jwlers!.filter(jwlerUrl => extractIdInt(jwlerUrl) != jwlerId);
             break;
         }
     }

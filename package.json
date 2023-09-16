@@ -11,7 +11,8 @@
     "type-check": "vue-tsc --noEmit -p tsconfig.vitest.json --composite false",
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
     "format": "prettier --write src/",
-    "generate-api": "./generate_api.sh"
+    "generate-api": "./generate_api.sh",
+    "deploy": "./deploy.sh"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.4.2",

@@ -1,0 +1,2079 @@
+openapi: 3.0.2
+info:
+  title: ChlausPlannerDue API
+  version: 1.0.0
+paths:
+  /api/jwler/:
+    get:
+      operationId: listJWlers
+      description: ''
+      parameters: [ ]
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/JWler'
+          description: ''
+      tags:
+        - api
+    post:
+      operationId: createJWler
+      description: ''
+      parameters: [ ]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/JWler'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/JWler'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/JWler'
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JWler'
+          description: ''
+      tags:
+        - api
+  /api/jwler/{id}/:
+    get:
+      operationId: retrieveJWler
+      description: ''
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: "A unique integer value identifying this Jungw\xE4chtler."
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JWler'
+          description: ''
+      tags:
+        - api
+    put:
+      operationId: updateJWler
+      description: ''
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: "A unique integer value identifying this Jungw\xE4chtler."
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/JWler'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/JWler'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/JWler'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JWler'
+          description: ''
+      tags:
+        - api
+    patch:
+      operationId: partialUpdateJWler
+      description: ''
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: "A unique integer value identifying this Jungw\xE4chtler."
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/JWler'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/JWler'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/JWler'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JWler'
+          description: ''
+      tags:
+        - api
+    delete:
+      operationId: destroyJWler
+      description: ''
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: "A unique integer value identifying this Jungw\xE4chtler."
+          schema:
+            type: string
+      responses:
+        '204':
+          description: ''
+      tags:
+        - api
+  /api/jwleravailability/:
+    get:
+      operationId: listJWlerAvailabilitys
+      description: ''
+      parameters: [ ]
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/JWlerAvailability'
+          description: ''
+      tags:
+        - api
+    post:
+      operationId: createJWlerAvailability
+      description: ''
+      parameters: [ ]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/JWlerAvailability'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/JWlerAvailability'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/JWlerAvailability'
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JWlerAvailability'
+          description: ''
+      tags:
+        - api
+  /api/jwleravailability/{id}/:
+    get:
+      operationId: retrieveJWlerAvailability
+      description: ''
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: "A unique integer value identifying this Jungw\xE4chtler-Verf\xFC\
+          gbarkeit."
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JWlerAvailability'
+          description: ''
+      tags:
+        - api
+    put:
+      operationId: updateJWlerAvailability
+      description: ''
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: "A unique integer value identifying this Jungw\xE4chtler-Verf\xFC\
+          gbarkeit."
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/JWlerAvailability'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/JWlerAvailability'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/JWlerAvailability'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JWlerAvailability'
+          description: ''
+      tags:
+        - api
+    patch:
+      operationId: partialUpdateJWlerAvailability
+      description: ''
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: "A unique integer value identifying this Jungw\xE4chtler-Verf\xFC\
+          gbarkeit."
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/JWlerAvailability'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/JWlerAvailability'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/JWlerAvailability'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JWlerAvailability'
+          description: ''
+      tags:
+        - api
+    delete:
+      operationId: destroyJWlerAvailability
+      description: ''
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: "A unique integer value identifying this Jungw\xE4chtler-Verf\xFC\
+          gbarkeit."
+          schema:
+            type: string
+      responses:
+        '204':
+          description: ''
+      tags:
+        - api
+  /api/location/:
+    get:
+      operationId: listLocations
+      description: ''
+      parameters: [ ]
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Location'
+          description: ''
+      tags:
+        - api
+    post:
+      operationId: createLocation
+      description: ''
+      parameters: [ ]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Location'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Location'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Location'
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Location'
+          description: ''
+      tags:
+        - api
+  /api/location/base/:
+    get:
+      operationId: baseLocation
+      description: ''
+      parameters: [ ]
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Location'
+          description: ''
+      tags:
+        - api
+  /api/location/{id}/:
+    get:
+      operationId: retrieveLocation
+      description: ''
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: A unique integer value identifying this Ort.
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Location'
+          description: ''
+      tags:
+        - api
+    put:
+      operationId: updateLocation
+      description: ''
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: A unique integer value identifying this Ort.
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Location'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Location'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Location'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Location'
+          description: ''
+      tags:
+        - api
+    patch:
+      operationId: partialUpdateLocation
+      description: ''
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: A unique integer value identifying this Ort.
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Location'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Location'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Location'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Location'
+          description: ''
+      tags:
+        - api
+    delete:
+      operationId: destroyLocation
+      description: ''
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: A unique integer value identifying this Ort.
+          schema:
+            type: string
+      responses:
+        '204':
+          description: ''
+      tags:
+        - api
+  /api/client/:
+    get:
+      operationId: listClients
+      description: ''
+      parameters: [ ]
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Client'
+          description: ''
+      tags:
+        - api
+    post:
+      operationId: createClient
+      description: ''
+      parameters: [ ]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Client'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Client'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Client'
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Client'
+          description: ''
+      tags:
+        - api
+  /api/client/{id}/:
+    get:
+      operationId: retrieveClient
+      description: ''
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: A unique integer value identifying this Kunde.
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Client'
+          description: ''
+      tags:
+        - api
+    put:
+      operationId: updateClient
+      description: ''
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: A unique integer value identifying this Kunde.
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Client'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Client'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Client'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Client'
+          description: ''
+      tags:
+        - api
+    patch:
+      operationId: partialUpdateClient
+      description: ''
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: A unique integer value identifying this Kunde.
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Client'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Client'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Client'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Client'
+          description: ''
+      tags:
+        - api
+    delete:
+      operationId: destroyClient
+      description: ''
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: A unique integer value identifying this Kunde.
+          schema:
+            type: string
+      responses:
+        '204':
+          description: ''
+      tags:
+        - api
+  /api/familyclientdetails/:
+    get:
+      operationId: listFamilyClientDetails
+      description: ''
+      parameters: [ ]
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FamilyClientDetails'
+          description: ''
+      tags:
+        - api
+    post:
+      operationId: createFamilyClientDetails
+      description: ''
+      parameters: [ ]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FamilyClientDetails'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/FamilyClientDetails'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/FamilyClientDetails'
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FamilyClientDetails'
+          description: ''
+      tags:
+        - api
+  /api/familyclientdetails/{id}/:
+    get:
+      operationId: retrieveFamilyClientDetails
+      description: ''
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: A unique integer value identifying this Familienkunden-Details.
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FamilyClientDetails'
+          description: ''
+      tags:
+        - api
+    put:
+      operationId: updateFamilyClientDetails
+      description: ''
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: A unique integer value identifying this Familienkunden-Details.
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FamilyClientDetails'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/FamilyClientDetails'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/FamilyClientDetails'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FamilyClientDetails'
+          description: ''
+      tags:
+        - api
+    patch:
+      operationId: partialUpdateFamilyClientDetails
+      description: ''
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: A unique integer value identifying this Familienkunden-Details.
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FamilyClientDetails'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/FamilyClientDetails'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/FamilyClientDetails'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FamilyClientDetails'
+          description: ''
+      tags:
+        - api
+    delete:
+      operationId: destroyFamilyClientDetails
+      description: ''
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: A unique integer value identifying this Familienkunden-Details.
+          schema:
+            type: string
+      responses:
+        '204':
+          description: ''
+      tags:
+        - api
+  /api/adultinfo/:
+    get:
+      operationId: listAdultInfos
+      description: ''
+      parameters: [ ]
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AdultInfo'
+          description: ''
+      tags:
+        - api
+    post:
+      operationId: createAdultInfo
+      description: ''
+      parameters: [ ]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdultInfo'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AdultInfo'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AdultInfo'
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdultInfo'
+          description: ''
+      tags:
+        - api
+  /api/adultinfo/{id}/:
+    get:
+      operationId: retrieveAdultInfo
+      description: ''
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: A unique integer value identifying this Erwachsenen-Info.
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdultInfo'
+          description: ''
+      tags:
+        - api
+    put:
+      operationId: updateAdultInfo
+      description: ''
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: A unique integer value identifying this Erwachsenen-Info.
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdultInfo'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AdultInfo'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AdultInfo'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdultInfo'
+          description: ''
+      tags:
+        - api
+    patch:
+      operationId: partialUpdateAdultInfo
+      description: ''
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: A unique integer value identifying this Erwachsenen-Info.
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdultInfo'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AdultInfo'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AdultInfo'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdultInfo'
+          description: ''
+      tags:
+        - api
+    delete:
+      operationId: destroyAdultInfo
+      description: ''
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: A unique integer value identifying this Erwachsenen-Info.
+          schema:
+            type: string
+      responses:
+        '204':
+          description: ''
+      tags:
+        - api
+  /api/childinfo/:
+    get:
+      operationId: listChildInfos
+      description: ''
+      parameters: [ ]
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ChildInfo'
+          description: ''
+      tags:
+        - api
+    post:
+      operationId: createChildInfo
+      description: ''
+      parameters: [ ]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChildInfo'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ChildInfo'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ChildInfo'
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChildInfo'
+          description: ''
+      tags:
+        - api
+  /api/childinfo/{id}/:
+    get:
+      operationId: retrieveChildInfo
+      description: ''
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: A unique integer value identifying this Kind-Info.
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChildInfo'
+          description: ''
+      tags:
+        - api
+    put:
+      operationId: updateChildInfo
+      description: ''
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: A unique integer value identifying this Kind-Info.
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChildInfo'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ChildInfo'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ChildInfo'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChildInfo'
+          description: ''
+      tags:
+        - api
+    patch:
+      operationId: partialUpdateChildInfo
+      description: ''
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: A unique integer value identifying this Kind-Info.
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChildInfo'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ChildInfo'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ChildInfo'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChildInfo'
+          description: ''
+      tags:
+        - api
+    delete:
+      operationId: destroyChildInfo
+      description: ''
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: A unique integer value identifying this Kind-Info.
+          schema:
+            type: string
+      responses:
+        '204':
+          description: ''
+      tags:
+        - api
+  /api/organisationclientdetails/:
+    get:
+      operationId: listOrganisationClientDetails
+      description: ''
+      parameters: [ ]
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/OrganisationClientDetails'
+          description: ''
+      tags:
+        - api
+    post:
+      operationId: createOrganisationClientDetails
+      description: ''
+      parameters: [ ]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrganisationClientDetails'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/OrganisationClientDetails'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/OrganisationClientDetails'
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrganisationClientDetails'
+          description: ''
+      tags:
+        - api
+  /api/organisationclientdetails/{id}/:
+    get:
+      operationId: retrieveOrganisationClientDetails
+      description: ''
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: A unique integer value identifying this Organisationskunden-Details.
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrganisationClientDetails'
+          description: ''
+      tags:
+        - api
+    put:
+      operationId: updateOrganisationClientDetails
+      description: ''
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: A unique integer value identifying this Organisationskunden-Details.
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrganisationClientDetails'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/OrganisationClientDetails'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/OrganisationClientDetails'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrganisationClientDetails'
+          description: ''
+      tags:
+        - api
+    patch:
+      operationId: partialUpdateOrganisationClientDetails
+      description: ''
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: A unique integer value identifying this Organisationskunden-Details.
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrganisationClientDetails'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/OrganisationClientDetails'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/OrganisationClientDetails'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrganisationClientDetails'
+          description: ''
+      tags:
+        - api
+    delete:
+      operationId: destroyOrganisationClientDetails
+      description: ''
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: A unique integer value identifying this Organisationskunden-Details.
+          schema:
+            type: string
+      responses:
+        '204':
+          description: ''
+      tags:
+        - api
+  /api/clientavailability/:
+    get:
+      operationId: listClientAvailabilitys
+      description: ''
+      parameters: [ ]
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ClientAvailability'
+          description: ''
+      tags:
+        - api
+    post:
+      operationId: createClientAvailability
+      description: ''
+      parameters: [ ]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClientAvailability'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ClientAvailability'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ClientAvailability'
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClientAvailability'
+          description: ''
+      tags:
+        - api
+  /api/clientavailability/{id}/:
+    get:
+      operationId: retrieveClientAvailability
+      description: ''
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: "A unique integer value identifying this Kunden-Verf\xFCgbarkeit."
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClientAvailability'
+          description: ''
+      tags:
+        - api
+    put:
+      operationId: updateClientAvailability
+      description: ''
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: "A unique integer value identifying this Kunden-Verf\xFCgbarkeit."
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClientAvailability'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ClientAvailability'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ClientAvailability'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClientAvailability'
+          description: ''
+      tags:
+        - api
+    patch:
+      operationId: partialUpdateClientAvailability
+      description: ''
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: "A unique integer value identifying this Kunden-Verf\xFCgbarkeit."
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClientAvailability'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ClientAvailability'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ClientAvailability'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClientAvailability'
+          description: ''
+      tags:
+        - api
+    delete:
+      operationId: destroyClientAvailability
+      description: ''
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: "A unique integer value identifying this Kunden-Verf\xFCgbarkeit."
+          schema:
+            type: string
+      responses:
+        '204':
+          description: ''
+      tags:
+        - api
+  /api/drivingtimematrix/:
+    get:
+      operationId: listDrivingTimeMatrixs
+      description: ''
+      parameters: [ ]
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DrivingTimeMatrix'
+          description: ''
+      tags:
+        - api
+    post:
+      operationId: createDrivingTimeMatrix
+      description: ''
+      parameters: [ ]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DrivingTimeMatrix'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/DrivingTimeMatrix'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/DrivingTimeMatrix'
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DrivingTimeMatrix'
+          description: ''
+      tags:
+        - api
+  /api/drivingtimematrix/calculate_new/:
+    get:
+      operationId: calculateNewDrivingTimeMatrix
+      description: ''
+      parameters: [ ]
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DrivingTimeMatrix'
+          description: ''
+      tags:
+        - api
+  /api/drivingtimematrix/drivingtimematrix/get_time_between/{location_from}/{location_to}/:
+    get:
+      operationId: getTimeBetweenDrivingTimeMatrix
+      description: ''
+      parameters:
+        - name: location_from
+          in: path
+          required: true
+          description: ''
+          schema:
+            type: integer
+        - name: location_to
+          in: path
+          required: true
+          description: ''
+          schema:
+            type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TimeBetweenData'
+          description: ''
+      tags:
+        - api
+  /api/drivingtimematrix/{locationsCSV}/:
+    get:
+      operationId: retrieveDrivingTimeMatrix
+      description: ''
+      parameters:
+        - name: locationsCSV
+          in: path
+          required: true
+          description: A unique value identifying this Fahrtzeit-Matrix.
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DrivingTimeMatrix'
+          description: ''
+      tags:
+        - api
+    put:
+      operationId: updateDrivingTimeMatrix
+      description: ''
+      parameters:
+        - name: locationsCSV
+          in: path
+          required: true
+          description: A unique value identifying this Fahrtzeit-Matrix.
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DrivingTimeMatrix'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/DrivingTimeMatrix'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/DrivingTimeMatrix'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DrivingTimeMatrix'
+          description: ''
+      tags:
+        - api
+    patch:
+      operationId: partialUpdateDrivingTimeMatrix
+      description: ''
+      parameters:
+        - name: locationsCSV
+          in: path
+          required: true
+          description: A unique value identifying this Fahrtzeit-Matrix.
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DrivingTimeMatrix'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/DrivingTimeMatrix'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/DrivingTimeMatrix'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DrivingTimeMatrix'
+          description: ''
+      tags:
+        - api
+    delete:
+      operationId: destroyDrivingTimeMatrix
+      description: ''
+      parameters:
+        - name: locationsCSV
+          in: path
+          required: true
+          description: A unique value identifying this Fahrtzeit-Matrix.
+          schema:
+            type: string
+      responses:
+        '204':
+          description: ''
+      tags:
+        - api
+  /api/tour/:
+    get:
+      operationId: listTours
+      description: ''
+      parameters: [ ]
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Tour'
+          description: ''
+      tags:
+        - api
+    post:
+      operationId: createTour
+      description: ''
+      parameters: [ ]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Tour'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Tour'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Tour'
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tour'
+          description: ''
+      tags:
+        - api
+  /api/tour/{id}/:
+    get:
+      operationId: retrieveTour
+      description: ''
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: A unique integer value identifying this Tour.
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tour'
+          description: ''
+      tags:
+        - api
+    put:
+      operationId: updateTour
+      description: ''
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: A unique integer value identifying this Tour.
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Tour'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Tour'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Tour'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tour'
+          description: ''
+      tags:
+        - api
+    patch:
+      operationId: partialUpdateTour
+      description: ''
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: A unique integer value identifying this Tour.
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Tour'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Tour'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Tour'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tour'
+          description: ''
+      tags:
+        - api
+    delete:
+      operationId: destroyTour
+      description: ''
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: A unique integer value identifying this Tour.
+          schema:
+            type: string
+      responses:
+        '204':
+          description: ''
+      tags:
+        - api
+  /api/tourelement/:
+    get:
+      operationId: listTourElements
+      description: ''
+      parameters: [ ]
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TourElement'
+          description: ''
+      tags:
+        - api
+    post:
+      operationId: createTourElement
+      description: ''
+      parameters: [ ]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TourElement'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TourElement'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TourElement'
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TourElement'
+          description: ''
+      tags:
+        - api
+  /api/tourelement/{id}/:
+    get:
+      operationId: retrieveTourElement
+      description: ''
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: A unique integer value identifying this Tour-Element.
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TourElement'
+          description: ''
+      tags:
+        - api
+    put:
+      operationId: updateTourElement
+      description: ''
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: A unique integer value identifying this Tour-Element.
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TourElement'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TourElement'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TourElement'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TourElement'
+          description: ''
+      tags:
+        - api
+    patch:
+      operationId: partialUpdateTourElement
+      description: ''
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: A unique integer value identifying this Tour-Element.
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TourElement'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TourElement'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TourElement'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TourElement'
+          description: ''
+      tags:
+        - api
+    delete:
+      operationId: destroyTourElement
+      description: ''
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: A unique integer value identifying this Tour-Element.
+          schema:
+            type: string
+      responses:
+        '204':
+          description: ''
+      tags:
+        - api
+  /api-token-auth/:
+    post:
+      operationId: createAuthToken
+      description: ''
+      parameters: [ ]
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AuthToken'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AuthToken'
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthToken'
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthToken'
+          description: ''
+      tags:
+        - api-token-auth
+  /api/tour/delete_all/:
+    delete:
+      operationId: deleteAllTour
+      description: ''
+      parameters: [ ]
+      responses:
+        '204':
+          description: ''
+      tags:
+        - api
+components:
+  schemas:
+    JWler:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 255
+        active:
+          type: boolean
+        chlaus:
+          type: boolean
+        driver:
+          type: boolean
+        availabilities:
+          type: array
+          items:
+            type: string
+          readOnly: true
+      required:
+        - name
+        - chlaus
+        - driver
+    JWlerAvailability:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        jwler:
+          type: string
+        start:
+          type: string
+          format: date-time
+          example: '2023-09-16T15:06:55Z'
+        end:
+          type: string
+          format: date-time
+          example: '2023-09-16T15:06:55Z'
+      required:
+        - jwler
+        - start
+        - end
+    Location:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        string:
+          type: string
+          maxLength: 1023
+      required:
+        - string
+    Client:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        first_name:
+          type: string
+          maxLength: 255
+        last_name:
+          type: string
+          maxLength: 255
+        email_address:
+          type: string
+          format: email
+          maxLength: 254
+        phone_number1:
+          type: string
+          maxLength: 255
+        phone_number2:
+          type: string
+          maxLength: 255
+        visit_location:
+          type: string
+        visit_location_description:
+          type: string
+        indoor_outdoor:
+          enum:
+            - indoor
+            - outdoor
+          type: string
+        bags_location:
+          type: string
+        payment_method:
+          enum:
+            - twint
+            - cash
+          type: string
+        general_comments:
+          type: string
+        family_details:
+          type: string
+        organisation_details:
+          type: string
+        availabilities:
+          type: array
+          items:
+            type: string
+          readOnly: true
+        required_time:
+          type: string
+          readOnly: true
+      required:
+        - first_name
+        - last_name
+        - email_address
+        - phone_number1
+        - visit_location
+        - bags_location
+        - family_details
+        - organisation_details
+    FamilyClientDetails:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        family_situation_comments:
+          type: string
+          description: (z.B. Lebenspartner ist nicht der Vater)
+        adult_infos:
+          type: array
+          items:
+            type: string
+          readOnly: true
+        child_infos:
+          type: array
+          items:
+            type: string
+          readOnly: true
+        client:
+          type: string
+          readOnly: true
+    AdultInfo:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 255
+        description:
+          type: string
+          maxLength: 255
+        family_client_details:
+          type: string
+      required:
+        - name
+        - description
+        - family_client_details
+    ChildInfo:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        first_name:
+          type: string
+          maxLength: 255
+        last_name:
+          type: string
+          maxLength: 255
+        gender:
+          enum:
+            - m
+            - f
+          type: string
+        age:
+          type: string
+          maxLength: 15
+        school_class:
+          type: string
+          maxLength: 15
+        teacher:
+          type: string
+          maxLength: 255
+        favourite_subject:
+          type: string
+          maxLength: 255
+        likes_to_eat:
+          type: string
+          maxLength: 255
+        hates_to_eat:
+          type: string
+          maxLength: 255
+        pets:
+          type: string
+          maxLength: 255
+        sport:
+          type: string
+          maxLength: 255
+        instrument:
+          type: string
+          maxLength: 255
+        favourite_toy:
+          type: string
+          maxLength: 255
+        praise:
+          type: string
+        improve:
+          type: string
+        performance:
+          type: string
+          description: "Hat das Kind etwas f\xFCr den Samichlaus vorbereitet?"
+          maxLength: 255
+        need_to_know:
+          type: string
+          description: "Was sollte der Samichlaus sonst noch wissen? (Sprachfehler,\
+            \ k\xF6rperl. Behinderungen usw.)"
+        taboo_subjects:
+          type: string
+          description: "Was darf der Samichlaus auf keinen Fall erw\xE4hnen?"
+        family_client_details:
+          type: string
+      required:
+        - first_name
+        - last_name
+        - age
+        - school_class
+        - teacher
+        - likes_to_eat
+        - hates_to_eat
+        - praise
+        - improve
+        - performance
+        - family_client_details
+    OrganisationClientDetails:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        visit_duration_h:
+          type: number
+        message_from_chlaus:
+          type: string
+        client:
+          type: string
+          readOnly: true
+      required:
+        - visit_duration_h
+        - message_from_chlaus
+    ClientAvailability:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        client:
+          type: string
+        start:
+          type: string
+          format: date-time
+          example: '2023-09-16T15:06:55Z'
+        end:
+          type: string
+          format: date-time
+          example: '2023-09-16T15:06:55Z'
+      required:
+        - client
+        - start
+        - end
+    DrivingTimeMatrix:
+      type: object
+      properties:
+        locationsCSV:
+          type: string
+        matrix:
+          type: object
+      required:
+        - locationsCSV
+        - matrix
+    TimeBetweenData:
+      properties:
+        time:
+          type: number
+      required:
+        - time
+      type: object
+    Tour:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 255
+        jwlers:
+          type: array
+          items:
+            type: string
+        elements:
+          type: array
+          items:
+            type: string
+          readOnly: true
+        date:
+          type: string
+          format: date
+        start:
+          type: string
+          readOnly: true
+        end:
+          type: string
+          readOnly: true
+      required:
+        - name
+        - date
+    TourElement:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        tour:
+          type: string
+        start:
+          type: string
+          format: date-time
+          example: '2023-09-16T15:06:55Z'
+        end:
+          type: string
+          format: date-time
+          example: '2023-09-16T15:06:55Z'
+        type:
+          enum:
+            - V
+            - D
+            - B
+          type: string
+        client:
+          type: string
+          nullable: true
+      required:
+        - tour
+        - start
+        - end
+    AuthToken:
+      type: object
+      properties:
+        username:
+          type: string
+          writeOnly: true
+        password:
+          type: string
+          writeOnly: true
+        token:
+          type: string
+          readOnly: true
+      required:
+        - username
+        - password

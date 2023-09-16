@@ -77,12 +77,12 @@ export default defineComponent({
       const sameDayTours = this.store.toursByDay.get(getDayKeyOfTour(this.tour!))!;
       const currentTourMutable = this.store.data.tours.get(this.tour!.id!)!;
       sameDayTours.forEach(to => {
-        const idx = to.jwlers.indexOf(jwlerUrl);
+        const idx = to.jwlers!.indexOf(jwlerUrl);
         if (idx >= 0) {
-          to.jwlers.splice(idx, 1);
+          to.jwlers!.splice(idx, 1);
         }
       });
-      currentTourMutable.jwlers.push(jwlerUrl);
+      currentTourMutable.jwlers!.push(jwlerUrl);
     },
     dropClient(event: DragEvent) {
       const dragData = getDragData(event);
