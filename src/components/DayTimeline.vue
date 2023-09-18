@@ -2,8 +2,6 @@
 import {defineComponent} from "vue";
 import TourTimeline from "@/components/TourTimeline.vue";
 import {
-  extractId,
-  extractIdInt,
   findNewTourId,
   getDayKeyOfClientAvailability,
   getDayKeyOfDate,
@@ -22,7 +20,6 @@ import CollapsibleContent from "@/components/CollapsibleContent.vue";
 import {ObjectType, startDrag} from "@/drag_drop";
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 import TimelineElement from "@/components/TimelineElement.vue";
-import {getClientUrl} from "@/api_url_builder";
 import {DEFAULT_TIME_RANGE} from "@/const";
 import type {Client} from "@/api/models/Client";
 import type {ClientAvailability} from "@/api/models/ClientAvailability";
@@ -66,7 +63,7 @@ export default defineComponent({
       mounted: false,
       ObjectType,
       draggingTourElement: {
-        tour: "",
+        tour: 0,
         start: new Date(0),
         end: new Date(0),
       } as TourElement,
@@ -79,7 +76,6 @@ export default defineComponent({
     startDrag,
     formatStartEnd,
     formatDeltaSeconds,
-    extractId,
     getDayKeyOfTour,
     addNewTour() {
       const newId = findNewTourId();
@@ -97,11 +93,11 @@ export default defineComponent({
         this.rangeStartAsDate.getTime() + parseFloat(possibleClient.client.requiredTime!) * 1000,
       );
       this.draggingTourElement = {
-        tour: "",
+        tour: 0,
         start: this.rangeStartAsDate,
         end: endDate,
         type: TourElementTypeEnum.V,
-        client: getClientUrl(possibleClient.client.id!),
+        client: possibleClient.client.id!,
       };
 
       const imgElement = (this.$refs.draggingElementImageContainer as HTMLElement).getElementsByClassName(
@@ -136,7 +132,7 @@ export default defineComponent({
     possibleClients() {
       const result = [] as PossibleClientData[];
       this.store.unassignedClients.forEach((client, clientId) => {
-        const avs = this.store.data.clientAvailabilities.get(clientId)!;
+        const avs = this.store.data.clientAvailabilities.get(clientId) ?? [];
         let avToday = null;
         let otherAvs = [];
         for (let i = 0; i < avs.length; i++) {
@@ -147,7 +143,7 @@ export default defineComponent({
           }
         }
         if (avToday != null) {
-          const visitLocationId = extractIdInt(client.visitLocation);
+          const visitLocationId = client.visitLocation;
           const location = this.store.data.locations.get(visitLocationId);
           result.push({
             client: client,
@@ -163,12 +159,7 @@ export default defineComponent({
     possibleJwlers() {
       const jwlerIds = new Set<number>();
       this.store.data.jwlers.forEach((_, id) => jwlerIds.add(id));
-      this.tours.forEach(tour =>
-        tour
-          .jwlers!.map(extractId)
-          .map(x => parseInt(x))
-          .forEach(id => jwlerIds.delete(id)),
-      );
+      this.tours.forEach(tour => tour.jwlers!.forEach(id => jwlerIds.delete(id)));
       const result = [] as PossibleJwlerData[];
       jwlerIds.forEach(id => {
         const av = getJwlerAvailabilityOnDay(id, this.dayKey);

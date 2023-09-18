@@ -12,7 +12,6 @@ import {
 import JWlerLabel from "@/components/JWlerLabel.vue";
 import {HourRange} from "@/types";
 import {allowDrop, dropTourElement, getDragData, getDraggedIdInt, ObjectType, startDrag} from "@/drag_drop";
-import {getClientUrl, getJwlerUrl, getUrl} from "@/api_url_builder";
 import {useStore} from "@/model/store";
 import TimelineElement from "@/components/TimelineElement.vue";
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
@@ -73,16 +72,15 @@ export default defineComponent({
       const dragData = getDragData(event);
       let jwlerId =
         dragData.type == ObjectType.JWLER ? getDraggedIdInt(event) : parseInt((dragData.id as string).split(";")[1]);
-      const jwlerUrl = getJwlerUrl(jwlerId);
       const sameDayTours = this.store.toursByDay.get(getDayKeyOfTour(this.tour!))!;
       const currentTourMutable = this.store.data.tours.get(this.tour!.id!)!;
       sameDayTours.forEach(to => {
-        const idx = to.jwlers!.indexOf(jwlerUrl);
+        const idx = to.jwlers!.indexOf(jwlerId);
         if (idx >= 0) {
           to.jwlers!.splice(idx, 1);
         }
       });
-      currentTourMutable.jwlers!.push(jwlerUrl);
+      currentTourMutable.jwlers!.push(jwlerId);
     },
     dropClient(event: DragEvent) {
       const dragData = getDragData(event);
@@ -97,11 +95,11 @@ export default defineComponent({
         const end = new Date(start.getTime() + durationSecs * 1000);
         const newElement: TourElement = {
           id: findNewTourElementId(),
-          tour: getUrl("tour", this.tourId),
+          tour: this.tourId,
           start: start,
           end: end,
           type: TourElementTypeEnum.V,
-          client: getClientUrl(clientId),
+          client: clientId,
         };
         addTourElement(this.tourId, newElement);
       } else if (dragData.type == ObjectType.TOUR_ELEMENT) {

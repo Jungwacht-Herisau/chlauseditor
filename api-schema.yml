@@ -1726,7 +1726,7 @@ components:
           readOnly: true
         name:
           type: string
-          maxLength: 255
+          maxLength: 65535
         active:
           type: boolean
         chlaus:
@@ -1736,8 +1736,7 @@ components:
         availabilities:
           type: array
           items:
-            type: string
-          readOnly: true
+            type: integer
       required:
         - name
         - chlaus
@@ -1749,15 +1748,15 @@ components:
           type: integer
           readOnly: true
         jwler:
-          type: string
+          type: integer
         start:
           type: string
           format: date-time
-          example: '2023-09-16T15:06:55Z'
+          example: '2023-09-18T18:36:06Z'
         end:
           type: string
           format: date-time
-          example: '2023-09-16T15:06:55Z'
+          example: '2023-09-18T18:36:06Z'
       required:
         - jwler
         - start
@@ -1770,7 +1769,7 @@ components:
           readOnly: true
         string:
           type: string
-          maxLength: 1023
+          maxLength: 65535
       required:
         - string
     Client:
@@ -1781,22 +1780,22 @@ components:
           readOnly: true
         first_name:
           type: string
-          maxLength: 255
+          maxLength: 65535
         last_name:
           type: string
-          maxLength: 255
+          maxLength: 65535
         email_address:
           type: string
           format: email
           maxLength: 254
         phone_number1:
           type: string
-          maxLength: 255
+          maxLength: 65535
         phone_number2:
           type: string
-          maxLength: 255
+          maxLength: 65535
         visit_location:
-          type: string
+          type: integer
         visit_location_description:
           type: string
         indoor_outdoor:
@@ -1814,14 +1813,13 @@ components:
         general_comments:
           type: string
         family_details:
-          type: string
+          type: integer
         organisation_details:
-          type: string
+          type: integer
         availabilities:
           type: array
           items:
-            type: string
-          readOnly: true
+            type: integer
         required_time:
           type: string
           readOnly: true
@@ -1846,13 +1844,11 @@ components:
         adult_infos:
           type: array
           items:
-            type: string
-          readOnly: true
+            type: integer
         child_infos:
           type: array
           items:
-            type: string
-          readOnly: true
+            type: integer
         client:
           type: string
           readOnly: true
@@ -1864,12 +1860,12 @@ components:
           readOnly: true
         name:
           type: string
-          maxLength: 255
+          maxLength: 65535
         description:
           type: string
-          maxLength: 255
+          maxLength: 65535
         family_client_details:
-          type: string
+          type: integer
       required:
         - name
         - description
@@ -1882,10 +1878,10 @@ components:
           readOnly: true
         first_name:
           type: string
-          maxLength: 255
+          maxLength: 65535
         last_name:
           type: string
-          maxLength: 255
+          maxLength: 65535
         gender:
           enum:
             - m
@@ -1893,34 +1889,34 @@ components:
           type: string
         age:
           type: string
-          maxLength: 15
+          maxLength: 65535
         school_class:
           type: string
-          maxLength: 15
+          maxLength: 65535
         teacher:
           type: string
-          maxLength: 255
+          maxLength: 65535
         favourite_subject:
           type: string
-          maxLength: 255
+          maxLength: 65535
         likes_to_eat:
           type: string
-          maxLength: 255
+          maxLength: 65535
         hates_to_eat:
           type: string
-          maxLength: 255
+          maxLength: 65535
         pets:
           type: string
-          maxLength: 255
+          maxLength: 65535
         sport:
           type: string
-          maxLength: 255
+          maxLength: 65535
         instrument:
           type: string
-          maxLength: 255
+          maxLength: 65535
         favourite_toy:
           type: string
-          maxLength: 255
+          maxLength: 65535
         praise:
           type: string
         improve:
@@ -1928,7 +1924,7 @@ components:
         performance:
           type: string
           description: "Hat das Kind etwas f\xFCr den Samichlaus vorbereitet?"
-          maxLength: 255
+          maxLength: 65535
         need_to_know:
           type: string
           description: "Was sollte der Samichlaus sonst noch wissen? (Sprachfehler,\
@@ -1937,7 +1933,7 @@ components:
           type: string
           description: "Was darf der Samichlaus auf keinen Fall erw\xE4hnen?"
         family_client_details:
-          type: string
+          type: integer
       required:
         - first_name
         - last_name
@@ -1973,15 +1969,15 @@ components:
           type: integer
           readOnly: true
         client:
-          type: string
+          type: integer
         start:
           type: string
           format: date-time
-          example: '2023-09-16T15:06:55Z'
+          example: '2023-09-18T18:36:06Z'
         end:
           type: string
           format: date-time
-          example: '2023-09-16T15:06:55Z'
+          example: '2023-09-18T18:36:06Z'
       required:
         - client
         - start
@@ -2011,16 +2007,15 @@ components:
           readOnly: true
         name:
           type: string
-          maxLength: 255
+          maxLength: 65535
         jwlers:
           type: array
           items:
-            type: string
+            type: integer
         elements:
           type: array
           items:
-            type: string
-          readOnly: true
+            type: integer
         date:
           type: string
           format: date
@@ -2040,15 +2035,15 @@ components:
           type: integer
           readOnly: true
         tour:
-          type: string
+          type: integer
         start:
           type: string
           format: date-time
-          example: '2023-09-16T15:06:55Z'
+          example: '2023-09-18T18:36:06Z'
         end:
           type: string
           format: date-time
-          example: '2023-09-16T15:06:55Z'
+          example: '2023-09-18T18:36:06Z'
         type:
           enum:
             - V
@@ -2056,7 +2051,7 @@ components:
             - B
           type: string
         client:
-          type: string
+          type: integer
           nullable: true
       required:
         - tour

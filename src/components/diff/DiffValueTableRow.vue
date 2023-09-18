@@ -1,5 +1,4 @@
 <script lang="ts">
-import type {PropType} from "vue";
 import {defineComponent} from "vue";
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 import {formatDeltaSeconds} from "@/util";
@@ -50,9 +49,7 @@ export default defineComponent({
     },
     badgeBgClass() {
       if (this.isNumberChange) {
-        return this.changedValue > this.originalValue !== this.moreIsBetter
-          ? "bg-danger"
-          : "bg-success";
+        return this.changedValue > this.originalValue !== this.moreIsBetter ? "bg-danger" : "bg-success";
       } else {
         return "bg-primary";
       }
@@ -61,8 +58,10 @@ export default defineComponent({
   methods: {
     formatValue(value: number | string) {
       switch (this.formatter) {
-        case "deltaSeconds": return formatDeltaSeconds(value as number);
-        default: return value.toString();
+        case "deltaSeconds":
+          return formatDeltaSeconds(value as number);
+        default:
+          return value.toString();
       }
     },
   },

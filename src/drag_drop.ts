@@ -1,7 +1,6 @@
 import {useStore} from "@/model/store";
-import {addTourElement, extractIdInt, popTourElement} from "@/model/model_utils";
+import {addTourElement, popTourElement} from "@/model/model_utils";
 import {Tour, TourElement} from "@/api";
-import {getUrl} from "@/api_url_builder";
 import {decodeUpperCase, encodeUpperCase} from "@/util";
 
 export enum ObjectType {
@@ -86,7 +85,7 @@ export function deleteDroppedElement(event: DragEvent) {
         case ObjectType.ASSIGNED_JWLER: {
             const [tourId, jwlerId] = getTwoDraggedIds(event);
             const tour = store.data.tours.get(tourId)!;
-            tour.jwlers = tour.jwlers!.filter(jwlerUrl => extractIdInt(jwlerUrl) != jwlerId);
+            tour.jwlers = tour.jwlers!.filter(id => id != jwlerId);
             break;
         }
     }
@@ -97,12 +96,12 @@ export function dropTourElement(event: DragEvent, newTour: Tour, newStart: Date)
     const [oldTourId, elementId] = getTwoDraggedIds(event);
     const oldElement = popTourElement(oldTourId, elementId);
     const newElement = {
-        id: oldElement.id,
-        tour: getUrl("tour", newTour.id!),
-        start: newStart,
-        end: new Date(newStart.getTime() + oldElement.end.getTime() - oldElement.start.getTime()),
-        type: oldElement.type,
-        client: oldElement.client,
+      id: oldElement.id,
+      tour: newTour.id!,
+      start: newStart,
+      end: new Date(newStart.getTime() + oldElement.end.getTime() - oldElement.start.getTime()),
+      type: oldElement.type,
+      client: oldElement.client,
     } as TourElement;
     addTourElement(newTour.id!, newElement);
 }
