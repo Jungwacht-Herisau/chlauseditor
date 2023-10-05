@@ -210,6 +210,7 @@ export default defineComponent({
                 <th>Name</th>
                 <th>Addresse</th>
                 <th>Dauer</th>
+                <th>Zeit</th>
                 <th>Besuchbar</th>
               </tr>
             </thead>
@@ -226,6 +227,7 @@ export default defineComponent({
                 </td>
                 <td>{{ cl.locationString }}</td>
                 <td>{{ formatDeltaSeconds(parseFloat(cl.client.requiredTime!)) }}</td>
+                <td>{{ formatStartEnd(cl.availabilityToday) }}</td>
                 <td>
                   <span v-if="cl.otherAvailabilities.length == 0"> Nur heute </span>
                   <span v-else> Heute+{{ cl.otherAvailabilities.length }}</span>
