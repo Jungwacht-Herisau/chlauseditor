@@ -91,19 +91,21 @@ export default {
       </div>
     </div>
   </nav>
-  <RouterView v-if="dataReady" />
-  <div v-else id="spinner-container">
-    <div class="progress">
-      <div
-        class="progress-bar"
-        role="progressbar"
-        :style="{width: loadingProgress * 100 + '%'}"
-        aria-valuemin="0"
-        :aria-valuenow="loadingProgress * 100"
-        aria-valuemax="100"
-      ></div>
+  <main>
+    <RouterView v-if="dataReady" />
+    <div v-else id="spinner-container">
+      <div class="progress">
+        <div
+          class="progress-bar"
+          role="progressbar"
+          :style="{width: loadingProgress * 100 + '%'}"
+          aria-valuemin="0"
+          :aria-valuenow="loadingProgress * 100"
+          aria-valuemax="100"
+        ></div>
+      </div>
     </div>
-  </div>
+  </main>
   <SaveDialog />
 </template>
 
@@ -125,5 +127,10 @@ export default {
 
 #spinner-container .progress {
   width: 50vw;
+}
+
+main {
+  padding-top: 0.75rem;
+  padding-left: 0.75rem;
 }
 </style>

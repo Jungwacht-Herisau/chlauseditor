@@ -392,3 +392,15 @@ export function handleAfterApiDestroy<T extends AnyModelType & HasId>(obj: T) {
     store.data.clientAvailabilities.delete(id);
   }
 }
+
+export function getTourElementDescription(element: TourElement): string {
+  switch (element.type) {
+    case TourElementTypeEnum.V:
+      return `Besuch ${element.client}`;
+    case TourElementTypeEnum.D:
+      return "Fahrt";
+    case TourElementTypeEnum.B:
+      return "Pause";
+  }
+  return "?";
+}

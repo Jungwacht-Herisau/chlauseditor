@@ -4,6 +4,7 @@ import {
   faCaretDown,
   faCaretRight,
   faCarSide,
+  faCheck,
   faFileCircleMinus,
   faFileCirclePlus,
   faFilePen,
@@ -31,4 +32,5 @@ export function addIconsToLibrary() {
   library.add(faFileCircleMinus);
   library.add(faBug);
   library.add(faRightFromBracket);
+  library.add(faCheck);
 }

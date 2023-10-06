@@ -1,11 +1,17 @@
 <script lang="ts">
+import AllClientsVisitedValidation from "@/components/validation/AllClientsVisitedValidation.vue";
+import AllTourElementsInsideTrioAvailableTimespanValidation
+  from "@/components/validation/AllTourElementsInsideTrioAvailableTimespanValidation.vue";
+
 export default {
   name: "ValidationView",
-};
+  components: {AllTourElementsInsideTrioAvailableTimespanValidation, AllClientsVisitedValidation},
+;
 </script>
 
 <template>
-  <h2>TODO Validation</h2>
+  <AllClientsVisitedValidation />
+  <AllTourElementsInsideTrioAvailableTimespanValidation />
 </template>
 
 <style scoped></style>
