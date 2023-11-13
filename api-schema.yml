@@ -1752,11 +1752,11 @@ components:
         start:
           type: string
           format: date-time
-          example: '2023-09-18T18:36:06Z'
+          example: '2023-11-13T22:35:42Z'
         end:
           type: string
           format: date-time
-          example: '2023-09-18T18:36:06Z'
+          example: '2023-11-13T22:35:42Z'
       required:
         - jwler
         - start
@@ -1973,11 +1973,11 @@ components:
         start:
           type: string
           format: date-time
-          example: '2023-09-18T18:36:06Z'
+          example: '2023-11-13T22:35:42Z'
         end:
           type: string
           format: date-time
-          example: '2023-09-18T18:36:06Z'
+          example: '2023-11-13T22:35:42Z'
       required:
         - client
         - start
@@ -2012,10 +2012,6 @@ components:
           type: array
           items:
             type: integer
-        elements:
-          type: array
-          items:
-            type: integer
         date:
           type: string
           format: date
@@ -2039,11 +2035,11 @@ components:
         start:
           type: string
           format: date-time
-          example: '2023-09-18T18:36:06Z'
+          example: '2023-11-13T22:35:42Z'
         end:
           type: string
           format: date-time
-          example: '2023-09-18T18:36:06Z'
+          example: '2023-11-13T22:35:42Z'
         type:
           enum:
             - V

@@ -14,6 +14,7 @@ import {
   faRightFromBracket,
   faRotateLeft,
   faRotateRight,
+  faScissors,
   faTrashCan,
 } from "@fortawesome/free-solid-svg-icons";
 
@@ -33,4 +34,5 @@ export function addIconsToLibrary() {
   library.add(faBug);
   library.add(faRightFromBracket);
   library.add(faCheck);
+  library.add(faScissors);
 }

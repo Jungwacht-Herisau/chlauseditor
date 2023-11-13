@@ -156,6 +156,15 @@ export const useStore = defineStore("data", {
               .listClients()
               .then(response => response.forEach(c => this.data.clients.set(c.id!, c)))
               .then(() => "clients"),
+          () => {
+            const locationIds = Array.from(this.data.clients.values()).map(cl => cl.visitLocation);
+            locationIds.push(this.data.baseLocation.id!);
+            const locationsCSV = locationIds.sort((a, b) => a - b).join(";");
+            return apiClient
+              .retrieveDrivingTimeMatrix(locationsCSV)
+              .then(response => (this.data.drivingTimeMatrix = response))
+              .then(() => "drivingTimeMatrix");
+          },
         ],
         [
           () =>
@@ -175,21 +184,14 @@ export const useStore = defineStore("data", {
                 response.forEach(l => this.data.locations.set(l.id!, l));
               })
               .then(() => "locations"),
-          () => {
-            const locationsCSV = Array.from(this.data.locations.keys())
-              .sort((a, b) => a - b)
-              .join(";");
-            return apiClient
-              .retrieveDrivingTimeMatrix(locationsCSV)
-              .then(response => (this.data.drivingTimeMatrix = response))
-              .then(() => "drivingTimeMatrix");
-          },
         ],
         [
           () =>
             apiClient
               .listTours()
-              .then(response => response.forEach(t => this.data.tours.set(t.id!, t)))
+              .then(response => {
+                response.forEach(t => this.data.tours.set(t.id!, t));
+              })
               .then(() => "tours"),
         ],
         [

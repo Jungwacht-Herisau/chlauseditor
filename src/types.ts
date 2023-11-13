@@ -31,3 +31,8 @@ export interface StartEnd {
   start: Date;
   end: Date;
 }
+
+export interface AttributeInfo {
+  name: string;
+  type: string;
+}

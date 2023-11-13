@@ -84,7 +84,6 @@ export default defineComponent({
         name: "Neue Tour",
         date: this.dayKey,
         jwlers: [],
-        elements: [],
       });
     },
     startPossibleClientDrag(possibleClient: PossibleClientData, event: DragEvent) {

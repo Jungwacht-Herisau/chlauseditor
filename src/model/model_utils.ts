@@ -156,6 +156,9 @@ export function getDriveTimeMs(location0: number, location1: number): number {
 export async function insertDriveElements(tour: Tour) {
   //todo there are still some ordering issues
   const store = useStore();
+  if (!store.data.tourElements.has(tour.id!) || store.data.tourElements.get(tour.id!)!.length == 0) {
+    return;
+  }
   const oldElements = store.data.tourElements.get(tour.id!)!.sort((a, b) => a.start.getTime() - b.start.getTime());
   const newElements = [] as TourElement[];
   const hoursOfTour = getHoursOfTour(tour);
@@ -267,8 +270,6 @@ export async function insertDriveElements(tour: Tour) {
   }
   store.data.tourElements.set(tour.id!, newElements);
 
-  tour.elements = newElements.map(el => el.id!);
-
   newElements.forEach(el => {
     console.log(el.start.toLocaleTimeString(), el.end.toLocaleTimeString(), el.type);
   });
@@ -280,9 +281,28 @@ export function deepCloneMap<K, V>(value: Map<K, V>): Map<K, V> {
   return result;
 }
 
+const DATE_MARKER = "c971f579-23b6-4aa2-b9da-3d876a0c377c";
+const dateSerializer = function (this: any, key: any, value: any) {
+  if (this[key] instanceof Date) {
+    return DATE_MARKER + this[key].toISOString();
+  }
+  return this[key];
+};
+
+const dateReviver = function (key: any, value: any) {
+  if (typeof value == "string" && value.startsWith(DATE_MARKER)) {
+    return new Date(value.substring(DATE_MARKER.length));
+  }
+  return value;
+};
+
 export function deepCloneObject<T>(obj: T): T {
   //this seems to be the simplest solution that is reliable enough...
-  const clone = JSON.parse(JSON.stringify(obj));
+  if (Array.isArray(obj)) {
+    return obj.map(element => deepCloneObject(element)) as T;
+  }
+  const json = JSON.stringify(obj, dateSerializer);
+  const clone = JSON.parse(json, dateReviver);
   Object.setPrototypeOf(clone, Object.getPrototypeOf(obj));
   return clone;
 }
@@ -297,10 +317,6 @@ export function popTourElement(tourId: number, elementId: number): TourElement {
     const remainingElements = elements.filter(te => te.id != elementId);
     store.data.tourElements.set(tourId, remainingElements);
   }
-  const tour = store.data.tours.get(tourId);
-  if (tour) {
-    tour.elements = tour.elements!.filter(e => e != elementId);
-  }
   return poppedElement;
 }
 
@@ -311,7 +327,6 @@ export function addTourElement(tourId: number, newElement: TourElement) {
   } else {
     store.data.tourElements.set(tourId, [newElement]);
   }
-  store.data.tours.get(tourId)!.elements!.push(newElement.id!);
 }
 
 export function modelEquals<T extends {[key: string]: any}>(a: T, b: T) {

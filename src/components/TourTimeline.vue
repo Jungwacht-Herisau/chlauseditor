@@ -137,17 +137,29 @@ export default defineComponent({
               <font-awesome-icon icon="car-side" />
               Fahrten einfügen
             </button>
+          </li>
+          <li>
             <button type="button" class="dropdown-item" @click="renameTour">
               <font-awesome-icon icon="pen" />
               Umbenennen
             </button>
+          </li>
+          <li>
             <button type="button" class="dropdown-item text-danger" @click="deleteTour">
               <font-awesome-icon icon="trash-can" />
               Löschen
             </button>
+          </li>
+          <li>
             <button type="button" class="dropdown-item" @click="printDebugInfo">
               <font-awesome-icon icon="bug" />
               Debug
+            </button>
+          </li>
+          <li>
+            <button type="button" class="dropdown-item" @click="openSplitModal">
+              <font-awesome-icon icon="scissors" />
+              Aufteilen
             </button>
           </li>
         </ul>
