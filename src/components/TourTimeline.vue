@@ -117,6 +117,9 @@ export default defineComponent({
       console.debug(toRaw(this.tour));
       console.debug(toRaw(this.elements));
     },
+    openSplitModal() {
+      //todo implement
+    },
   },
 });
 </script>
