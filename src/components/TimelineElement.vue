@@ -99,12 +99,21 @@ export default defineComponent({
       }
     },
     tooltipHtml() {
-      let html = `Zeit: ${formatStartEnd(this.tourElement!)}<br>` + `Dauer: ${formatHours(this.durationHours)}<br>`;
+      let html = `Zeit: ${formatStartEnd(this.tourElement!)}<br>Dauer: ${formatHours(this.durationHours)}<br>`;
       if (this.client != null) {
         html += "<hr>";
         const locationStr = this.store.data.locations.get(this.client!.visitLocation)?.string;
         html += `${this.client?.firstName} ${this.client?.lastName}<br>`;
         html += `${locationStr}<br>`;
+        html += "<hr>";
+        const allAvailabilities = this.store.data.clientAvailabilities.get(this.client.id!);
+        const avsOnThisDay = allAvailabilities?.filter(av => av.start.toDateString() === this.startDate.toDateString());
+        if (avsOnThisDay) {
+          const startStr = formatHours(toFractionHours(avsOnThisDay[0].start));
+          const endStr = formatHours(toFractionHours(avsOnThisDay[0].end));
+          html += `Verfügbar ${startStr}-${endStr}<br>`;
+        }
+        html += `Besuchbar an ${allAvailabilities?.length ?? 0} Tagen`;
       }
       return html;
     },
