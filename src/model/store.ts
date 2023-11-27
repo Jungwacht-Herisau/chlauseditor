@@ -159,6 +159,7 @@ export const useStore = defineStore("data", {
               .then(() => "clients"),
           () => {
             const locationIds = Array.from(this.data.clients.values()).map(cl => cl.visitLocation);
+            console.log("locationIds", locationIds);
             locationIds.push(this.data.baseLocation.id!);
             const locationIdsUnique = [...new Set(locationIds)];
             const locationIdsSorted = locationIdsUnique.sort((a, b) => a - b);
