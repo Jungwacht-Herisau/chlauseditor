@@ -5,6 +5,10 @@ import AllTourElementsInsideTrioAvailableTimespanValidation from "@/components/v
 export default {
   name: "ValidationView",
   components: {AllTourElementsInsideTrioAvailableTimespanValidation, AllClientsVisitedValidation},
+
+  mounted() {
+    console.log("ValidationView mounted");
+  },
 };
 </script>
 

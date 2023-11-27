@@ -82,12 +82,20 @@ export function getJwlerAvailabilitiesOfTour(tour: Tour): JWlerAvailability[] {
   for (let iJw = 0; iJw < tour.jwlers!.length; iJw++) {
     const jwlerId = tour.jwlers![iJw];
     const allAv = useStore().data.jwlerAvailabilities.get(jwlerId)!;
+    let jwlerAv: JWlerAvailability | null = null;
     for (let iAv = 0; iAv < allAv.length; iAv++) {
       if (allAv[iAv].start.toDateString() == tourDate) {
-        availabilities.push(allAv[iAv]);
+        jwlerAv = allAv[iAv];
         break;
       }
     }
+    if (jwlerAv == null) {
+      jwlerAv = new JWlerAvailability();
+      jwlerAv.jwler = jwlerId;
+      jwlerAv.start = new Date(tour.date);
+      jwlerAv.end = new Date(tour.date);
+    }
+    availabilities.push(jwlerAv);
   }
   return availabilities;
 }

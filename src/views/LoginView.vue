@@ -12,6 +12,9 @@ export default defineComponent({
       error: "",
     };
   },
+  mounted() {
+    console.log("LoginView mounted");
+  },
   methods: {
     async tryLogin() {
       const err = await getApiToken(this.user, this.pass);

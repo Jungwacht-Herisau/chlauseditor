@@ -130,6 +130,7 @@ export const useStore = defineStore("data", {
   },
   actions: {
     fetchData() {
+      console.log("store.fetchData()");
       const apiClient = ApiClientFactory.getInstance();
 
       const fetchers = [
@@ -159,7 +160,9 @@ export const useStore = defineStore("data", {
           () => {
             const locationIds = Array.from(this.data.clients.values()).map(cl => cl.visitLocation);
             locationIds.push(this.data.baseLocation.id!);
-            const locationsCSV = locationIds.sort((a, b) => a - b).join(";");
+            const locationIdsUnique = [...new Set(locationIds)];
+            const locationIdsSorted = locationIdsUnique.sort((a, b) => a - b);
+            const locationsCSV = locationIdsSorted.join(";");
             return apiClient
               .retrieveDrivingTimeMatrix(locationsCSV)
               .then(response => (this.data.drivingTimeMatrix = response))

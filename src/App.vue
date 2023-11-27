@@ -18,6 +18,7 @@ export default {
     };
   },
   mounted() {
+    console.log("App mounted");
     document.body.setAttribute("data-bs-theme", "dark");
     if (!hasApiToken()) {
       router.push("/");
@@ -92,8 +93,8 @@ export default {
     </div>
   </nav>
   <main>
-    <RouterView v-if="dataReady" />
-    <div v-else id="spinner-container">
+    <RouterView />
+    <div v-if="false" id="spinner-container">
       <div class="progress">
         <div
           class="progress-bar"

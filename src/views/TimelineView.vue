@@ -7,11 +7,13 @@ import {allowDropDeletableElements, deleteDroppedElement} from "@/drag_drop";
 export default {
   components: {CollapsibleContent, DayTimeline},
 
-  mounted() {},
   data() {
     return {
       store: useStore(),
     };
+  },
+  mounted() {
+    console.log("TimelineView mounted");
   },
   methods: {
     deleteDroppedElement,
@@ -22,7 +24,11 @@ export default {
 </script>
 
 <template>
-  <main @dragover="event => allowDropDeletableElements(event)" @drop="event => deleteDroppedElement(event)">
+  <main
+    v-if="store.fetchingProgress.finished()"
+    @dragover="event => allowDropDeletableElements(event)"
+    @drop="event => deleteDroppedElement(event)"
+  >
     <CollapsibleContent
       v-for="dateKey in store.days"
       :key="dateKey"
