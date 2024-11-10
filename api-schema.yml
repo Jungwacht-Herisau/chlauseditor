@@ -140,7 +140,7 @@ paths:
         - api
   /api/jwleravailability/:
     get:
-      operationId: listJWlerAvailabilitys
+      operationId: listJWlerAvailabilities
       description: ''
       parameters: [ ]
       responses:
@@ -1103,7 +1103,7 @@ paths:
         - api
   /api/clientavailability/:
     get:
-      operationId: listClientAvailabilitys
+      operationId: listClientAvailabilities
       description: ''
       parameters: [ ]
       responses:
@@ -1238,7 +1238,7 @@ paths:
         - api
   /api/drivingtimematrix/:
     get:
-      operationId: listDrivingTimeMatrixs
+      operationId: listDrivingTimeMatrices
       description: ''
       parameters: [ ]
       responses:
@@ -1752,11 +1752,11 @@ components:
         start:
           type: string
           format: date-time
-          example: '2023-11-13T22:35:42Z'
+          example: '2024-11-10T13:48:37Z'
         end:
           type: string
           format: date-time
-          example: '2023-11-13T22:35:42Z'
+          example: '2024-11-10T13:48:37Z'
       required:
         - jwler
         - start
@@ -1769,9 +1769,8 @@ components:
           readOnly: true
         string:
           type: string
+          nullable: true
           maxLength: 65535
-      required:
-        - string
     Client:
       type: object
       properties:
@@ -1973,11 +1972,11 @@ components:
         start:
           type: string
           format: date-time
-          example: '2023-11-13T22:35:42Z'
+          example: '2024-11-10T13:48:37Z'
         end:
           type: string
           format: date-time
-          example: '2023-11-13T22:35:42Z'
+          example: '2024-11-10T13:48:37Z'
       required:
         - client
         - start
@@ -1987,11 +1986,14 @@ components:
       properties:
         locationsCSV:
           type: string
-        matrix:
+        durations:
+          type: object
+        distances:
           type: object
       required:
         - locationsCSV
-        - matrix
+        - durations
+        - distances
     TimeBetweenData:
       properties:
         time:
@@ -2035,11 +2037,11 @@ components:
         start:
           type: string
           format: date-time
-          example: '2023-11-13T22:35:42Z'
+          example: '2024-11-10T13:48:37Z'
         end:
           type: string
           format: date-time
-          example: '2023-11-13T22:35:42Z'
+          example: '2024-11-10T13:48:37Z'
         type:
           enum:
             - V

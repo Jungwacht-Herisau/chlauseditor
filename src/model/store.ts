@@ -144,7 +144,7 @@ export const useStore = defineStore("data", {
         [
           () =>
             apiClient
-              .listJWlerAvailabilitys()
+              .listJWlerAvailabilities()
               .then(response => {
                 const grouped = groupBy(response, ja => ja.jwler);
                 grouped.forEach((value, key) => this.data.jwlerAvailabilities.set(key, value));
@@ -173,7 +173,7 @@ export const useStore = defineStore("data", {
         [
           () =>
             apiClient
-              .listClientAvailabilitys()
+              .listClientAvailabilities()
               .then(response => {
                 const grouped = groupBy(response, ca => ca.client);
                 grouped.forEach((value, key) => this.data.clientAvailabilities.set(key, value));

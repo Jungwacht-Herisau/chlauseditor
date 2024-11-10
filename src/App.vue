@@ -1,6 +1,6 @@
 <script lang="ts">
 import {RouterView} from "vue-router";
-import {deleteApiToken, hasApiToken} from "@/api_client_factory";
+import {deleteApiToken, hasApiToken, setAuthToken} from "@/api_client_factory";
 import router from "@/router";
 import {useStore} from "@/model/store";
 import SaveDialog from "@/components/SaveDialog.vue";
@@ -18,6 +18,15 @@ export default {
     };
   },
   mounted() {
+    window.addEventListener("message", event => {
+      const data: string = event.data;
+      if (data.startsWith("token=")) {
+        const token = data.substring("token=".length);
+        setAuthToken(token);
+        console.log("auth token set from outside iframe");
+        router.push("/timeline");
+      }
+    });
     console.log("App mounted");
     document.body.setAttribute("data-bs-theme", "dark");
     if (!hasApiToken()) {

@@ -49,7 +49,7 @@ export async function getApiToken(user: string, pass: string) {
   const response = await fetch(`${API_URL}/api-token-auth/`, init);
   const json: any = await response.json();
   if ("token" in json) {
-    localStorage.setItem("api-token", json.token);
+    setAuthToken(json.token);
     return null;
   } else if ("non_field_errors" in json) {
     return (json.non_field_errors as string[]).join(", ");
@@ -63,4 +63,8 @@ export async function getApiToken(user: string, pass: string) {
     }
     return msg;
   }
+}
+
+export function setAuthToken(token: string) {
+  localStorage.setItem("api-token", token);
 }
