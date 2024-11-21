@@ -428,7 +428,7 @@ export function getTourElementDescription(element: TourElement): string {
   return "?";
 }
 
-export function getLocationDescription(location: Location): string {
+export function getLocationDescription(location: Location | undefined): string {
   if (location) {
     if (location.streetAndNumber && location.zip && location.city) {
       return `${location.streetAndNumber}, ${location.zip} ${location.city}`;
