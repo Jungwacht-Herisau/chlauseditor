@@ -19,9 +19,8 @@ export default {
   },
   mounted() {
     window.addEventListener("message", event => {
-      const data: string = event.data;
-      if (data.startsWith("token=")) {
-        const token = data.substring("token=".length);
+      if (typeof event.data === "string" && event.data.startsWith("token=")) {
+        const token = event.data.substring("token=".length);
         setAuthToken(token);
         console.log("auth token set from outside iframe");
         router.push("/timeline");

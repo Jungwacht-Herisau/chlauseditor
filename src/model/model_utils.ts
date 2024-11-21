@@ -1,9 +1,9 @@
-import type {HasId} from "@/util";
-import {arrayEquals, toDateISOString, toFractionHours} from "@/util";
-import type {DayKey} from "@/types";
-import {useStore} from "@/model/store";
-import {DEFAULT_TIME_RANGE} from "@/const";
-import {TourElementTypeEnum} from "@/api/models/TourElement";
+import type { HasId } from "@/util";
+import { arrayEquals, toDateISOString, toFractionHours } from "@/util";
+import type { DayKey } from "@/types";
+import { useStore } from "@/model/store";
+import { DEFAULT_TIME_RANGE } from "@/const";
+import { TourElementTypeEnum } from "@/api/models/TourElement";
 import {
   AdultInfo,
   ChildInfo,
@@ -19,7 +19,7 @@ import {
   Tour,
   TourElement,
 } from "@/api";
-import {toRaw} from "vue";
+import { toRaw } from "vue";
 
 export const MODEL_TYPES = [
   AdultInfo,
@@ -158,7 +158,7 @@ export function getDriveTimeMs(location0: number, location1: number): number {
   if (idx0 < 0 || idx1 < 0) {
     throw RangeError(`location(s) [${location0}, ${location1}] not in matrix ${locIdxs}`);
   }
-  return dtm.matrix[idx0][idx1] * 1000;
+  return dtm.durations[idx0][idx1] * 1000;
 }
 
 export async function insertDriveElements(tour: Tour) {
@@ -337,7 +337,7 @@ export function addTourElement(tourId: number, newElement: TourElement) {
   }
 }
 
-export function modelEquals<T extends {[key: string]: any}>(a: T, b: T) {
+export function modelEquals<T extends { [key: string]: any }>(a: T, b: T) {
   a = toRaw(a);
   b = toRaw(b);
   for (const type of MODEL_TYPES) {
@@ -426,4 +426,20 @@ export function getTourElementDescription(element: TourElement): string {
       return "Pause";
   }
   return "?";
+}
+
+export function getLocationDescription(location: Location): string {
+  if (location) {
+    if (location.streetAndNumber && location.zip && location.city) {
+      return `${location.streetAndNumber}, ${location.zip} ${location.city}`;
+    } else if (location.zip && location.city) {
+      return `${location.latitude},${location.longitude} ~${location.zip} ${location.city}`;
+    } else if (location.string) {
+      return location.string;
+    } else {
+      return `${location.latitude},${location.longitude}`;
+    }
+  } else {
+    return "";
+  }
 }

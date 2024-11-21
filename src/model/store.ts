@@ -154,15 +154,20 @@ export const useStore = defineStore("data", {
         [
           () =>
             apiClient
+              .baseLocation()
+              .then(response => (this.data.baseLocation = response))
+              .then(() => "baseLocation"),
+          () =>
+            apiClient
               .listClients()
               .then(response => response.forEach(c => this.data.clients.set(c.id!, c)))
               .then(() => "clients"),
           () => {
             const locationIds = Array.from(this.data.clients.values()).map(cl => cl.visitLocation);
-            console.log("locationIds", locationIds);
             locationIds.push(this.data.baseLocation.id!);
             const locationIdsUnique = [...new Set(locationIds)];
             const locationIdsSorted = locationIdsUnique.sort((a, b) => a - b);
+            console.log("locationIds", locationIdsSorted);
             const locationsCSV = locationIdsSorted.join(";");
             return apiClient
               .retrieveDrivingTimeMatrix(locationsCSV)
@@ -207,13 +212,6 @@ export const useStore = defineStore("data", {
                 grouped.forEach((value, key) => this.data.tourElements.set(key, value));
               })
               .then(() => "tourElements"),
-        ],
-        [
-          () =>
-            apiClient
-              .baseLocation()
-              .then(response => (this.data.baseLocation = response))
-              .then(() => "baseLocation"),
         ],
       ];
       this.fetchingProgress.total = fetchers.map(arr => arr.length).reduce((a, b) => a + b, 0);

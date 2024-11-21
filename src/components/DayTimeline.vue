@@ -9,6 +9,7 @@ import {
   getDisplayEndHourOfTour,
   getDisplayStartHourOfTour,
   getJwlerAvailabilityOnDay,
+  getLocationDescription,
 } from "@/model/model_utils";
 import TimeRuler from "@/components/TimeRuler.vue";
 import {HourRange} from "@/types";
@@ -146,7 +147,7 @@ export default defineComponent({
           const location = this.store.data.locations.get(visitLocationId);
           result.push({
             client: client,
-            locationString: location ? location.string : "",
+            locationString: getLocationDescription(location),
             availabilityToday: avToday,
             otherAvailabilities: otherAvs,
           });

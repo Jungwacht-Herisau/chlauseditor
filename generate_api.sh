@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-openapi-generator-cli generate \
+npx openapi-generator-cli generate \
     -g typescript \
     --type-mappings=DateTime=Date \
     --type-mappings=Date=Date \
@@ -12,7 +12,7 @@ mkdir src/api
 mv -t src/api/ tmp-api/apis tmp-api/auth tmp-api/http tmp-api/models tmp-api/types tmp-api/*.ts
 rm -rf tmp-api
 
-prettier --write src/api
+npx prettier --write src/api
 
 find src/api -name "*.ts" -exec sed -i '1s/^/\/\/ @ts-nocheck\n/' {} \;
 

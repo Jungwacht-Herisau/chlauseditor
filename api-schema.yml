@@ -7,7 +7,7 @@ paths:
     get:
       operationId: listJWlers
       description: ''
-      parameters: [ ]
+      parameters: []
       responses:
         '200':
           content:
@@ -18,11 +18,11 @@ paths:
                   $ref: '#/components/schemas/JWler'
           description: ''
       tags:
-        - api
+      - api
     post:
       operationId: createJWler
       description: ''
-      parameters: [ ]
+      parameters: []
       requestBody:
         content:
           application/json:
@@ -42,18 +42,18 @@ paths:
                 $ref: '#/components/schemas/JWler'
           description: ''
       tags:
-        - api
+      - api
   /api/jwler/{id}/:
     get:
       operationId: retrieveJWler
       description: ''
       parameters:
-        - name: id
-          in: path
-          required: true
-          description: "A unique integer value identifying this Jungw\xE4chtler."
-          schema:
-            type: string
+      - name: id
+        in: path
+        required: true
+        description: "A unique integer value identifying this Jungw\xE4chtler."
+        schema:
+          type: string
       responses:
         '200':
           content:
@@ -62,17 +62,17 @@ paths:
                 $ref: '#/components/schemas/JWler'
           description: ''
       tags:
-        - api
+      - api
     put:
       operationId: updateJWler
       description: ''
       parameters:
-        - name: id
-          in: path
-          required: true
-          description: "A unique integer value identifying this Jungw\xE4chtler."
-          schema:
-            type: string
+      - name: id
+        in: path
+        required: true
+        description: "A unique integer value identifying this Jungw\xE4chtler."
+        schema:
+          type: string
       requestBody:
         content:
           application/json:
@@ -92,17 +92,17 @@ paths:
                 $ref: '#/components/schemas/JWler'
           description: ''
       tags:
-        - api
+      - api
     patch:
       operationId: partialUpdateJWler
       description: ''
       parameters:
-        - name: id
-          in: path
-          required: true
-          description: "A unique integer value identifying this Jungw\xE4chtler."
-          schema:
-            type: string
+      - name: id
+        in: path
+        required: true
+        description: "A unique integer value identifying this Jungw\xE4chtler."
+        schema:
+          type: string
       requestBody:
         content:
           application/json:
@@ -122,27 +122,27 @@ paths:
                 $ref: '#/components/schemas/JWler'
           description: ''
       tags:
-        - api
+      - api
     delete:
       operationId: destroyJWler
       description: ''
       parameters:
-        - name: id
-          in: path
-          required: true
-          description: "A unique integer value identifying this Jungw\xE4chtler."
-          schema:
-            type: string
+      - name: id
+        in: path
+        required: true
+        description: "A unique integer value identifying this Jungw\xE4chtler."
+        schema:
+          type: string
       responses:
         '204':
           description: ''
       tags:
-        - api
+      - api
   /api/jwleravailability/:
     get:
       operationId: listJWlerAvailabilities
       description: ''
-      parameters: [ ]
+      parameters: []
       responses:
         '200':
           content:
@@ -153,11 +153,11 @@ paths:
                   $ref: '#/components/schemas/JWlerAvailability'
           description: ''
       tags:
-        - api
+      - api
     post:
       operationId: createJWlerAvailability
       description: ''
-      parameters: [ ]
+      parameters: []
       requestBody:
         content:
           application/json:
@@ -177,19 +177,19 @@ paths:
                 $ref: '#/components/schemas/JWlerAvailability'
           description: ''
       tags:
-        - api
+      - api
   /api/jwleravailability/{id}/:
     get:
       operationId: retrieveJWlerAvailability
       description: ''
       parameters:
-        - name: id
-          in: path
-          required: true
-          description: "A unique integer value identifying this Jungw\xE4chtler-Verf\xFC\
+      - name: id
+        in: path
+        required: true
+        description: "A unique integer value identifying this Jungw\xE4chtler-Verf\xFC\
           gbarkeit."
-          schema:
-            type: string
+        schema:
+          type: string
       responses:
         '200':
           content:
@@ -198,18 +198,18 @@ paths:
                 $ref: '#/components/schemas/JWlerAvailability'
           description: ''
       tags:
-        - api
+      - api
     put:
       operationId: updateJWlerAvailability
       description: ''
       parameters:
-        - name: id
-          in: path
-          required: true
-          description: "A unique integer value identifying this Jungw\xE4chtler-Verf\xFC\
+      - name: id
+        in: path
+        required: true
+        description: "A unique integer value identifying this Jungw\xE4chtler-Verf\xFC\
           gbarkeit."
-          schema:
-            type: string
+        schema:
+          type: string
       requestBody:
         content:
           application/json:
@@ -229,18 +229,18 @@ paths:
                 $ref: '#/components/schemas/JWlerAvailability'
           description: ''
       tags:
-        - api
+      - api
     patch:
       operationId: partialUpdateJWlerAvailability
       description: ''
       parameters:
-        - name: id
-          in: path
-          required: true
-          description: "A unique integer value identifying this Jungw\xE4chtler-Verf\xFC\
+      - name: id
+        in: path
+        required: true
+        description: "A unique integer value identifying this Jungw\xE4chtler-Verf\xFC\
           gbarkeit."
-          schema:
-            type: string
+        schema:
+          type: string
       requestBody:
         content:
           application/json:
@@ -260,28 +260,28 @@ paths:
                 $ref: '#/components/schemas/JWlerAvailability'
           description: ''
       tags:
-        - api
+      - api
     delete:
       operationId: destroyJWlerAvailability
       description: ''
       parameters:
-        - name: id
-          in: path
-          required: true
-          description: "A unique integer value identifying this Jungw\xE4chtler-Verf\xFC\
+      - name: id
+        in: path
+        required: true
+        description: "A unique integer value identifying this Jungw\xE4chtler-Verf\xFC\
           gbarkeit."
-          schema:
-            type: string
+        schema:
+          type: string
       responses:
         '204':
           description: ''
       tags:
-        - api
+      - api
   /api/location/:
     get:
       operationId: listLocations
       description: ''
-      parameters: [ ]
+      parameters: []
       responses:
         '200':
           content:
@@ -292,11 +292,11 @@ paths:
                   $ref: '#/components/schemas/Location'
           description: ''
       tags:
-        - api
+      - api
     post:
       operationId: createLocation
       description: ''
-      parameters: [ ]
+      parameters: []
       requestBody:
         content:
           application/json:
@@ -316,12 +316,12 @@ paths:
                 $ref: '#/components/schemas/Location'
           description: ''
       tags:
-        - api
+      - api
   /api/location/base/:
     get:
       operationId: baseLocation
       description: ''
-      parameters: [ ]
+      parameters: []
       responses:
         '200':
           content:
@@ -330,18 +330,18 @@ paths:
                 $ref: '#/components/schemas/Location'
           description: ''
       tags:
-        - api
+      - api
   /api/location/{id}/:
     get:
       operationId: retrieveLocation
       description: ''
       parameters:
-        - name: id
-          in: path
-          required: true
-          description: A unique integer value identifying this Ort.
-          schema:
-            type: string
+      - name: id
+        in: path
+        required: true
+        description: A unique integer value identifying this Ort.
+        schema:
+          type: string
       responses:
         '200':
           content:
@@ -350,17 +350,17 @@ paths:
                 $ref: '#/components/schemas/Location'
           description: ''
       tags:
-        - api
+      - api
     put:
       operationId: updateLocation
       description: ''
       parameters:
-        - name: id
-          in: path
-          required: true
-          description: A unique integer value identifying this Ort.
-          schema:
-            type: string
+      - name: id
+        in: path
+        required: true
+        description: A unique integer value identifying this Ort.
+        schema:
+          type: string
       requestBody:
         content:
           application/json:
@@ -380,17 +380,17 @@ paths:
                 $ref: '#/components/schemas/Location'
           description: ''
       tags:
-        - api
+      - api
     patch:
       operationId: partialUpdateLocation
       description: ''
       parameters:
-        - name: id
-          in: path
-          required: true
-          description: A unique integer value identifying this Ort.
-          schema:
-            type: string
+      - name: id
+        in: path
+        required: true
+        description: A unique integer value identifying this Ort.
+        schema:
+          type: string
       requestBody:
         content:
           application/json:
@@ -410,27 +410,27 @@ paths:
                 $ref: '#/components/schemas/Location'
           description: ''
       tags:
-        - api
+      - api
     delete:
       operationId: destroyLocation
       description: ''
       parameters:
-        - name: id
-          in: path
-          required: true
-          description: A unique integer value identifying this Ort.
-          schema:
-            type: string
+      - name: id
+        in: path
+        required: true
+        description: A unique integer value identifying this Ort.
+        schema:
+          type: string
       responses:
         '204':
           description: ''
       tags:
-        - api
+      - api
   /api/client/:
     get:
       operationId: listClients
       description: ''
-      parameters: [ ]
+      parameters: []
       responses:
         '200':
           content:
@@ -441,11 +441,11 @@ paths:
                   $ref: '#/components/schemas/Client'
           description: ''
       tags:
-        - api
+      - api
     post:
       operationId: createClient
       description: ''
-      parameters: [ ]
+      parameters: []
       requestBody:
         content:
           application/json:
@@ -465,18 +465,18 @@ paths:
                 $ref: '#/components/schemas/Client'
           description: ''
       tags:
-        - api
+      - api
   /api/client/{id}/:
     get:
       operationId: retrieveClient
       description: ''
       parameters:
-        - name: id
-          in: path
-          required: true
-          description: A unique integer value identifying this Kunde.
-          schema:
-            type: string
+      - name: id
+        in: path
+        required: true
+        description: A unique integer value identifying this Kunde.
+        schema:
+          type: string
       responses:
         '200':
           content:
@@ -485,17 +485,17 @@ paths:
                 $ref: '#/components/schemas/Client'
           description: ''
       tags:
-        - api
+      - api
     put:
       operationId: updateClient
       description: ''
       parameters:
-        - name: id
-          in: path
-          required: true
-          description: A unique integer value identifying this Kunde.
-          schema:
-            type: string
+      - name: id
+        in: path
+        required: true
+        description: A unique integer value identifying this Kunde.
+        schema:
+          type: string
       requestBody:
         content:
           application/json:
@@ -515,17 +515,17 @@ paths:
                 $ref: '#/components/schemas/Client'
           description: ''
       tags:
-        - api
+      - api
     patch:
       operationId: partialUpdateClient
       description: ''
       parameters:
-        - name: id
-          in: path
-          required: true
-          description: A unique integer value identifying this Kunde.
-          schema:
-            type: string
+      - name: id
+        in: path
+        required: true
+        description: A unique integer value identifying this Kunde.
+        schema:
+          type: string
       requestBody:
         content:
           application/json:
@@ -545,27 +545,27 @@ paths:
                 $ref: '#/components/schemas/Client'
           description: ''
       tags:
-        - api
+      - api
     delete:
       operationId: destroyClient
       description: ''
       parameters:
-        - name: id
-          in: path
-          required: true
-          description: A unique integer value identifying this Kunde.
-          schema:
-            type: string
+      - name: id
+        in: path
+        required: true
+        description: A unique integer value identifying this Kunde.
+        schema:
+          type: string
       responses:
         '204':
           description: ''
       tags:
-        - api
+      - api
   /api/familyclientdetails/:
     get:
       operationId: listFamilyClientDetails
       description: ''
-      parameters: [ ]
+      parameters: []
       responses:
         '200':
           content:
@@ -576,11 +576,11 @@ paths:
                   $ref: '#/components/schemas/FamilyClientDetails'
           description: ''
       tags:
-        - api
+      - api
     post:
       operationId: createFamilyClientDetails
       description: ''
-      parameters: [ ]
+      parameters: []
       requestBody:
         content:
           application/json:
@@ -600,18 +600,18 @@ paths:
                 $ref: '#/components/schemas/FamilyClientDetails'
           description: ''
       tags:
-        - api
+      - api
   /api/familyclientdetails/{id}/:
     get:
       operationId: retrieveFamilyClientDetails
       description: ''
       parameters:
-        - name: id
-          in: path
-          required: true
-          description: A unique integer value identifying this Familienkunden-Details.
-          schema:
-            type: string
+      - name: id
+        in: path
+        required: true
+        description: A unique integer value identifying this Familienkunden-Details.
+        schema:
+          type: string
       responses:
         '200':
           content:
@@ -620,17 +620,17 @@ paths:
                 $ref: '#/components/schemas/FamilyClientDetails'
           description: ''
       tags:
-        - api
+      - api
     put:
       operationId: updateFamilyClientDetails
       description: ''
       parameters:
-        - name: id
-          in: path
-          required: true
-          description: A unique integer value identifying this Familienkunden-Details.
-          schema:
-            type: string
+      - name: id
+        in: path
+        required: true
+        description: A unique integer value identifying this Familienkunden-Details.
+        schema:
+          type: string
       requestBody:
         content:
           application/json:
@@ -650,17 +650,17 @@ paths:
                 $ref: '#/components/schemas/FamilyClientDetails'
           description: ''
       tags:
-        - api
+      - api
     patch:
       operationId: partialUpdateFamilyClientDetails
       description: ''
       parameters:
-        - name: id
-          in: path
-          required: true
-          description: A unique integer value identifying this Familienkunden-Details.
-          schema:
-            type: string
+      - name: id
+        in: path
+        required: true
+        description: A unique integer value identifying this Familienkunden-Details.
+        schema:
+          type: string
       requestBody:
         content:
           application/json:
@@ -680,27 +680,27 @@ paths:
                 $ref: '#/components/schemas/FamilyClientDetails'
           description: ''
       tags:
-        - api
+      - api
     delete:
       operationId: destroyFamilyClientDetails
       description: ''
       parameters:
-        - name: id
-          in: path
-          required: true
-          description: A unique integer value identifying this Familienkunden-Details.
-          schema:
-            type: string
+      - name: id
+        in: path
+        required: true
+        description: A unique integer value identifying this Familienkunden-Details.
+        schema:
+          type: string
       responses:
         '204':
           description: ''
       tags:
-        - api
+      - api
   /api/adultinfo/:
     get:
       operationId: listAdultInfos
       description: ''
-      parameters: [ ]
+      parameters: []
       responses:
         '200':
           content:
@@ -711,11 +711,11 @@ paths:
                   $ref: '#/components/schemas/AdultInfo'
           description: ''
       tags:
-        - api
+      - api
     post:
       operationId: createAdultInfo
       description: ''
-      parameters: [ ]
+      parameters: []
       requestBody:
         content:
           application/json:
@@ -735,18 +735,18 @@ paths:
                 $ref: '#/components/schemas/AdultInfo'
           description: ''
       tags:
-        - api
+      - api
   /api/adultinfo/{id}/:
     get:
       operationId: retrieveAdultInfo
       description: ''
       parameters:
-        - name: id
-          in: path
-          required: true
-          description: A unique integer value identifying this Erwachsenen-Info.
-          schema:
-            type: string
+      - name: id
+        in: path
+        required: true
+        description: A unique integer value identifying this Erwachsenen-Info.
+        schema:
+          type: string
       responses:
         '200':
           content:
@@ -755,17 +755,17 @@ paths:
                 $ref: '#/components/schemas/AdultInfo'
           description: ''
       tags:
-        - api
+      - api
     put:
       operationId: updateAdultInfo
       description: ''
       parameters:
-        - name: id
-          in: path
-          required: true
-          description: A unique integer value identifying this Erwachsenen-Info.
-          schema:
-            type: string
+      - name: id
+        in: path
+        required: true
+        description: A unique integer value identifying this Erwachsenen-Info.
+        schema:
+          type: string
       requestBody:
         content:
           application/json:
@@ -785,17 +785,17 @@ paths:
                 $ref: '#/components/schemas/AdultInfo'
           description: ''
       tags:
-        - api
+      - api
     patch:
       operationId: partialUpdateAdultInfo
       description: ''
       parameters:
-        - name: id
-          in: path
-          required: true
-          description: A unique integer value identifying this Erwachsenen-Info.
-          schema:
-            type: string
+      - name: id
+        in: path
+        required: true
+        description: A unique integer value identifying this Erwachsenen-Info.
+        schema:
+          type: string
       requestBody:
         content:
           application/json:
@@ -815,27 +815,27 @@ paths:
                 $ref: '#/components/schemas/AdultInfo'
           description: ''
       tags:
-        - api
+      - api
     delete:
       operationId: destroyAdultInfo
       description: ''
       parameters:
-        - name: id
-          in: path
-          required: true
-          description: A unique integer value identifying this Erwachsenen-Info.
-          schema:
-            type: string
+      - name: id
+        in: path
+        required: true
+        description: A unique integer value identifying this Erwachsenen-Info.
+        schema:
+          type: string
       responses:
         '204':
           description: ''
       tags:
-        - api
+      - api
   /api/childinfo/:
     get:
       operationId: listChildInfos
       description: ''
-      parameters: [ ]
+      parameters: []
       responses:
         '200':
           content:
@@ -846,11 +846,11 @@ paths:
                   $ref: '#/components/schemas/ChildInfo'
           description: ''
       tags:
-        - api
+      - api
     post:
       operationId: createChildInfo
       description: ''
-      parameters: [ ]
+      parameters: []
       requestBody:
         content:
           application/json:
@@ -870,18 +870,18 @@ paths:
                 $ref: '#/components/schemas/ChildInfo'
           description: ''
       tags:
-        - api
+      - api
   /api/childinfo/{id}/:
     get:
       operationId: retrieveChildInfo
       description: ''
       parameters:
-        - name: id
-          in: path
-          required: true
-          description: A unique integer value identifying this Kind-Info.
-          schema:
-            type: string
+      - name: id
+        in: path
+        required: true
+        description: A unique integer value identifying this Kind-Info.
+        schema:
+          type: string
       responses:
         '200':
           content:
@@ -890,17 +890,17 @@ paths:
                 $ref: '#/components/schemas/ChildInfo'
           description: ''
       tags:
-        - api
+      - api
     put:
       operationId: updateChildInfo
       description: ''
       parameters:
-        - name: id
-          in: path
-          required: true
-          description: A unique integer value identifying this Kind-Info.
-          schema:
-            type: string
+      - name: id
+        in: path
+        required: true
+        description: A unique integer value identifying this Kind-Info.
+        schema:
+          type: string
       requestBody:
         content:
           application/json:
@@ -920,17 +920,17 @@ paths:
                 $ref: '#/components/schemas/ChildInfo'
           description: ''
       tags:
-        - api
+      - api
     patch:
       operationId: partialUpdateChildInfo
       description: ''
       parameters:
-        - name: id
-          in: path
-          required: true
-          description: A unique integer value identifying this Kind-Info.
-          schema:
-            type: string
+      - name: id
+        in: path
+        required: true
+        description: A unique integer value identifying this Kind-Info.
+        schema:
+          type: string
       requestBody:
         content:
           application/json:
@@ -950,27 +950,27 @@ paths:
                 $ref: '#/components/schemas/ChildInfo'
           description: ''
       tags:
-        - api
+      - api
     delete:
       operationId: destroyChildInfo
       description: ''
       parameters:
-        - name: id
-          in: path
-          required: true
-          description: A unique integer value identifying this Kind-Info.
-          schema:
-            type: string
+      - name: id
+        in: path
+        required: true
+        description: A unique integer value identifying this Kind-Info.
+        schema:
+          type: string
       responses:
         '204':
           description: ''
       tags:
-        - api
+      - api
   /api/organisationclientdetails/:
     get:
       operationId: listOrganisationClientDetails
       description: ''
-      parameters: [ ]
+      parameters: []
       responses:
         '200':
           content:
@@ -981,11 +981,11 @@ paths:
                   $ref: '#/components/schemas/OrganisationClientDetails'
           description: ''
       tags:
-        - api
+      - api
     post:
       operationId: createOrganisationClientDetails
       description: ''
-      parameters: [ ]
+      parameters: []
       requestBody:
         content:
           application/json:
@@ -1005,18 +1005,18 @@ paths:
                 $ref: '#/components/schemas/OrganisationClientDetails'
           description: ''
       tags:
-        - api
+      - api
   /api/organisationclientdetails/{id}/:
     get:
       operationId: retrieveOrganisationClientDetails
       description: ''
       parameters:
-        - name: id
-          in: path
-          required: true
-          description: A unique integer value identifying this Organisationskunden-Details.
-          schema:
-            type: string
+      - name: id
+        in: path
+        required: true
+        description: A unique integer value identifying this Organisationskunden-Details.
+        schema:
+          type: string
       responses:
         '200':
           content:
@@ -1025,17 +1025,17 @@ paths:
                 $ref: '#/components/schemas/OrganisationClientDetails'
           description: ''
       tags:
-        - api
+      - api
     put:
       operationId: updateOrganisationClientDetails
       description: ''
       parameters:
-        - name: id
-          in: path
-          required: true
-          description: A unique integer value identifying this Organisationskunden-Details.
-          schema:
-            type: string
+      - name: id
+        in: path
+        required: true
+        description: A unique integer value identifying this Organisationskunden-Details.
+        schema:
+          type: string
       requestBody:
         content:
           application/json:
@@ -1055,17 +1055,17 @@ paths:
                 $ref: '#/components/schemas/OrganisationClientDetails'
           description: ''
       tags:
-        - api
+      - api
     patch:
       operationId: partialUpdateOrganisationClientDetails
       description: ''
       parameters:
-        - name: id
-          in: path
-          required: true
-          description: A unique integer value identifying this Organisationskunden-Details.
-          schema:
-            type: string
+      - name: id
+        in: path
+        required: true
+        description: A unique integer value identifying this Organisationskunden-Details.
+        schema:
+          type: string
       requestBody:
         content:
           application/json:
@@ -1085,27 +1085,27 @@ paths:
                 $ref: '#/components/schemas/OrganisationClientDetails'
           description: ''
       tags:
-        - api
+      - api
     delete:
       operationId: destroyOrganisationClientDetails
       description: ''
       parameters:
-        - name: id
-          in: path
-          required: true
-          description: A unique integer value identifying this Organisationskunden-Details.
-          schema:
-            type: string
+      - name: id
+        in: path
+        required: true
+        description: A unique integer value identifying this Organisationskunden-Details.
+        schema:
+          type: string
       responses:
         '204':
           description: ''
       tags:
-        - api
+      - api
   /api/clientavailability/:
     get:
       operationId: listClientAvailabilities
       description: ''
-      parameters: [ ]
+      parameters: []
       responses:
         '200':
           content:
@@ -1116,11 +1116,11 @@ paths:
                   $ref: '#/components/schemas/ClientAvailability'
           description: ''
       tags:
-        - api
+      - api
     post:
       operationId: createClientAvailability
       description: ''
-      parameters: [ ]
+      parameters: []
       requestBody:
         content:
           application/json:
@@ -1140,18 +1140,18 @@ paths:
                 $ref: '#/components/schemas/ClientAvailability'
           description: ''
       tags:
-        - api
+      - api
   /api/clientavailability/{id}/:
     get:
       operationId: retrieveClientAvailability
       description: ''
       parameters:
-        - name: id
-          in: path
-          required: true
-          description: "A unique integer value identifying this Kunden-Verf\xFCgbarkeit."
-          schema:
-            type: string
+      - name: id
+        in: path
+        required: true
+        description: "A unique integer value identifying this Kunden-Verf\xFCgbarkeit."
+        schema:
+          type: string
       responses:
         '200':
           content:
@@ -1160,17 +1160,17 @@ paths:
                 $ref: '#/components/schemas/ClientAvailability'
           description: ''
       tags:
-        - api
+      - api
     put:
       operationId: updateClientAvailability
       description: ''
       parameters:
-        - name: id
-          in: path
-          required: true
-          description: "A unique integer value identifying this Kunden-Verf\xFCgbarkeit."
-          schema:
-            type: string
+      - name: id
+        in: path
+        required: true
+        description: "A unique integer value identifying this Kunden-Verf\xFCgbarkeit."
+        schema:
+          type: string
       requestBody:
         content:
           application/json:
@@ -1190,17 +1190,17 @@ paths:
                 $ref: '#/components/schemas/ClientAvailability'
           description: ''
       tags:
-        - api
+      - api
     patch:
       operationId: partialUpdateClientAvailability
       description: ''
       parameters:
-        - name: id
-          in: path
-          required: true
-          description: "A unique integer value identifying this Kunden-Verf\xFCgbarkeit."
-          schema:
-            type: string
+      - name: id
+        in: path
+        required: true
+        description: "A unique integer value identifying this Kunden-Verf\xFCgbarkeit."
+        schema:
+          type: string
       requestBody:
         content:
           application/json:
@@ -1220,27 +1220,27 @@ paths:
                 $ref: '#/components/schemas/ClientAvailability'
           description: ''
       tags:
-        - api
+      - api
     delete:
       operationId: destroyClientAvailability
       description: ''
       parameters:
-        - name: id
-          in: path
-          required: true
-          description: "A unique integer value identifying this Kunden-Verf\xFCgbarkeit."
-          schema:
-            type: string
+      - name: id
+        in: path
+        required: true
+        description: "A unique integer value identifying this Kunden-Verf\xFCgbarkeit."
+        schema:
+          type: string
       responses:
         '204':
           description: ''
       tags:
-        - api
+      - api
   /api/drivingtimematrix/:
     get:
       operationId: listDrivingTimeMatrices
       description: ''
-      parameters: [ ]
+      parameters: []
       responses:
         '200':
           content:
@@ -1251,11 +1251,11 @@ paths:
                   $ref: '#/components/schemas/DrivingTimeMatrix'
           description: ''
       tags:
-        - api
+      - api
     post:
       operationId: createDrivingTimeMatrix
       description: ''
-      parameters: [ ]
+      parameters: []
       requestBody:
         content:
           application/json:
@@ -1275,12 +1275,12 @@ paths:
                 $ref: '#/components/schemas/DrivingTimeMatrix'
           description: ''
       tags:
-        - api
+      - api
   /api/drivingtimematrix/calculate_new/:
     get:
       operationId: calculateNewDrivingTimeMatrix
       description: ''
-      parameters: [ ]
+      parameters: []
       responses:
         '200':
           content:
@@ -1289,24 +1289,24 @@ paths:
                 $ref: '#/components/schemas/DrivingTimeMatrix'
           description: ''
       tags:
-        - api
+      - api
   /api/drivingtimematrix/drivingtimematrix/get_time_between/{location_from}/{location_to}/:
     get:
       operationId: getTimeBetweenDrivingTimeMatrix
       description: ''
       parameters:
-        - name: location_from
-          in: path
-          required: true
-          description: ''
-          schema:
-            type: integer
-        - name: location_to
-          in: path
-          required: true
-          description: ''
-          schema:
-            type: integer
+      - name: location_from
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: integer
+      - name: location_to
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: integer
       responses:
         '200':
           content:
@@ -1315,18 +1315,18 @@ paths:
                 $ref: '#/components/schemas/TimeBetweenData'
           description: ''
       tags:
-        - api
+      - api
   /api/drivingtimematrix/{locationsCSV}/:
     get:
       operationId: retrieveDrivingTimeMatrix
       description: ''
       parameters:
-        - name: locationsCSV
-          in: path
-          required: true
-          description: A unique value identifying this Fahrtzeit-Matrix.
-          schema:
-            type: string
+      - name: locationsCSV
+        in: path
+        required: true
+        description: A unique value identifying this Fahrtzeit-Matrix.
+        schema:
+          type: string
       responses:
         '200':
           content:
@@ -1335,17 +1335,17 @@ paths:
                 $ref: '#/components/schemas/DrivingTimeMatrix'
           description: ''
       tags:
-        - api
+      - api
     put:
       operationId: updateDrivingTimeMatrix
       description: ''
       parameters:
-        - name: locationsCSV
-          in: path
-          required: true
-          description: A unique value identifying this Fahrtzeit-Matrix.
-          schema:
-            type: string
+      - name: locationsCSV
+        in: path
+        required: true
+        description: A unique value identifying this Fahrtzeit-Matrix.
+        schema:
+          type: string
       requestBody:
         content:
           application/json:
@@ -1365,17 +1365,17 @@ paths:
                 $ref: '#/components/schemas/DrivingTimeMatrix'
           description: ''
       tags:
-        - api
+      - api
     patch:
       operationId: partialUpdateDrivingTimeMatrix
       description: ''
       parameters:
-        - name: locationsCSV
-          in: path
-          required: true
-          description: A unique value identifying this Fahrtzeit-Matrix.
-          schema:
-            type: string
+      - name: locationsCSV
+        in: path
+        required: true
+        description: A unique value identifying this Fahrtzeit-Matrix.
+        schema:
+          type: string
       requestBody:
         content:
           application/json:
@@ -1395,27 +1395,27 @@ paths:
                 $ref: '#/components/schemas/DrivingTimeMatrix'
           description: ''
       tags:
-        - api
+      - api
     delete:
       operationId: destroyDrivingTimeMatrix
       description: ''
       parameters:
-        - name: locationsCSV
-          in: path
-          required: true
-          description: A unique value identifying this Fahrtzeit-Matrix.
-          schema:
-            type: string
+      - name: locationsCSV
+        in: path
+        required: true
+        description: A unique value identifying this Fahrtzeit-Matrix.
+        schema:
+          type: string
       responses:
         '204':
           description: ''
       tags:
-        - api
+      - api
   /api/tour/:
     get:
       operationId: listTours
       description: ''
-      parameters: [ ]
+      parameters: []
       responses:
         '200':
           content:
@@ -1426,11 +1426,11 @@ paths:
                   $ref: '#/components/schemas/Tour'
           description: ''
       tags:
-        - api
+      - api
     post:
       operationId: createTour
       description: ''
-      parameters: [ ]
+      parameters: []
       requestBody:
         content:
           application/json:
@@ -1450,18 +1450,18 @@ paths:
                 $ref: '#/components/schemas/Tour'
           description: ''
       tags:
-        - api
+      - api
   /api/tour/{id}/:
     get:
       operationId: retrieveTour
       description: ''
       parameters:
-        - name: id
-          in: path
-          required: true
-          description: A unique integer value identifying this Tour.
-          schema:
-            type: string
+      - name: id
+        in: path
+        required: true
+        description: A unique integer value identifying this Tour.
+        schema:
+          type: string
       responses:
         '200':
           content:
@@ -1470,17 +1470,17 @@ paths:
                 $ref: '#/components/schemas/Tour'
           description: ''
       tags:
-        - api
+      - api
     put:
       operationId: updateTour
       description: ''
       parameters:
-        - name: id
-          in: path
-          required: true
-          description: A unique integer value identifying this Tour.
-          schema:
-            type: string
+      - name: id
+        in: path
+        required: true
+        description: A unique integer value identifying this Tour.
+        schema:
+          type: string
       requestBody:
         content:
           application/json:
@@ -1500,17 +1500,17 @@ paths:
                 $ref: '#/components/schemas/Tour'
           description: ''
       tags:
-        - api
+      - api
     patch:
       operationId: partialUpdateTour
       description: ''
       parameters:
-        - name: id
-          in: path
-          required: true
-          description: A unique integer value identifying this Tour.
-          schema:
-            type: string
+      - name: id
+        in: path
+        required: true
+        description: A unique integer value identifying this Tour.
+        schema:
+          type: string
       requestBody:
         content:
           application/json:
@@ -1530,27 +1530,27 @@ paths:
                 $ref: '#/components/schemas/Tour'
           description: ''
       tags:
-        - api
+      - api
     delete:
       operationId: destroyTour
       description: ''
       parameters:
-        - name: id
-          in: path
-          required: true
-          description: A unique integer value identifying this Tour.
-          schema:
-            type: string
+      - name: id
+        in: path
+        required: true
+        description: A unique integer value identifying this Tour.
+        schema:
+          type: string
       responses:
         '204':
           description: ''
       tags:
-        - api
+      - api
   /api/tourelement/:
     get:
       operationId: listTourElements
       description: ''
-      parameters: [ ]
+      parameters: []
       responses:
         '200':
           content:
@@ -1561,11 +1561,11 @@ paths:
                   $ref: '#/components/schemas/TourElement'
           description: ''
       tags:
-        - api
+      - api
     post:
       operationId: createTourElement
       description: ''
-      parameters: [ ]
+      parameters: []
       requestBody:
         content:
           application/json:
@@ -1585,18 +1585,18 @@ paths:
                 $ref: '#/components/schemas/TourElement'
           description: ''
       tags:
-        - api
+      - api
   /api/tourelement/{id}/:
     get:
       operationId: retrieveTourElement
       description: ''
       parameters:
-        - name: id
-          in: path
-          required: true
-          description: A unique integer value identifying this Tour-Element.
-          schema:
-            type: string
+      - name: id
+        in: path
+        required: true
+        description: A unique integer value identifying this Tour-Element.
+        schema:
+          type: string
       responses:
         '200':
           content:
@@ -1605,17 +1605,17 @@ paths:
                 $ref: '#/components/schemas/TourElement'
           description: ''
       tags:
-        - api
+      - api
     put:
       operationId: updateTourElement
       description: ''
       parameters:
-        - name: id
-          in: path
-          required: true
-          description: A unique integer value identifying this Tour-Element.
-          schema:
-            type: string
+      - name: id
+        in: path
+        required: true
+        description: A unique integer value identifying this Tour-Element.
+        schema:
+          type: string
       requestBody:
         content:
           application/json:
@@ -1635,17 +1635,17 @@ paths:
                 $ref: '#/components/schemas/TourElement'
           description: ''
       tags:
-        - api
+      - api
     patch:
       operationId: partialUpdateTourElement
       description: ''
       parameters:
-        - name: id
-          in: path
-          required: true
-          description: A unique integer value identifying this Tour-Element.
-          schema:
-            type: string
+      - name: id
+        in: path
+        required: true
+        description: A unique integer value identifying this Tour-Element.
+        schema:
+          type: string
       requestBody:
         content:
           application/json:
@@ -1665,27 +1665,27 @@ paths:
                 $ref: '#/components/schemas/TourElement'
           description: ''
       tags:
-        - api
+      - api
     delete:
       operationId: destroyTourElement
       description: ''
       parameters:
-        - name: id
-          in: path
-          required: true
-          description: A unique integer value identifying this Tour-Element.
-          schema:
-            type: string
+      - name: id
+        in: path
+        required: true
+        description: A unique integer value identifying this Tour-Element.
+        schema:
+          type: string
       responses:
         '204':
           description: ''
       tags:
-        - api
+      - api
   /api-token-auth/:
     post:
       operationId: createAuthToken
       description: ''
-      parameters: [ ]
+      parameters: []
       requestBody:
         content:
           application/x-www-form-urlencoded:
@@ -1705,17 +1705,17 @@ paths:
                 $ref: '#/components/schemas/AuthToken'
           description: ''
       tags:
-        - api-token-auth
+      - api-token-auth
   /api/tour/delete_all/:
     delete:
       operationId: deleteAllTour
       description: ''
-      parameters: [ ]
+      parameters: []
       responses:
         '204':
           description: ''
       tags:
-        - api
+      - api
 components:
   schemas:
     JWler:
@@ -1738,9 +1738,9 @@ components:
           items:
             type: integer
       required:
-        - name
-        - chlaus
-        - driver
+      - name
+      - chlaus
+      - driver
     JWlerAvailability:
       type: object
       properties:
@@ -1752,15 +1752,15 @@ components:
         start:
           type: string
           format: date-time
-          example: '2024-11-10T13:48:37Z'
+          example: '2024-11-21T15:05:45Z'
         end:
           type: string
           format: date-time
-          example: '2024-11-10T13:48:37Z'
+          example: '2024-11-21T15:05:45Z'
       required:
-        - jwler
-        - start
-        - end
+      - jwler
+      - start
+      - end
     Location:
       type: object
       properties:
@@ -1771,6 +1771,26 @@ components:
           type: string
           nullable: true
           maxLength: 65535
+        street_and_number:
+          type: string
+          nullable: true
+          maxLength: 65535
+        zip:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: -9223372036854775808
+          format: int64
+          nullable: true
+        city:
+          type: string
+          nullable: true
+          maxLength: 65535
+        latitude:
+          type: number
+          nullable: true
+        longitude:
+          type: number
+          nullable: true
     Client:
       type: object
       properties:
@@ -1799,15 +1819,15 @@ components:
           type: string
         indoor_outdoor:
           enum:
-            - indoor
-            - outdoor
+          - indoor
+          - outdoor
           type: string
         bags_location:
           type: string
         payment_method:
           enum:
-            - twint
-            - cash
+          - twint
+          - cash
           type: string
         general_comments:
           type: string
@@ -1823,14 +1843,14 @@ components:
           type: string
           readOnly: true
       required:
-        - first_name
-        - last_name
-        - email_address
-        - phone_number1
-        - visit_location
-        - bags_location
-        - family_details
-        - organisation_details
+      - first_name
+      - last_name
+      - email_address
+      - phone_number1
+      - visit_location
+      - bags_location
+      - family_details
+      - organisation_details
     FamilyClientDetails:
       type: object
       properties:
@@ -1866,9 +1886,9 @@ components:
         family_client_details:
           type: integer
       required:
-        - name
-        - description
-        - family_client_details
+      - name
+      - description
+      - family_client_details
     ChildInfo:
       type: object
       properties:
@@ -1883,8 +1903,8 @@ components:
           maxLength: 65535
         gender:
           enum:
-            - m
-            - f
+          - m
+          - f
           type: string
         age:
           type: string
@@ -1934,17 +1954,17 @@ components:
         family_client_details:
           type: integer
       required:
-        - first_name
-        - last_name
-        - age
-        - school_class
-        - teacher
-        - likes_to_eat
-        - hates_to_eat
-        - praise
-        - improve
-        - performance
-        - family_client_details
+      - first_name
+      - last_name
+      - age
+      - school_class
+      - teacher
+      - likes_to_eat
+      - hates_to_eat
+      - praise
+      - improve
+      - performance
+      - family_client_details
     OrganisationClientDetails:
       type: object
       properties:
@@ -1959,8 +1979,8 @@ components:
           type: string
           readOnly: true
       required:
-        - visit_duration_h
-        - message_from_chlaus
+      - visit_duration_h
+      - message_from_chlaus
     ClientAvailability:
       type: object
       properties:
@@ -1972,15 +1992,15 @@ components:
         start:
           type: string
           format: date-time
-          example: '2024-11-10T13:48:37Z'
+          example: '2024-11-21T15:05:45Z'
         end:
           type: string
           format: date-time
-          example: '2024-11-10T13:48:37Z'
+          example: '2024-11-21T15:05:45Z'
       required:
-        - client
-        - start
-        - end
+      - client
+      - start
+      - end
     DrivingTimeMatrix:
       type: object
       properties:
@@ -1991,15 +2011,15 @@ components:
         distances:
           type: object
       required:
-        - locationsCSV
-        - durations
-        - distances
+      - locationsCSV
+      - durations
+      - distances
     TimeBetweenData:
       properties:
         time:
           type: number
       required:
-        - time
+      - time
       type: object
     Tour:
       type: object
@@ -2024,8 +2044,8 @@ components:
           type: string
           readOnly: true
       required:
-        - name
-        - date
+      - name
+      - date
     TourElement:
       type: object
       properties:
@@ -2037,24 +2057,24 @@ components:
         start:
           type: string
           format: date-time
-          example: '2024-11-10T13:48:37Z'
+          example: '2024-11-21T15:05:45Z'
         end:
           type: string
           format: date-time
-          example: '2024-11-10T13:48:37Z'
+          example: '2024-11-21T15:05:45Z'
         type:
           enum:
-            - V
-            - D
-            - B
+          - V
+          - D
+          - B
           type: string
         client:
           type: integer
           nullable: true
       required:
-        - tour
-        - start
-        - end
+      - tour
+      - start
+      - end
     AuthToken:
       type: object
       properties:
@@ -2068,5 +2088,5 @@ components:
           type: string
           readOnly: true
       required:
-        - username
-        - password
+      - username
+      - password
