@@ -48,6 +48,6 @@
     "vite": "^6.2.0",
     "vitest": "^3.0.7",
     "vue-tsc": "^2.1.10",
-    "@openapitools/openapi-generator-cli": "^2.15.3"
+    "@openapitools/openapi-generator-cli": "^2.18.4"
   }
 }
