@@ -45,7 +45,7 @@
     "jsdom": "^25.0.1",
     "prettier": "^3.5.3",
     "typescript": "~5.6.3",
-    "vite": "^6.3.5",
+    "vite": "^7.0.0",
     "vitest": "^3.1.4",
     "vue-tsc": "^2.1.10",
     "@openapitools/openapi-generator-cli": "^2.20.2"
