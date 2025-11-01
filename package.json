@@ -46,7 +46,7 @@
     "prettier": "^3.5.3",
     "typescript": "~5.9.2",
     "vite": "^7.1.2",
-    "vitest": "^3.1.4",
+    "vitest": "^4.0.6",
     "vue-tsc": "^2.1.10",
     "@openapitools/openapi-generator-cli": "^2.23.1"
   }
