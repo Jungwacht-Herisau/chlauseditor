@@ -45,7 +45,7 @@ export function allowDrop(event: DragEvent, ...types: ObjectType[]) {
 }
 
 export function getDragData(event: DragEvent): DragData {
-    const text = decodeUpperCase(event.dataTransfer!.types[0]);
+    const text = decodeUpperCase(event.dataTransfer!.types[0] ?? "");
     console.debug(text);
     if (text[0] == "{") {
         return JSON.parse(text);
@@ -62,11 +62,11 @@ export function getDraggedIdInt(event: DragEvent): number {
     return data.id;
 }
 
-export function getTwoDraggedIds(event: DragEvent) {
-    const [oldTourId, elementId] = (getDragData(event).id as string).split(";");
-    const tourIdInt = parseInt(oldTourId);
-    const elementIdInt = parseInt(elementId);
-    return [tourIdInt, elementIdInt];
+export function getTwoDraggedIds(event: DragEvent): [number, number] {
+  const [oldTourId, elementId] = (getDragData(event).id as string).split(";") as [string, string];
+  const tourIdInt = parseInt(oldTourId);
+  const elementIdInt = parseInt(elementId);
+  return [tourIdInt, elementIdInt];
 }
 
 export function allowDropDeletableElements(event: DragEvent) {

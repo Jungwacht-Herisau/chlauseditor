@@ -3,7 +3,7 @@ import type {PropType} from "vue";
 import {defineComponent} from "vue";
 import {useStore} from "@/model/store";
 import type {HourRange} from "@/types";
-import {formatHours, formatStartEnd, toFractionHours} from "@/util";
+import {findNextMultipleOf, formatHours, formatStartEnd, toFractionHours} from "@/util";
 import ClientLabel from "@/components/ClientLabel.vue";
 import {Tooltip} from "bootstrap";
 import {allowDrop, dropTourElement, getDragData, ObjectType, startDrag} from "@/drag_drop";
@@ -44,7 +44,7 @@ export default defineComponent({
       const x =
         (event.clientX - dragData.cursorOffsetX - spacerRect.left) /
         (spacerRect.width / this.range!.calcFraction(this.durationHours, true));
-      const hourStart = this.range!.start + x * this.range!.span();
+      const hourStart = findNextMultipleOf(this.range!.start + x * this.range!.span(), 1 / 12 /*5min*/);
       const todayMorning = new Date(this.tour!.date);
       const start = new Date(todayMorning.getTime() + hourStart * 60 * 60 * 1000);
       dropTourElement(event, this.tour!, start);

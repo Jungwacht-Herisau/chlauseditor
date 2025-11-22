@@ -9,7 +9,7 @@ export function sortAndUnique<T>(arr: T[]): T[] {
 }
 
 export function toDateISOString(date: Date): string {
-  return date.toISOString().split("T", 1)[0];
+  return date.toISOString().split("T", 1)[0]!;
 }
 
 export function groupBy<T, K extends keyof any>(
@@ -42,8 +42,8 @@ export function formatDeltaSeconds(seconds: number): string {
   const sizes = [24 * 60 * 60, 60 * 60, 60, 1];
   const units = ["d", "h", "m", "s"];
   for (let i = 0; i < sizes.length; i++) {
-    if (seconds > sizes[i] || i + 1 == sizes.length) {
-      const value = seconds / sizes[i];
+    if (seconds > sizes[i]! || i + 1 == sizes.length) {
+      const value = seconds / sizes[i]!;
       const valueAtLeast2SignificantDigits = value < 10 ? value.toFixed(1) : Math.round(value).toFixed(0);
       return valueAtLeast2SignificantDigits + units[i];
     }
@@ -133,10 +133,14 @@ export function getCommonTimeSpan(spans: StartEnd[]): StartEnd | null {
   if (spans.length < 1) {
     return null;
   } else if (spans.length == 1) {
-    return spans[0];
+    return spans[0] ?? null;
   } else {
     const latestStart = new Date(Math.max(...spans.map(se => se!.start.getTime())));
     const earliestEnd = new Date(Math.min(...spans.map(se => se!.end.getTime())));
     return latestStart < earliestEnd ? {start: latestStart, end: earliestEnd} : null;
   }
+}
+
+export function findNextMultipleOf(num: number, factor: number): number {
+  return Math.round(num / factor) * factor;
 }

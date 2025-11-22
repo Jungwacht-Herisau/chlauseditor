@@ -7,7 +7,7 @@ import {
   getDayKeyOfTour,
   getJwlerAvailabilitiesOfTour,
   getJwlersOfTour,
-  insertDriveElements,
+  insertDriveElements
 } from "@/model/model_utils";
 import JWlerLabel from "@/components/JWlerLabel.vue";
 import {HourRange} from "@/types";
@@ -20,6 +20,7 @@ import {TourElementTypeEnum} from "@/api/models/TourElement";
 import type {JWlerAvailability} from "@/api/models/JWlerAvailability";
 import type {Tour} from "@/api/models/Tour";
 import TextInputModal from "@/components/TextInputModal.vue";
+import {findNextMultipleOf} from "@/util.ts";
 
 export default defineComponent({
   name: "TourTimeline",
@@ -86,7 +87,7 @@ export default defineComponent({
       const dragData = getDragData(event);
       const dropZoneRect = (this.$refs.dropZone as HTMLElement).getBoundingClientRect();
       const x = (event.clientX - dragData.cursorOffsetX - dropZoneRect.left) / dropZoneRect.width;
-      const hourStart = this.range!.start + x * this.range!.span();
+      const hourStart = findNextMultipleOf(this.range!.start + x * this.range!.span(), 1 / 12 /*5min*/);
       const todayMorning = new Date(this.tour!.date);
       const start = new Date(todayMorning.getTime() + hourStart * 60 * 60 * 1000);
       if (dragData.type == ObjectType.CLIENT) {
