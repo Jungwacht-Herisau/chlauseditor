@@ -3,7 +3,7 @@ import {
   deepCloneObject,
   getDayKeyOfClientAvailability,
   getDayKeyOfJwlerAvailability,
-  getDayKeyOfTour,
+  getDayKeyOfTour
 } from "@/model/model_utils";
 import type {DayKey} from "@/types";
 import {groupBy} from "@/util";
@@ -17,7 +17,7 @@ import {
   JWlerAvailability,
   Location,
   Tour,
-  TourElement,
+  TourElement
 } from "@/api";
 import {Changeset} from "@/model/changeset";
 import {ApiClientFactory} from "@/api_client_factory";
@@ -216,7 +216,7 @@ export const useStore = defineStore("data", {
       ];
       this.fetchingProgress.total = fetchers.map(arr => arr.length).reduce((a, b) => a + b, 0);
       const runFunc = (progress: FetchingProgress, funcs: Array<() => Promise<any>>, i: number) => {
-        funcs[i]()
+        funcs[i]!()
           .then(eName => console.debug(`successfully fetched ${eName}`))
           .catch(error => {
             console.error("Error while fetching entity: ", error);

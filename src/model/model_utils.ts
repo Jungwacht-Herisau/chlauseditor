@@ -1,9 +1,9 @@
-import type { HasId } from "@/util";
-import { arrayEquals, toDateISOString, toFractionHours } from "@/util";
-import type { DayKey } from "@/types";
-import { useStore } from "@/model/store";
-import { DEFAULT_TIME_RANGE } from "@/const";
-import { TourElementTypeEnum } from "@/api/models/TourElement";
+import type {HasId} from "@/util";
+import {arrayEquals, toDateISOString, toFractionHours} from "@/util";
+import type {DayKey} from "@/types";
+import {useStore} from "@/model/store";
+import {DEFAULT_TIME_RANGE} from "@/const";
+import {TourElementTypeEnum} from "@/api/models/TourElement";
 import {
   AdultInfo,
   ChildInfo,
@@ -19,7 +19,7 @@ import {
   Tour,
   TourElement,
 } from "@/api";
-import { toRaw } from "vue";
+import {toRaw} from "vue";
 
 export const MODEL_TYPES = [
   AdultInfo,
@@ -70,7 +70,7 @@ export function getDayKeyOfClientAvailability(ca: ClientAvailability): DayKey {
 export function getJwlersOfTour(tour: Tour): JWler[] {
   const jwlers = [] as JWler[];
   for (let i = 0; i < tour.jwlers!.length!; i++) {
-    const jwlerId = tour.jwlers![i];
+    const jwlerId = tour.jwlers![i]!;
     jwlers.push(useStore().data.jwlers.get(jwlerId)!);
   }
   return jwlers;
@@ -80,13 +80,13 @@ export function getJwlerAvailabilitiesOfTour(tour: Tour): JWlerAvailability[] {
   const tourDate = new Date(Date.parse(tour.date)).toDateString();
   const availabilities = [] as JWlerAvailability[];
   for (let iJw = 0; iJw < tour.jwlers!.length; iJw++) {
-    const jwlerId = tour.jwlers![iJw];
+    const jwlerId = tour.jwlers![iJw]!;
     const allAv = useStore().data.jwlerAvailabilities.get(jwlerId);
     let jwlerAv: JWlerAvailability | null = null;
     if (allAv) {
       for (let iAv = 0; iAv < allAv.length; iAv++) {
-        if (allAv[iAv].start.toDateString() == tourDate) {
-          jwlerAv = allAv[iAv];
+        if (allAv[iAv]!.start.toDateString() == tourDate) {
+          jwlerAv = allAv[iAv]!;
           break;
         }
       }
@@ -124,8 +124,8 @@ export function getJwlerAvailabilityOnDay(jwlerId: number, day: DayKey): JWlerAv
   const avs = useStore().data.jwlerAvailabilities.get(jwlerId);
   if (avs) {
     for (let i = 0; i < avs.length; i++) {
-      if (getDayKeyOfJwlerAvailability(avs[i]) == day) {
-        return avs[i];
+      if (getDayKeyOfJwlerAvailability(avs[i]!) == day) {
+        return avs[i]!;
       }
     }
   }
@@ -181,8 +181,8 @@ export async function insertDriveElements(tour: Tour) {
   ): [number, TourElement] | [null, null] {
     let i = idx + direction;
     while (i >= 0 && i < newElements.length) {
-      if (newElements[i].type == type) {
-        return [i, newElements[i]];
+      if (newElements[i]!.type == type) {
+        return [i, newElements[i]!];
       }
       i += direction;
     }
@@ -190,7 +190,7 @@ export async function insertDriveElements(tour: Tour) {
   }
 
   function adjustExistingDriveElementTime(driveIdx: number, driveElement: TourElement, driveTimeMs: number) {
-    const elementAfterLastDrive = oldElements[driveIdx + 1];
+    const elementAfterLastDrive = oldElements[driveIdx + 1]!;
     const elementBeforeLastDrive = driveIdx >= 1 ? oldElements[driveIdx - 1] : null;
     const driveEarliestStart = elementBeforeLastDrive != null ? elementBeforeLastDrive.end : earliestPossibleTourStart;
     const driveLatestEnd = elementAfterLastDrive.start;
@@ -229,7 +229,7 @@ export async function insertDriveElements(tour: Tour) {
 
   let drivenSinceLastVisit = false;
   for (let i = 0; i < oldElements.length; i++) {
-    const iElement = oldElements[i];
+    const iElement = oldElements[i]!;
     if (iElement.type == TourElementTypeEnum.V) {
       const [lastVisitIdx, lastVisitElement] = searchElement(newElements.length, -1, TourElementTypeEnum.V);
       const [lastDriveIdx, lastDriveElement] = searchElement(newElements.length, -1, TourElementTypeEnum.D);
@@ -339,7 +339,7 @@ export function addTourElement(tourId: number, newElement: TourElement) {
   }
 }
 
-export function modelEquals<T extends { [key: string]: any }>(a: T, b: T) {
+export function modelEquals<T extends {[key: string]: any}>(a: T, b: T) {
   a = toRaw(a);
   b = toRaw(b);
   for (const type of MODEL_TYPES) {
@@ -432,7 +432,7 @@ export function getTourElementDescription(element: TourElement): string {
 
 export function getLocationDescription(location: Location | undefined): string {
   if (location) {
-    if (location.streetAndNumber && location.zip && location.city) {
+    if (location.string && location.zip && location.city) {
       return `${location.streetAndNumber}, ${location.zip} ${location.city}`;
     } else if (location.zip && location.city) {
       return `${location.latitude},${location.longitude} ~${location.zip} ${location.city}`;

@@ -41,14 +41,14 @@ export default defineComponent({
     getTotalTimeS(elements: Array<TourElement>): number {
       return elements.length == 0
         ? 0
-        : (elements[elements.length - 1].end.getTime() - elements[0].start.getTime()) / 1000;
+        : (elements[elements.length - 1]!.end.getTime() - elements[0]!.start.getTime()) / 1000;
     },
     getTotalBreakTimeS(elements: Array<TourElement>): number {
       if (elements.length == 0) {
         return 0;
       }
       let totalMs = 0;
-      let lastEnd = elements[0].start.getTime();
+      let lastEnd = elements[0]!.start.getTime();
       for (const e of elements) {
         const breakUntil = (e.type == TourElementTypeEnum.B ? e.end : e.start).getTime();
         totalMs += breakUntil - lastEnd;

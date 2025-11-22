@@ -102,7 +102,7 @@ export default defineComponent({
 
       const imgElement = (this.$refs.draggingElementImageContainer as HTMLElement).getElementsByClassName(
         "timeline-element",
-      )[0];
+      )[0]!;
       event.dataTransfer!.setDragImage(imgElement, 0, 20);
     },
   },
@@ -134,12 +134,12 @@ export default defineComponent({
       this.store.unassignedClients.forEach((client, clientId) => {
         const avs = this.store.data.clientAvailabilities.get(clientId) ?? [];
         let avToday = null;
-        let otherAvs = [];
+        let otherAvs = [] as ClientAvailability[];
         for (let i = 0; i < avs.length; i++) {
-          if (getDayKeyOfDate(this.date!) == getDayKeyOfClientAvailability(avs[i])) {
+          if (getDayKeyOfDate(this.date!) == getDayKeyOfClientAvailability(avs[i]!)) {
             avToday = avs[i];
           } else {
-            otherAvs.push(avs[i]);
+            otherAvs.push(avs[i]!);
           }
         }
         if (avToday != null) {
@@ -175,7 +175,7 @@ export default defineComponent({
     },
     timelineWidthPx(): number {
       if (this.mounted) {
-        const ruler = (this.$refs.rootElement as HTMLElement).getElementsByClassName("time-ruler")[0];
+        const ruler = (this.$refs.rootElement as HTMLElement).getElementsByClassName("time-ruler")[0]!;
         return ruler.getBoundingClientRect().width;
       } else {
         return 0;

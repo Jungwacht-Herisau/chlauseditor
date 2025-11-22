@@ -7,7 +7,7 @@ import {
   getDayKeyOfTour,
   getJwlerAvailabilitiesOfTour,
   getJwlersOfTour,
-  insertDriveElements
+  insertDriveElements,
 } from "@/model/model_utils";
 import JWlerLabel from "@/components/JWlerLabel.vue";
 import {HourRange} from "@/types";
@@ -72,7 +72,7 @@ export default defineComponent({
     dropJwler(event: DragEvent) {
       const dragData = getDragData(event);
       let jwlerId =
-        dragData.type == ObjectType.JWLER ? getDraggedIdInt(event) : parseInt((dragData.id as string).split(";")[1]);
+        dragData.type == ObjectType.JWLER ? getDraggedIdInt(event) : parseInt((dragData.id as string).split(";")[1]!);
       const sameDayTours = this.store.toursByDay.get(getDayKeyOfTour(this.tour!))!;
       const currentTourMutable = this.store.data.tours.get(this.tour!.id!)!;
       sameDayTours.forEach(to => {
@@ -179,7 +179,7 @@ export default defineComponent({
         v-for="(_, i) in jwlers.length"
         :key="i"
         draggable="true"
-        @dragstart="event => startDrag(event, ObjectType.ASSIGNED_JWLER, `${tourId};${jwlers[i].id!}`)"
+        @dragstart="event => startDrag(event, ObjectType.ASSIGNED_JWLER, `${tourId};${jwlers[i]!.id!}`)"
       >
         <JWlerLabel :jwler="jwlers[i]" />
       </div>

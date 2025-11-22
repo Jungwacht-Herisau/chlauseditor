@@ -35,7 +35,7 @@ export default defineComponent({
       let pairs = Array.from(this.store.originalData.tours.keys())
         .filter(id => this.store.data.tours.has(id))
         .map(id => [this.store.originalData.tours.get(id)!, this.store.data.tours.get(id)!]);
-      return pairs.filter(pair => !modelEquals(pair[0], pair[1]));
+      return pairs.filter(pair => !modelEquals(pair[0]!, pair[1]!));
     },
     addedTours() {
       return Array.from(this.store.data.tours.values()).filter(t => !this.store.originalData.tours.has(t.id!));
@@ -85,7 +85,7 @@ export default defineComponent({
     <template #afterheader>
       <span class="badge bg-secondary">{{ changedTours.length + removedTours.length + addedTours.length }}</span>
     </template>
-    <TourDiff v-for="pair in changedTours" :key="pair[0].id" :original="pair[0]" :changed="pair[1]" />
+    <TourDiff v-for="pair in changedTours" :key="pair[0]!.id" :original="pair[0]!" :changed="pair[1]!" />
     <ChangedTourHeader v-for="tour in removedTours" :key="tour.id" :old-name="tour.name" />
     <ChangedTourHeader v-for="tour in addedTours" :key="tour.id" :new-name="tour.name" />
   </CollapsibleContent>

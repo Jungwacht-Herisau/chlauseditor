@@ -109,8 +109,8 @@ export default defineComponent({
         const allAvailabilities = this.store.data.clientAvailabilities.get(this.client.id!);
         const avsOnThisDay = allAvailabilities?.filter(av => av.start.toDateString() === this.startDate.toDateString());
         if (avsOnThisDay && avsOnThisDay.length > 0) {
-          const startStr = formatHours(toFractionHours(avsOnThisDay[0].start));
-          const endStr = formatHours(toFractionHours(avsOnThisDay[0].end));
+          const startStr = formatHours(toFractionHours(avsOnThisDay[0]!.start));
+          const endStr = formatHours(toFractionHours(avsOnThisDay[0]!.end));
           html += `Verfügbar ${startStr}-${endStr}<br>`;
         } else {
           html += "Heute nicht verfügbar<br>";
