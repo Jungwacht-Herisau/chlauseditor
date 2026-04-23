@@ -47,7 +47,7 @@
     "typescript": "~5.9.3",
     "vite": "^8.0.10",
     "vitest": "^4.0.14",
-    "vue-tsc": "^3.1.5",
+    "vue-tsc": "^3.2.7",
     "@openapitools/openapi-generator-cli": "^2.31.1"
   }
 }
